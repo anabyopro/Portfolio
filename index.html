@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html>
 <html lang="fr" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
@@ -830,26 +830,38 @@
 
         // Ajout des styles dynamiques pour le carrousel
         const style = document.createElement('style');
+        // J'ai déplacé les styles dans des media queries pour un affichage adaptatif.
         style.innerHTML = `
           .carousel-item { 
-            flex-shrink: 0; 
+            flex-shrink: 0;
+            transition: all 0.5s ease-in-out;
           }
-          .item-active { /* Image centrale plus large */
-            width: 60%; order: 2; transform: scale(1); z-index: 20; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+          /* Styles pour mobile : un seul élément visible */
+          .item-active { width: 100%; order: 2; }
+          .item-prev, .item-next { display: none; } /* On cache les éléments latéraux */
+
+          /* Styles pour écrans plus larges (tablettes et ordinateurs) */
+          @media (min-width: 768px) {
+            .item-prev, .item-next {
+              display: flex; /* On ré-affiche les éléments latéraux */
+              width: 22%;
+              order: 1;
+              transform: scale(0.9);
+              opacity: 0.9;
+              z-index: 10;
+            }
+            .item-active {
+              width: 56%;
+              order: 2;
+              transform: scale(1);
+              z-index: 20;
+              box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            }
+            .item-next {
+              order: 3;
+            }
           }
-          .item-prev, .item-next {
-            width: 22%; /* Un tout petit peu plus large (était 20%) */
-            order: 1;
-            transform: scale(0.9); /* Nettement plus gros visuellement (était 0.8) */
-            opacity: 0.9; /* Beaucoup plus visible et lisible (était 0.5) */
-            z-index: 10;
-          }
-          /* On ajuste aussi l'élément central pour qu'il reste dominant */
-          .item-active {
-            width: 56%; /* Légère réduction pour laisser de la place aux côtés (était 60%) */
-            order: 2; transform: scale(1); z-index: 20; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-          }
-          .item-next { order: 3; }
         `;
         document.head.appendChild(style);
 
@@ -948,7 +960,7 @@
           items.forEach(item => {
             const data = carouselData[item.index];
             const el = document.createElement('div');
-            el.className = `carousel-item item-${item.type} transition-all duration-500 ease-in-out cursor-pointer`;
+            el.className = `carousel-item item-${item.type} cursor-pointer`;
             // Remplacer l'image simple par le composant de comparaison avant/après
             if (item.type === 'active') {
               el.classList.add('relative', 'flex', 'flex-col', 'justify-center', 'items-center', 'h-full', 'gap-4');
@@ -1079,3 +1091,5 @@
     </script>
   </body>
 </html>
+
+
