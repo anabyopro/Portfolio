@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Analyse de Données Biologiques - Votre Expert en Bio-informatique
+    </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Ajout de la bibliothèque pour le slider avant/après -->
+    <link rel="stylesheet" href="https://unpkg.com/img-comparison-slider@8/dist/styles.css" />
+    <script defer src="https://unpkg.com/img-comparison-slider@8/dist/index.js"></script>
+
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      /* Styles pour l'effet de balayage lumineux continu */
+      .text-shine {
+        background-size: 250% auto; /* Dégradé plus large pour un balayage plus doux */
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-fill-color: transparent;
+        animation: shine 4s linear infinite; /* Animation plus lente et continue */
+      }
+
+      /* Définition de l'animation */
+      @keyframes shine {
+        0% {
+          background-position: 200% center; /* Commence à droite */
+        }
+        100% {
+          background-position: -200% center; /* Termine à gauche */
+        }
+      }
+
+      /* Dégradé pour le logo principal (bleu ciel) */
+      .text-shine-sky-400 {
+        color: #38bdf8; /* Couleur de secours */
+        /* Dégradé : bleu, puis un point blanc brillant, puis bleu à nouveau */
+        background-image: linear-gradient(to right, #38bdf8 20%, #ffffff 50%, #38bdf8 80%);
+      }
+
+      /* Icones SVG simples pour la démo */
+      .icon-lock {
+        width: 48px;
+        height: 48px;
+        stroke-width: 1.5;
+        stroke: currentColor;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .icon-check {
+        width: 24px;
+        height: 24px;
+        stroke-width: 2;
+        stroke: currentColor;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .icon-file {
+        width: 32px;
+        height: 32px;
+        stroke-width: 1.5;
+        stroke: currentColor;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .icon-zap {
+        width: 32px;
+        height: 32px;
+        stroke-width: 1.5;
+        stroke: currentColor;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .icon-chart {
+        width: 32px;
+        height: 32px;
+        stroke-width: 1.5;
+        stroke: currentColor;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      /* Styles pour l'animation d'apparition au défilement */
+      .fade-in-section {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+      }
+      .fade-in-section.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      /* Style pour la cassure en vague */
+      .wave-break {
+        clip-path: polygon(
+          0% 10%,
+          100% 0%,
+          100% 100%,
+          0% 100%
+        );
+      }
+      /* Style pour la transition en dégradé de la section processus */
+      #processus::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0; 
+        height: 100%; /* On augmente légèrement la hauteur du dégradé */
+        z-index: -1; /* Placer le dégradé derrière le contenu */
+        background: linear-gradient(
+          to bottom,
+          rgb(0, 0, 0) 0%, /* Début : Noir transparent */
+          #696f83 45%,             /* Milieu : Le bleu arrive plus bas */
+          #f9fafb 85%              /* Fin : Le blanc est atteint vers la fin du dégradé */
+        );
+      }
+      /* Styles pour les tableaux Excel */
+      .excel-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.8rem;
+        line-height: 1.2;
+        color: #333;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .excel-table th, .excel-table td {
+        border: 1px solid #ccc;
+        padding: 4px 6px;
+        text-align: left;
+      }
+      .excel-table th {
+        background-color: #e9e9e9;
+        font-weight: bold;
+        text-align: center;
+      }
+      .excel-table .row-header {
+        background-color: #f2f2f2;
+        text-align: center;
+        font-weight: bold;
+        color: #666;
+      }
+      .excel-table .cell-dirty {
+        background-color: #fff0f0;
+        color: #c00;
+      }
+      .excel-table .cell-merged {
+        background-color: #e0f2f1;
+        font-style: italic;
+      }
+      .excel-table .cell-long {
+        background-color: #e3f2fd;
+      }
+
+      /* Style pour le dégradé sur "Ana" */
+      .logo-ana {
+        background-image: linear-gradient(to bottom right, white, #38bdf8); /* Dégradé du blanc (haut-gauche) au bleu ciel (bas-droite) */
+        -webkit-background-clip: text; /* Pour Chrome, Safari */
+        background-clip: text;
+        color: transparent; /* Rend le texte transparent pour voir le dégradé */
+        -webkit-text-fill-color: transparent; /* Alternative pour certains navigateurs */
+      }
+
+    </style>
+  </head>
+  <body class="bg-gray-50 text-gray-800">
+    <!-- Barre de Navigation -->
+    <header id="main-header" class="bg-transparent text-white fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
+        <div class="flex justify-between items-center h-20">
+          <!-- Logo / Titre -->
+          <div class="flex-shrink-0 flex items-center"> <a href="./index.html"> <img class="h-16 w-auto" src="./assets/logo_anabyo.png" alt="Logo AnaByo" /> </a> <a href="./index.html" id="logo-text" class="ml-3 text-3xl font-bold transition-colors duration-300"><span class="text-shine text-shine-sky-400">Ana</span><span class="text-lime-400">Byo</span></a> </div>
+          <!-- Menu Desktop -->
+          <div class="hidden md:flex md:items-center md:space-x-8">
+            <a
+              href="#confidentialite"
+              class="font-medium hover:text-indigo-300"
+              >Confidentialité</a
+            >
+            <a
+              href="#processus"
+              class="font-medium hover:text-sky-300"
+              >Processus</a
+            >
+            <a
+              href="#tarifs"
+              class="font-medium hover:text-indigo-300"
+              >Tarifs</a
+            >
+            <!-- Menu Déroulant -->
+            <div class="relative" id="dropdown-container">
+              <button id="dropdown-button" class="flex items-center font-medium hover:text-indigo-300">
+                <span>À Propos</span>
+                <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+              </button>
+              <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 z-50">
+                <a href="./qui-suis-je.html" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600">
+                  Qui suis-je ?
+                </a>
+                <a href="./documents.html" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600">
+                  Documents
+                </a>
+                <a href="./mentions-legales.html" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600">
+                  Mentions Légales
+                </a>
+              </div>
+            </div>
+            <a
+              href="#contact-devis"
+              class="px-5 py-2 bg-sky-600 text-white rounded-lg font-medium hover:bg-sky-700 transition-colors"
+              id="cta-header-devis"
+            >
+              Demander un devis
+            </a>
+          </div>
+          <!-- Menu mobile (simple) -->
+          <div class="md:hidden flex items-center">
+            <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+              <span class="sr-only">Ouvrir le menu principal</span>
+              <!-- Icône Hamburger -->
+              <svg id="hamburger-icon" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+              </svg>
+              <!-- Icône Croix (cachée par défaut) -->
+              <svg id="close-icon" class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </nav>
+      <!-- Menu mobile, affiché/caché par JS -->
+      <div class="hidden md:hidden bg-gray-800/95 backdrop-blur-sm" id="mobile-menu">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <a href="#confidentialite" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Confidentialité</a>
+          <a href="#processus" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Processus</a>
+          <a href="#tarifs" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Tarifs</a>
+          <a href="./qui-suis-je.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Qui suis-je ?</a>
+          <a href="./documents.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Documents</a>
+          <a href="./mentions-legales.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Mentions Légales</a>
+          <a href="#contact-devis" class="block px-3 py-2 rounded-md text-base font-medium text-sky-400 bg-sky-900/50 hover:bg-sky-800/50">Demander un devis</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Section Principale (Hero) -->
+    <main>
+      <!-- Section Hero avec fond vidéo -->
+      <div class="relative bg-gray-900">
+        <video
+          src="./assets/video_anabyo.mp4"
+          autoplay
+          loop
+          muted
+          playsinline
+          class="absolute top-1/2 left-1/2 z-0 min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 object-cover"
+        ></video>
+        <!-- Superposition pour la lisibilité -->
+        <div class="absolute inset-0 bg-black/75 z-10 border-b border-black/50"></div>
+        <!-- Section Hero -->
+        <section
+          id="hero" 
+          class="relative z-20 flex items-center justify-center pt-24 pb-6 lg:pt-64 lg:pb-16"
+        >
+          <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
+            Ne passez plus des mois sur 
+            <span class="text-lime-400">Excel</span>.
+          </h1>
+            <p class="mt-6 max-w-3xl mx-auto text-lg sm:text-xl text-gray-200">
+              Faites de la science, je prépare vos données.
+            </p>
+            <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+              <a
+                href="#contact-devis"
+                class="inline-flex items-center justify-center px-8 py-3 bg-sky-600 text-white rounded-lg font-semibold shadow-md hover:bg-sky-700 transition-colors text-lg"
+                id="cta-hero-essai"
+              >
+                Demander une évaluation gratuite
+              </a>
+              <a
+                href="#processus"
+                class="inline-flex items-center justify-center px-8 py-3 bg-white/20 text-white rounded-lg font-semibold hover:bg-white/30 backdrop-blur-sm transition-colors text-lg"
+              >
+                Découvrir les services
+              </a>
+            </div>
+            <p class="mt-6 text-base font-semibold text-gray-400 flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+              100% satisfait ou remboursé
+            </p>
+          </div>
+        </section>
+        
+        <!-- Ligne de séparation -->
+        <div class="relative z-30 w-full h-px bg-gradient-to-r from-transparent via-white/50 to-transparent my-8"></div>
+
+        <!-- Section Texte du Problème -->
+        <section id="probleme" class="relative z-30 pt-8 sm:pt-12 pb-12 sm:pb-16 fade-in-section">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+              <h2 class="text-3xl sm:text-4xl font-extrabold text-white">
+                Vos problèmes, mes solutions
+              </h2>
+              <p class="mt-4 max-w-3xl mx-auto text-lg text-gray-200">
+                <span class="whitespace-nowrap">Données inexploitables, heures perdues en copier-coller, formats incompatibles avec vos logiciels...</span><br>
+                <span class="mt-2 block font-bold text-lime-300">Voici concrètement comment je transforme vos fichiers en résultats.</span>
+              </p>
+            </div>
+
+            <!-- Carrousel intégré directement ici -->
+            <div class="relative mt-16 sm:mt-20">
+              
+              
+              <div class="relative w-full max-w-7xl mx-auto flex items-center justify-center px-4 sm:px-6 mt-4">
+                <button id="prev-btn" class="absolute left-0 z-30 bg-white/10 text-white p-2 rounded-full hover:bg-white/20 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+                <div id="carousel-view" class="w-full h-auto md:h-[65vh] min-h-[400px] flex items-center justify-center gap-2 md:gap-4 py-6 overflow-hidden"></div>
+                <button id="next-btn" class="absolute right-0 z-30 bg-white/10 text-white p-2 rounded-full hover:bg-white/20 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section id="processus" class="relative z-20 text-gray-800 pt-32 sm:pt-32 pb-3" style="background: linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, #1e3a8a 15%, #f9fafb 30%);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-gray-900">
+          <div class="text-center">
+            <h2 class="text-lg font-semibold text-sky-300 tracking-wide uppercase">
+              Processus
+            </h2>
+            <p class="mt-2 text-3xl sm:text-4xl font-extrabold text-white">
+              En 3 étapes, simple et sécurisé
+            </p>
+          </div>
+          <div
+            class="mt-16 space-y-16 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-x-12"
+          >
+            <!-- Étape 1 -->
+            <div>
+              <div
+                class="flex items-center justify-center h-12 w-12 rounded-full bg-indigo-500 text-white font-bold text-xl"
+              >
+                1
+              </div>
+              <div class="mt-5">
+                <h3 class="text-xl font-semibold text-gray-900">
+                  Prise de Contact & Évaluation
+                </h3>
+                <p class="mt-3 text-gray-700">
+                  Vous me contactez via le formulaire pour décrire votre besoin.
+                  Sur la base d'un fichier exemple (anonymisé si besoin),
+                  j'évalue la complexité et vous propose une première tâche
+                  d'évaluation gratuite.
+                </p>
+              </div>
+            </div>
+            <!-- Étape 2 -->
+            <div>
+              <div
+                class="flex items-center justify-center h-12 w-12 rounded-full bg-indigo-500 text-white font-bold text-xl"
+              >
+                2
+              </div>
+              <div class="mt-5">
+                <h3 class="text-xl font-semibold text-gray-900">Validation</h3>
+                <p class="mt-3 text-gray-700">
+                  Je vous renvoie le fichier traité issu de l'évaluation. Vous
+                  validez la qualité du travail et le gain de temps. Si vous
+                  êtes convaincu, je vous fournis un devis détaillé pour la
+                  totalité de votre projet.
+                </p>
+              </div>
+            </div>
+            <!-- Étape 3 -->
+            <div>
+              <div
+                class="flex items-center justify-center h-12 w-12 rounded-full bg-indigo-500 text-white font-bold text-xl"
+              >
+                3
+              </div>
+              <div class="mt-5">
+                <h3 class="text-xl font-semibold text-gray-900">
+                  Collaboration & Facturation
+                </h3>
+                <p class="mt-3 text-gray-700">
+                  Une fois le devis accepté, la mission commence. La facturation
+                  est effectuée à la fin de la prestation, conformément au
+                  devis, pour une intégration simple à votre comptabilité.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Vague de transition -->
+      <div class="bg-gradient-to-b from-gray-100 to-gray-900">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" class="block"><path fill="#f9fafb" fill-opacity="1" d="M0,192L80,176C160,160,320,128,480,133.3C640,139,800,181,960,186.7C1120,192,1280,160,1360,144L1440,128L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z"></path></svg>
+      </div>
+
+      <!-- Section Confidentialité (CRUCIALE) -->
+      <section id="confidentialite" class="bg-gray-900 text-white py-16 sm:py-24 fade-in-section">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+          <div class="flex flex-col lg:flex-row items-start gap-12">
+          
+            <div class="lg:w-1/3 lg:sticky lg:top-24">
+                <div class="flex items-center mb-6">
+                    <svg class="w-12 h-12 text-sky-400/70 mr-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    <h2 class="text-3xl font-extrabold leading-tight">
+                      Engagement<br>Sécurité &<br>Confidentialité
+                    </h2>
+                </div>
+                <p class="text-lg text-gray-300 leading-relaxed">
+                  Je manipule des données de recherche sensibles, non publiées et précieuses. La confiance absolue est la base de notre collaboration.
+                </p>
+            </div>
+
+            <div class="lg:w-2/3 bg-gray-800/50 rounded-2xl p-8 md:p-10 border border-gray-700 shadow-inner backdrop-blur-sm">
+                <ul class="space-y-6">
+                    <li class="flex items-start">
+                        <svg class="w-6 h-6 flex-shrink-0 text-lime-400 mr-4 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <div>
+                            <strong class="text-white block mb-1">Accord de Non-Divulgation (NDA)</strong>
+                            <span class="text-gray-300">Je m'engage par écrit (si vous le souhaitez) à ne jamais divulguer, partager ou réutiliser vos données.</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-6 h-6 flex-shrink-0 text-lime-400 mr-4 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <div>
+                            <strong class="text-white block mb-1">Transferts certifiés</strong>
+                            <span class="text-gray-300">Utilisation exclusive de canaux sécurisés et chiffrés (type BlueFiles) pour l'envoi et la réception de vos documents.</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-6 h-6 flex-shrink-0 text-lime-400 mr-4 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <div>
+                            <strong class="text-white block mb-1">Stockage chiffré</strong>
+                            <span class="text-gray-300">Toutes les données sont stockées sur des supports chiffrés (Bitlocker). En cas de vol physique, elles restent mathématiquement inaccessibles.</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-6 h-6 flex-shrink-0 text-lime-400 mr-4 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <div>
+                            <strong class="text-white block mb-1">Politique 'Zéro Trace'</strong>
+                            <span class="text-gray-300">Engagement ferme de suppression définitive de toutes vos données (locales et cloud) sous 30 jours après validation.</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-6 h-6 flex-shrink-0 text-lime-400 mr-4 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <div>
+                            <strong class="text-white block mb-1">Protection contre l'IA</strong>
+                            <span class="text-gray-300">Vos données ne sont jamais, sous aucun prétexte, utilisées pour entraîner des modèles d'intelligence artificielle.</span>
+                        </div>
+                    </li>
+                </ul>
+                <p class="mt-8 pt-6 border-t border-gray-700 text-sm text-gray-400 italic">
+                    Ces protocoles stricts sont conçus pour vous aider à respecter vos propres obligations RGPD lorsque vous sous-traitez vos analyses.
+                </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Section Tarifs -->
+      <section id="tarifs" class="bg-gray-100 pt-16 sm:pt-24 pb-0 fade-in-section">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> 
+          <div class="text-center">
+            <h2
+              class="text-base font-semibold text-indigo-600 tracking-wide uppercase"
+            >
+              Tarifs
+            </h2>
+            <p class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900">
+              Transparent et adapté à la recherche
+            </p>
+          </div>
+          <div
+            class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto"
+          >
+            <!-- Offre 1: Test Gratuit -->
+            <div
+              id="plan-essai"
+              class="bg-white p-8 rounded-lg shadow-lg border-2 border-transparent cursor-pointer transition-all"
+            >
+              <h3 class="text-2xl font-semibold text-gray-900">Test Gratuit</h3>
+              <p class="mt-2 text-gray-600">
+                Votre première tâche, sans engagement.
+              </p>
+              <p class="mt-6">
+                <span class="text-5xl font-extrabold text-gray-900">0 €</span>
+              </p>
+            </div>
+            <!-- Offre 2: Par Tâche -->
+            <div
+              id="plan-devis"
+              class="bg-white p-8 rounded-lg shadow-lg border-2 border-transparent cursor-pointer transition-all flex flex-col"
+            >
+              <h3 class="text-2xl font-semibold text-gray-900">À la Tâche</h3>
+              <p class="mt-2 text-gray-600">Pour tous vos besoins réguliers.</p>
+              <p class="mt-6">
+                <span class="text-5xl font-extrabold text-gray-900">30 €</span>
+                <span class="text-xl font-medium text-gray-500">/ tâche</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section Contact (Dynamique) -->
+      <section id="contact-devis" class="bg-gray-100 pt-16 pb-24 fade-in-section">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            
+            <div class="text-left lg:sticky lg:top-24"> <h2 id="contact-title" class="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight">
+                </h2>
+              <p id="contact-description" class="mt-4 text-lg text-gray-600">
+                </p>
+              
+              <div class="mt-10 space-y-4">
+                <div class="flex items-center text-gray-700">
+                  <svg class="w-6 h-6 mr-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  <span>Réponse garantie sous 24h ouvrées.</span>
+                </div>
+                <div class="flex items-center text-gray-700">
+                  <svg class="w-6 h-6 mr-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                  <span>Vos informations restent strictement confidentielles.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-xl shadow-xl border border-gray-100">
+              <form action="https://formspree.io/f/xvgvvwoy" method="POST">
+                <div class="grid grid-cols-1 gap-y-6">
+                      <input id="contact-subject" type="hidden" name="_subject" value="Nouvelle demande de devis" />
+                      <div>
+                        <label for="full-name" class="block text-sm font-medium text-gray-700">Nom complet</label>
+                        <div class="mt-1">
+                          <input type="text" name="full-name" id="full-name" autocomplete="name" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50" /> </div>
+                      </div>
+                      <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <div class="mt-1">
+                          <input id="email" name="email" type="email" autocomplete="email" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50" />
+                        </div>
+                      </div>
+                      <div>
+                          <label for="laboratory" class="block text-sm font-medium text-gray-700">Laboratoire / Institution (Optionnel)</label>
+                          <div class="mt-1">
+                            <input type="text" name="laboratory" id="laboratory" class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50" />
+                          </div>
+                      </div>
+                      <div>
+                        <label for="message" id="contact-message-label" class="block text-sm font-medium text-gray-700">Décrivez votre besoin</label>
+                        <div class="mt-1">
+                          <textarea id="message" name="message" rows="4" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50"></textarea>
+                        </div>
+                      </div>
+                      <div>
+                        <button id="contact-submit-button" type="submit" class="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all transform hover:scale-[1.02]">
+                          Envoyer
+                        </button>
+                      </div>
+                </div>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-10 border-t border-gray-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="flex flex-col-reverse md:flex-row justify-between items-center gap-6 md:gap-0">
+          
+          <div class="text-center md:text-left">
+            <p class="text-sm font-medium text-gray-300">
+                &copy; 2025 Bourachot Tom - AnaByo
+            </p>
+            <p class="mt-1 text-xs text-gray-500">
+                Tous droits réservés.
+            </p>
+          </div>
+
+          <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+            
+            <nav class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
+              <a href="#confidentialite" class="hover:text-white transition-colors duration-200">Confidentialité</a>
+              <a href="./documents.html" class="hover:text-white transition-colors duration-200">Documents</a>
+              <a href="./mentions-legales.html" class="hover:text-white transition-colors duration-200">Mentions Légales</a>
+            </nav>
+
+            <div class="hidden md:block h-4 w-px bg-gray-700"></div>
+
+            <div class="text-sm flex flex-col md:flex-row items-center gap-1 md:gap-2">
+              <span class="text-gray-500">Contact hors demande de devis :</span>
+              <a href="mailto:anabyopro@gmail.com" 
+                id="copy-email-link"
+                class="text-gray-200 hover:text-indigo-100 transition-colors duration-200 cursor-pointer font-medium">
+                anabyopro@gmail.com
+              </a>
+            </div>
+
+            <div class="hidden md:block h-4 w-px bg-gray-700"></div>
+
+            <a href="https://www.linkedin.com/in/tom-bourachot44/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors duration-200">
+              <span class="sr-only">LinkedIn</span>
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+              </svg>
+            </a>
+
+          </div>
+
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // --- Script pour le header dynamique ---
+      document.addEventListener('scroll', function() {
+        const header = document.getElementById('main-header');
+        const logoText = document.getElementById('logo-text');
+        const navLinks = header.querySelectorAll('a, button');
+
+        if (window.scrollY > 50) { // Se déclenche après 50px de scroll
+          header.classList.remove('bg-transparent');
+          header.classList.add('bg-black', 'shadow-lg', 'text-white');
+          // Le logo et les liens restent avec leurs couleurs claires, on s'assure juste que le hover est correct
+          navLinks.forEach(link => {
+            link.classList.remove('hover:text-indigo-300');
+            link.classList.add('hover:text-sky-300');
+          });
+        } else {
+          header.classList.add('bg-transparent');
+          header.classList.remove('bg-black', 'shadow-lg');
+          // On restaure les couleurs initiales
+          navLinks.forEach(link => {
+            link.classList.add('hover:text-indigo-300');
+            link.classList.remove('hover:text-sky-300');
+          });
+        }
+      });
+      document.addEventListener("DOMContentLoaded", function () {
+        const planEssai = document.getElementById("plan-essai");
+        const planDevis = document.getElementById("plan-devis");
+
+        // Boutons d'appel à l'action
+        const ctaHeaderDevis = document.getElementById("cta-header-devis");
+        const ctaHeroEssai = document.getElementById("cta-hero-essai");
+        const copyEmailLink = document.getElementById("copy-email-link");
+
+        const contactTitle = document.getElementById("contact-title");
+        const contactDescription = document.getElementById("contact-description");
+        const contactMessageLabel = document.getElementById("contact-message-label");
+        const contactSubmitButton = document.getElementById("contact-submit-button");
+        const contactSubject = document.getElementById("contact-subject");
+
+        const selectedClasses = ["border-indigo-600", "shadow-xl"];
+        const defaultClasses = ["border-transparent", "shadow-lg"];
+
+        const content = {
+          essai: {
+            title: "Demandez votre essai gratuit",
+            description:
+              "Prouvons d'abord la valeur ajoutée. Je réalise votre première tâche de formatage gratuitement sur un fichier test ou d'assemblage sur deux fichiers pour que vous puissiez évaluer la qualité du service.",
+            messageLabel:
+              'Décrivez la tâche pour l\'essai gratuit (ex: "Fusionner ces 2 fichiers en un seul")',
+            buttonText: "Lancer mon essai gratuit",
+            subject: "Nouvelle demande d'essai gratuit",
+          },
+          devis: {
+            title: "Recevez votre devis personnalisé", 
+            description: 'Le tarif de base sert de référence pour établir un devis précis. Une "tâche" est évaluée pour vous fournir une proposition chiffrée.',
+            messageLabel:
+              'Décrivez votre besoin (ex: "J\'ai 20 fichiers Excel à fusionner...")',
+            buttonText: "Obtenir mon devis",
+            subject: "Nouvelle demande de devis",
+          },
+        };
+
+        function updateForm(plan) {
+          contactTitle.textContent = content[plan].title;
+          contactDescription.innerHTML = content[plan].description; // Utiliser innerHTML pour interpréter le lien <a>
+          contactMessageLabel.textContent = content[plan].messageLabel;
+          contactSubmitButton.textContent = content[plan].buttonText;
+          contactSubject.value = content[plan].subject;
+        }
+
+        function selectPlan(planElement, planType) {
+          // Reset both plans
+          planEssai.classList.remove(...selectedClasses);
+          planDevis.classList.remove(...selectedClasses);
+          planEssai.classList.add(...defaultClasses);
+          planDevis.classList.add(...defaultClasses);
+
+          // Apply selected style to the chosen one
+          planElement.classList.remove(...defaultClasses);
+          planElement.classList.add(...selectedClasses);
+
+          updateForm(planType);
+        }
+
+        planEssai.addEventListener("click", () => selectPlan(planEssai, "essai"));
+        planDevis.addEventListener("click", () => selectPlan(planDevis, "devis"));
+
+        // Gérer le défilement fluide pour tous les liens d'ancre
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                // On ne veut pas interférer avec les boutons déjà gérés
+                if (this.id === 'cta-header-devis' || this.id === 'cta-hero-essai') {
+                    return;
+                }
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    const headerOffset = 80; // Hauteur du header
+                    const elementPosition = targetElement.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Gérer les clics sur les boutons d'appel à l'action
+        if (ctaHeaderDevis) {
+          ctaHeaderDevis.addEventListener("click", (event) => {
+            event.preventDefault(); // Empêche le saut d'ancre par défaut
+            selectPlan(planDevis, "devis");
+            const targetElement = document.getElementById('contact-devis');
+            const headerOffset = 100; // Hauteur du header + marge
+            const elementPosition = targetElement.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+          });
+        }
+        if (ctaHeroEssai) {
+          ctaHeroEssai.addEventListener("click", (event) => {
+            event.preventDefault(); // Empêche le saut d'ancre par défaut
+            selectPlan(planEssai, "essai");
+            const targetElement = document.getElementById('contact-devis');
+            const headerOffset = 100; // Hauteur du header + marge
+            const elementPosition = targetElement.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+          });
+        }
+
+        // Gérer la copie de l'e-mail avec notification au curseur
+        if (copyEmailLink) {
+          copyEmailLink.addEventListener("click", function (event) {
+            event.preventDefault(); // Empêche l'ouverture du client mail
+            const email = this.innerText;
+
+            navigator.clipboard.writeText(email).then(() => {
+              // Créer l'élément de notification
+              const notification = document.createElement('div');
+              notification.textContent = 'Copié !';
+              
+              // Appliquer les styles
+              Object.assign(notification.style, {
+                position: 'absolute',
+                left: `${event.pageX + 15}px`,
+                top: `${event.pageY}px`,
+                background: '#2d3748', // Gris foncé
+                color: 'white',
+                padding: '4px 8px',
+                borderRadius: '4px',
+                fontSize: '12px',
+                zIndex: '1000',
+                transition: 'opacity 0.5s ease-out'
+              });
+
+              document.body.appendChild(notification);
+
+              // Faire disparaître et supprimer l'élément
+              setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                  document.body.removeChild(notification);
+                }, 500); // Attendre la fin de la transition
+              }, 1500); // Commencer à disparaître après 1.5s
+            });
+          });
+        }
+
+        // Set default selection on page load
+        selectPlan(planDevis, "devis");
+
+        // --- Script pour l'animation au défilement ---
+        const sections = document.querySelectorAll('.fade-in-section');
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+            }
+          });
+        }, {
+          rootMargin: '0px',
+          threshold: 0.1 // Déclenche l'animation quand 10% de la section est visible
+        });
+
+        sections.forEach(section => {
+          observer.observe(section);
+        });
+
+        // Ajout des styles dynamiques pour le carrousel
+        const style = document.createElement('style');
+        style.innerHTML = `
+          .carousel-item { 
+            flex-shrink: 0; 
+          }
+          .item-active { /* Image centrale plus large */
+            width: 60%; order: 2; transform: scale(1); z-index: 20; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          }
+          .item-prev, .item-next {
+            width: 22%; /* Un tout petit peu plus large (était 20%) */
+            order: 1;
+            transform: scale(0.9); /* Nettement plus gros visuellement (était 0.8) */
+            opacity: 0.9; /* Beaucoup plus visible et lisible (était 0.5) */
+            z-index: 10;
+          }
+          /* On ajuste aussi l'élément central pour qu'il reste dominant */
+          .item-active {
+            width: 56%; /* Légère réduction pour laisser de la place aux côtés (était 60%) */
+            order: 2; transform: scale(1); z-index: 20; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+          }
+          .item-next { order: 3; }
+        `;
+        document.head.appendChild(style);
+
+        // --- Script pour le carrousel interactif ---
+        const carouselData = [
+           {
+            title: "Données Incohérentes",
+            solution_title: "Données Nettoyées & Standardisées",
+            problem_description: "Les noms varient, les valeurs manquantes sont incohérentes... L'analyse est impossible.",
+            solution_description: "Les données sont uniformisées, prêtes à être analysées sans erreur.",
+            html_before: `<table class="excel-table"><thead><tr><th>ID_PATIENT</th><th>Date</th><th>Marqueur_A</th><th>Resultat</th></tr></thead><tbody>
+              <tr><td>PAT-01</td><td class="cell-dirty">10/05/2023</td><td class="cell-dirty"> 12.5 </td><td>positif</td></tr>
+              <tr><td class="cell-dirty">pat-02</td><td>11-05-2023</td><td>8.9</td><td class="cell-dirty">Pos</td></tr>
+              <tr><td>PAT-03</td><td>12/05/23</td><td class="cell-dirty">15,2</td><td class="cell-dirty">negatif</td></tr>
+              <tr><td>PAT-04</td><td>13/05/2023</td><td>-</td><td>positif</td></tr>
+              <tr><td class="cell-dirty">Pat-05</td><td>2023-05-14</td><td>11.7</td><td class="cell-dirty">NEG</td></tr>
+              <tr><td>PAT-06</td><td>15/05/2023</td><td class="cell-dirty">manquant</td><td>n/a</td></tr>
+            </tbody></table>`,
+            html_after: `<table class="excel-table"><thead><tr><th>ID_PATIENT</th><th>Date</th><th>Marqueur_A</th><th>Resultat</th></tr></thead><tbody>
+              <tr><td>PAT-01</td><td>2023-05-10</td><td>12.5</td><td>positif</td></tr>
+              <tr><td>PAT-02</td><td>2023-05-11</td><td>8.9</td><td>positif</td></tr>
+              <tr><td>PAT-03</td><td>2023-05-12</td><td>15.2</td><td>negatif</td></tr>
+              <tr><td>PAT-04</td><td>2023-05-13</td><td>NA</td><td>positif</td></tr>
+              <tr><td>PAT-05</td><td>2023-05-14</td><td>11.7</td><td>negatif</td></tr>
+              <tr><td>PAT-06</td><td>2023-05-15</td><td>NA</td><td>NA</td></tr>
+            </tbody></table>`,
+          },
+          {
+            title: "Fichiers Éparpillés",
+            solution_title: "Fichiers Fusionnés & Agrégés",
+            problem_description: "Les données sont dans plusieurs fichiers, un par expérience. Les copier-coller sont lents et risqués.",
+            solution_description: "Un seul 'fichier maître' est créé, incluant une colonne qui trace l'origine de chaque donnée.",
+            html_before: `<div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <table class="excel-table"><caption class="text-gray-200">Exp1.xlsx</caption><thead><tr><th>ID</th><th>Valeur</th></tr></thead><tbody>
+                <tr><td>A</td><td>10</td></tr><tr><td>B</td><td>12</td></tr><tr><td>C</td><td>14</td></tr><tr><td>D</td><td>9</td></tr>
+              </tbody></table>
+              <table class="excel-table"><caption class="text-gray-200">Exp2.xlsx</caption><thead><tr><th>ID</th><th>Valeur</th></tr></thead><tbody>
+                <tr><td>A</td><td>15</td></tr><tr><td>C</td><td>11</td></tr><tr><td>E</td><td>18</td></tr><tr><td>F</td><td>13</td></tr>
+              </tbody></table>
+            </div>`,
+            html_after: `<table class="excel-table"><caption class="text-gray-200">Masterfile.xlsx</caption><thead><tr><th class="cell-merged">source</th><th>ID</th><th>valeur</th></tr></thead><tbody>
+              <tr><td class="cell-merged">exp1.xlsx</td><td>A</td><td>10</td></tr>
+              <tr><td class="cell-merged">exp1.xlsx</td><td>B</td><td>12</td></tr>
+              <tr><td class="cell-merged">exp1.xlsx</td><td>C</td><td>14</td></tr>
+              <tr><td class="cell-merged">exp2.xlsx</td><td>A</td><td>15</td></tr>
+              <tr><td class="cell-merged">exp2.xlsx</td><td>C</td><td>11</td></tr>
+              <tr><td class="cell-merged">exp2.xlsx</td><td>E</td><td>18</td></tr>
+            </tbody></table>`,
+          },
+          {
+            title: "Format Incompatible",
+            solution_title: "Format \"Long\" Compatible",
+            problem_description: "Le format 'large' est facile à lire pour un humain, mais incompatible avec la plupart des logiciels d'analyse.",
+            solution_description: "Les données sont pivotées en format 'long' : une ligne par observation, prêt pour l'analyse statistique.",
+            html_before: `<table class="excel-table"><thead><tr><th>Sujet</th><th>Jour_0</th><th>Jour_7</th></tr></thead><tbody>
+              <tr><td>Sujet_1</td><td>10.2</td><td>15.4</td></tr>
+              <tr><td>Sujet_2</td><td>9.8</td><td>12.1</td></tr>
+              <tr><td>Sujet_3</td><td>11.1</td><td>14.9</td></tr>
+              <tr><td>Sujet_4</td><td>12.0</td><td>16.2</td></tr>
+              <tr><td>Sujet_5</td><td>8.5</td><td>11.3</td></tr>
+              <tr><td>Sujet_6</td><td>13.7</td><td>17.0</td></tr>
+            </tbody></table>`,
+            html_after: `<table class="excel-table"><thead><tr><th>Sujet</th><th>temps</th><th class="cell-long">valeur</th></tr></thead><tbody>
+              <tr><td>Sujet_1</td><td>jour_0</td><td class="cell-long">10.2</td></tr>
+              <tr><td>Sujet_1</td><td>jour_7</td><td class="cell-long">15.4</td></tr>
+              <tr><td>Sujet_2</td><td>jour_0</td><td class="cell-long">9.8</td></tr>
+              <tr><td>Sujet_2</td><td>jour_7</td><td class="cell-long">12.1</td></tr>
+              <tr><td>Sujet_3</td><td>jour_0</td><td class="cell-long">11.1</td></tr>
+              <tr><td>Sujet_3</td><td>jour_7</td><td class="cell-long">14.9</td></tr>
+            </tbody></table>`,
+          }
+        ];
+
+        const carouselView = document.getElementById('carousel-view');
+        const carouselTitle = document.getElementById('carousel-title');
+        const carouselDescription = document.getElementById('carousel-description');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        let currentIndex = 0;
+
+        function updateCarousel(newIndex, direction) {
+          currentIndex = (newIndex + carouselData.length) % carouselData.length;
+
+          carouselView.innerHTML = ''; // Vider la vue
+
+          const prevIndex = (currentIndex - 1 + carouselData.length) % carouselData.length;
+          const nextIndex = (currentIndex + 1) % carouselData.length;
+
+          const items = [
+            { index: prevIndex, type: 'prev' },
+            { index: currentIndex, type: 'active' },
+            { index: nextIndex, type: 'next' }
+          ];
+
+          items.forEach(item => {
+            const data = carouselData[item.index];
+            const el = document.createElement('div');
+            el.className = `carousel-item item-${item.type} transition-all duration-500 ease-in-out cursor-pointer`;
+            // Remplacer l'image simple par le composant de comparaison avant/après
+            if (item.type === 'active') {
+              el.classList.add('relative', 'flex', 'flex-col', 'justify-center', 'items-center', 'h-full', 'gap-4');
+              el.innerHTML = ` 
+                <h3 class="text-center text-xl font-semibold text-white mb-4">${data.title}</h3>
+                <div class="relative w-full flex-grow rounded-lg shadow-xl overflow-hidden">
+                  <div class="absolute inset-0 w-full h-full p-4 bg-gray-700 rounded-lg transition-opacity duration-300 opacity-0">
+                    ${data.html_after}
+                  </div>
+                  <div class="absolute inset-0 w-full h-full p-4 bg-gray-700 rounded-lg transition-opacity duration-300 opacity-100">
+                    ${data.html_before}
+                  </div>
+                </div>
+              <div class="w-full max-w-md text-center mt-6">
+                  <p class="text-white text-sm h-10 flex items-center justify-center transition-opacity duration-300"></p>
+                  <div class="flex justify-between text-xs text-gray-300 font-bold px-1 mt-4">
+                    <span>AVANT</span>
+                    <span>APRÈS</span>
+                  </div>
+                  <input type="range" min="0" max="100" value="0" class="w-full h-2 bg-gray-200/20 rounded-lg appearance-none cursor-pointer accent-lime-400" />
+                </div>
+              `;
+
+              const imageContainer = el.querySelector('.relative.w-full.flex-grow');
+              const afterDiv = imageContainer.children[0];
+              const beforeDiv = imageContainer.children[1];
+              const sliderContainer = el.querySelector('.w-full.max-w-md.text-center');
+              const titleElement = el.querySelector('h3');
+              const descriptionText = sliderContainer.querySelector('p');
+              const slider = sliderContainer.children[2];
+
+              const updateVisuals = (value) => {
+                if (value > 50) { // État "Après"
+                  beforeDiv.style.opacity = '0';
+                  afterDiv.style.opacity = '1';
+                  descriptionText.textContent = data.solution_description;
+                  titleElement.textContent = data.solution_title;
+                } else { // État "Avant"
+                  beforeDiv.style.opacity = '1';
+                  afterDiv.style.opacity = '0';
+                  descriptionText.textContent = data.problem_description;
+                  titleElement.textContent = data.title;
+                }
+              };
+
+              const snapSlider = () => {
+                const currentValue = parseFloat(slider.value);
+                slider.value = (currentValue > 50) ? 100 : 0;
+                updateVisuals(slider.value);
+              };
+
+              // Pendant le glissement, on met juste à jour les images
+              slider.addEventListener('input', (e) => updateVisuals(e.target.value));
+
+              // Au relâchement (après un clic ou un glissement), on "snap" le curseur à l'extrémité
+              slider.addEventListener('change', snapSlider);
+
+              updateVisuals(slider.value); // Initialiser l'état visuel
+
+            } else {
+              // NOUVELLE VERSION : Image floue en fond des cartes latérales
+              el.classList.add(
+                'relative', 'overflow-hidden', // Important pour que l'image de fond soit bien coupée et pour la position relative
+                'flex', 'flex-col', 'items-center', 'justify-center',
+                'rounded-2xl',
+                'p-6',
+                'border', 'border-white/30',
+                'shadow-lg',
+                'hover:scale-105', // Petit effet de zoom au survol pour l'interactivité
+                'transition-all', // Transition pour le zoom et les couleurs
+                'cursor-pointer'  // Indique que c'est cliquable
+              );
+
+              // Image de fond floue et sombre
+              el.innerHTML = `
+                <div class="absolute inset-0 bg-gray-800/50 backdrop-blur-sm rounded-2xl"></div><div class="relative z-10 p-4">${data.html_before}</div><h4 class="relative z-10 text-white text-center font-extrabold text-xl drop-shadow-lg">${data.title}</h4>`;
+              el.addEventListener('click', () => updateCarousel(item.index, item.type));
+            }
+            carouselView.appendChild(el);
+          });
+
+          // Plus besoin de mettre à jour le titre et la description globaux
+        }
+
+        function handleCarouselUpdate(newIndex, direction) {
+          setTimeout(() => {
+            updateCarousel(newIndex, direction);
+          }, 250); // Délai correspondant à la moitié de la transition CSS
+        }
+
+        prevBtn.addEventListener('click', () => handleCarouselUpdate(currentIndex - 1, 'prev'));
+        nextBtn.addEventListener('click', () => handleCarouselUpdate(currentIndex + 1, 'next'));
+
+        updateCarousel(0, 'next'); // Initialisation
+
+        // --- Script pour le menu déroulant ---
+        const dropdownContainer = document.getElementById('dropdown-container');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+        let timeoutId;
+
+        if (dropdownContainer && dropdownMenu) {
+          const showDropdown = () => {
+            clearTimeout(timeoutId);
+            dropdownMenu.classList.remove('hidden');
+          };
+          const hideDropdown = () => {
+            timeoutId = setTimeout(() => dropdownMenu.classList.add('hidden'), 200);
+          };
+
+          dropdownContainer.addEventListener('mouseenter', showDropdown);
+          dropdownContainer.addEventListener('mouseleave', hideDropdown);
+        }
+
+        // --- Script pour le menu mobile ---
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const hamburgerIcon = document.getElementById('hamburger-icon');
+        const closeIcon = document.getElementById('close-icon');
+
+        if (mobileMenuButton && mobileMenu) {
+          mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            hamburgerIcon.classList.toggle('hidden');
+            closeIcon.classList.toggle('hidden');
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

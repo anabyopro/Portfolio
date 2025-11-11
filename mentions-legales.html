@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mentions Légales - AnaByo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      /* Styles pour l'effet de balayage lumineux continu */
+      .text-shine {
+        background-size: 250% auto; /* Dégradé plus large pour un balayage plus doux */
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-fill-color: transparent;
+        animation: shine 4s linear infinite; /* Animation plus lente et continue */
+      }
+
+      /* Définition de l'animation */
+      @keyframes shine {
+        0% {
+          background-position: 200% center; /* Commence à droite */
+        }
+        100% {
+          background-position: -200% center; /* Termine à gauche */
+        }
+      }
+
+      /* Dégradé pour le logo principal (bleu ciel) */
+      .text-shine-sky-400 {
+        color: #38bdf8; /* Couleur de secours */
+        /* Dégradé : bleu, puis un point blanc brillant, puis bleu à nouveau */
+        background-image: linear-gradient(
+          to right,
+          #38bdf8 20%,
+          #ffffff 50%,
+          #38bdf8 80%
+        );
+      }
+
+      /* Dégradé pour le logo de la page "À Propos" (bleu foncé) */
+      .text-shine-sky-700 {
+        color: #0369a1; /* Couleur de secours */
+        background-image: linear-gradient(
+          to right,
+          #0369a1 20%,
+          #ffffff 50%,
+          #0369a1 80%
+        );
+      }
+    </style>
+  </head>
+  <body class="bg-white text-gray-800">
+    <!-- Barre de Navigation -->
+    <header
+      id="main-header"
+      class="bg-black shadow-lg text-white sticky top-0 z-50 transition-all duration-300"
+    >
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20">
+          <!-- Logo / Titre -->
+          <div class="flex-shrink-0 flex items-center">
+            <a href="./index.html">
+              <img
+                class="h-16 w-auto"
+                src="./assets/logo_anabyo.png"
+                alt="Logo AnaByo"
+              />
+            </a>
+            <a
+              href="./index.html"
+              id="logo-text"
+              class="ml-3 text-3xl font-bold transition-colors duration-300"
+              ><span class="text-shine text-shine-sky-400">Ana</span
+              ><span class="text-lime-400">Byo</span></a
+            >
+          </div>
+          <!-- Menu Desktop -->
+          <div class="hidden md:flex md:items-center md:space-x-8">
+            <a
+              href="./index.html#confidentialite"
+              class="font-medium hover:text-sky-300"
+              >Confidentialité</a
+            >
+            <a
+              href="./index.html#processus"
+              class="font-medium hover:text-sky-300"
+              >Processus</a
+            >
+            <a href="./index.html#tarifs" class="font-medium hover:text-sky-300"
+              >Tarifs</a
+            >
+            <!-- Menu Déroulant -->
+            <div class="relative" id="dropdown-container">
+              <button
+                id="dropdown-button"
+                class="flex items-center font-medium hover:text-sky-300"
+              >
+                <span>À Propos</span>
+                <svg
+                  class="w-4 h-4 ml-1"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </button>
+              <div
+                id="dropdown-menu"
+                class="hidden absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 z-50"
+              >
+                <a
+                  href="./qui-suis-je.html"
+                  class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600"
+                >
+                  Qui suis-je ?
+                </a>
+                <a
+                  href="./documents.html"
+                  class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600"
+                >
+                  Documents
+                </a>
+                <a
+                  href="./mentions-legales.html"
+                  class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600 bg-gray-100"
+                >
+                  Mentions Légales
+                </a>
+                <a
+                  href="./mentions-legales.html"
+                  class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600"
+                >
+                  Mentions Légales
+                </a>
+              </div>
+            </div>
+            <a
+              href="./index.html#contact-devis"
+              class="px-5 py-2 bg-sky-600 text-white rounded-lg font-medium hover:bg-sky-700 transition-colors"
+            >
+              Demander un devis
+            </a>
+          </div>
+          <!-- Menu mobile (simple) -->
+          <div class="md:hidden flex items-center">
+            <button
+              id="mobile-menu-button"
+              class="inline-flex items-center justify-center p-2 rounded-md hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+            >
+              <span class="sr-only">Ouvrir le menu principal</span>
+              <!-- Icône Hamburger -->
+              <svg
+                id="hamburger-icon"
+                class="h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16m-7 6h7"
+                />
+              </svg>
+              <!-- Icône Croix (cachée par défaut) -->
+              <svg
+                id="close-icon"
+                class="hidden h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </nav>
+      <!-- Menu mobile, affiché/caché par JS -->
+      <div
+        class="hidden md:hidden bg-gray-800/95 backdrop-blur-sm"
+        id="mobile-menu"
+      >
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <a
+            href="./index.html#confidentialite"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
+            >Confidentialité</a
+          >
+          <a
+            href="./index.html#processus"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
+            >Processus</a
+          >
+          <a
+            href="./index.html#tarifs"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
+            >Tarifs</a
+          >
+          <a
+            href="./qui-suis-je.html"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
+            >Qui suis-je ?</a
+          >
+          <a
+            href="./documents.html"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
+            >Documents</a
+          >
+          <a
+            href="./mentions-legales.html"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
+            >Mentions Légales</a
+          >
+          <a
+            href="./index.html#contact-devis"
+            class="block px-3 py-2 rounded-md text-base font-medium text-sky-400 bg-sky-900/50 hover:bg-sky-800/50"
+            >Demander un devis</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="mentions-legales" class="py-16 sm:py-24">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900">
+              Mentions Légales
+            </h1>
+            <p class="mt-4 text-lg text-gray-600">
+              Conformément aux dispositions de la loi n° 2004-575 du 21 juin
+              2004 pour la confiance en l'économie numérique, il est précisé aux
+              utilisateurs du site AnaByo l'identité des différents intervenants
+              dans le cadre de sa réalisation et de son suivi.
+            </p>
+          </div>
+
+          <div class="mt-12 space-y-8 text-gray-700">
+            <div>
+              <h2 class="text-2xl font-bold text-gray-900">
+                1. Éditeur du Site
+              </h2>
+              <p class="mt-4">
+                <strong>Propriétaire et Éditeur :</strong> Monsieur Tom
+                Bourachot (Nom commercial : AnaByo)<br />
+                <strong>Statut :</strong> Micro-entrepreneur<br />
+                <strong>Adresse :</strong>
+                <span class="text-red-500"
+                  >41 rue Charles Floquet, Apt 3 - 33400 Talence</span
+                ><br />
+                <strong>SIRET :</strong>
+                <span class="text-red-500"
+                  >[VOTRE NUMÉRO SIRET À 14 CHIFFRES À REMPLIR]</span
+                ><br />
+                <strong>Contact :</strong> anabyopro@gmail.com /
+                <span class="text-red-500">0648651745</span><br />
+                <strong>TVA :</strong> TVA non applicable, art. 293 B du CGI.
+              </p>
+            </div>
+
+            <div>
+              <h2 class="text-2xl font-bold text-gray-900">
+                2. Hébergeur du Site
+              </h2>
+              <p class="mt-4">
+                <strong>Hébergement :</strong> Ce site est hébergé par :<br />
+                <span class="text-red-500">Bourachot Tom</span><br />
+                <span class="text-red-500"
+                  >41 rue Charles Floquet, Apt 3 - 33400 Talence</span
+                ><br />
+                <span class="text-red-500">0648651745</span>
+              </p>
+            </div>
+
+            <div>
+              <h2 class="text-2xl font-bold text-gray-900">
+                3. Propriété Intellectuelle
+              </h2>
+              <p class="mt-4">
+                L'ensemble de ce site (textes, logo AnaByo, structure, images)
+                relève de la législation française et internationale sur le
+                droit d'auteur et la propriété intellectuelle. Toute
+                reproduction, totale ou partielle, est interdite sans
+                l'autorisation expresse de Tom Bourachot.
+              </p>
+            </div>
+
+            <div>
+              <h2 class="text-2xl font-bold text-gray-900">
+                4. Données Personnelles
+              </h2>
+              <p class="mt-4">
+                Les données collectées via le formulaire de contact (nom, email)
+                n'ont pour but que de traiter votre demande de devis. Elles ne
+                sont jamais revendues à des tiers. Conformément au Règlement
+                Général sur la Protection des Données (RGPD), vous disposez d'un
+                droit d'accès, de rectification et de suppression de vos données
+                en contactant :
+                <a
+                  href="mailto:anabyopro@gmail.com"
+                  class="text-indigo-600 hover:underline"
+                >
+                  anabyopro@gmail.com </a
+                >. Pour plus de détails sur notre politique de confidentialité,
+                veuillez consulter notre section dédiée sur la
+                <a
+                  href="./index.html#confidentialite"
+                  class="text-indigo-600 hover:underline"
+                  >page d'accueil</a
+                >.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 py-10 border-t border-gray-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          class="flex flex-col-reverse md:flex-row justify-between items-center gap-6 md:gap-0"
+        >
+          <!-- Copyright (gauche) -->
+          <div class="text-center md:text-left">
+            <p class="text-sm font-medium text-gray-300">
+              &copy; 2025 Bourachot Tom - AnaByo
+            </p>
+            <p class="mt-1 text-xs text-gray-500">Tous droits réservés.</p>
+          </div>
+
+          <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+            <nav class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
+              <a
+                href="./index.html#confidentialite"
+                class="hover:text-white transition-colors duration-200"
+                >Confidentialité</a
+              >
+              <a
+                href="./documents.html"
+                class="hover:text-white transition-colors duration-200"
+                >Documents</a
+              >
+              <a
+                href="./mentions-legales.html"
+                class="hover:text-white transition-colors duration-200"
+                >Mentions Légales</a
+              >
+            </nav>
+
+            <div class="hidden md:block h-4 w-px bg-gray-700"></div>
+
+            <div
+              class="text-sm flex flex-col md:flex-row items-center gap-1 md:gap-2"
+            >
+              <span class="text-gray-500">Contact hors demande de devis :</span>
+              <a
+                href="mailto:anabyopro@gmail.com"
+                id="copy-email-link"
+                class="text-gray-200 hover:text-indigo-100 transition-colors duration-200 cursor-pointer font-medium"
+              >
+                anabyopro@gmail.com
+              </a>
+            </div>
+
+            <div class="hidden md:block h-4 w-px bg-gray-700"></div>
+
+            <a
+              href="https://www.linkedin.com/in/tom-bourachot44/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-gray-400 hover:text-white transition-colors duration-200"
+            >
+              <span class="sr-only">LinkedIn</span>
+              <svg
+                class="w-6 h-6"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // --- Script pour le menu déroulant ---
+        const dropdownContainer = document.getElementById("dropdown-container");
+        const dropdownMenu = document.getElementById("dropdown-menu");
+        let timeoutId;
+
+        if (dropdownContainer && dropdownMenu) {
+          const showDropdown = () => {
+            clearTimeout(timeoutId);
+            dropdownMenu.classList.remove("hidden");
+          };
+          const hideDropdown = () => {
+            timeoutId = setTimeout(
+              () => dropdownMenu.classList.add("hidden"),
+              200
+            );
+          };
+
+          dropdownContainer.addEventListener("mouseenter", showDropdown);
+          dropdownContainer.addEventListener("mouseleave", hideDropdown);
+        }
+
+        // --- Script pour le menu mobile ---
+        const mobileMenuButton = document.getElementById("mobile-menu-button");
+        const mobileMenu = document.getElementById("mobile-menu");
+        const hamburgerIcon = document.getElementById("hamburger-icon");
+        const closeIcon = document.getElementById("close-icon");
+
+        if (mobileMenuButton && mobileMenu) {
+          mobileMenuButton.addEventListener("click", () => {
+            mobileMenu.classList.toggle("hidden");
+            hamburgerIcon.classList.toggle("hidden");
+            closeIcon.classList.toggle("hidden");
+          });
+        }
+
+        // Gérer la copie de l'e-mail avec notification au curseur
+        const copyEmailLink = document.getElementById("copy-email-link");
+        if (copyEmailLink) {
+          copyEmailLink.addEventListener("click", function (event) {
+            event.preventDefault(); // Empêche l'ouverture du client mail
+            const email = this.innerText;
+
+            navigator.clipboard.writeText(email).then(() => {
+              // Créer l'élément de notification
+              const notification = document.createElement("div");
+              notification.textContent = "Copié !";
+
+              // Appliquer les styles
+              Object.assign(notification.style, {
+                position: "absolute",
+                left: `${event.pageX + 15}px`,
+                top: `${event.pageY}px`,
+                background: "#2d3748", // Gris foncé
+                color: "white",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                fontSize: "12px",
+                zIndex: "1000",
+                transition: "opacity 0.5s ease-out",
+              });
+
+              document.body.appendChild(notification);
+
+              // Faire disparaître et supprimer l'élément
+              setTimeout(() => {
+                notification.style.opacity = "0";
+                setTimeout(() => {
+                  document.body.removeChild(notification);
+                }, 500);
+              }, 1500);
+            });
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

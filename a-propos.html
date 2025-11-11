@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>À Propos & Documents - AnaByo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      /* Styles pour l'effet de balayage lumineux continu */
+      .text-shine {
+        background-size: 250% auto; /* Dégradé plus large pour un balayage plus doux */
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-fill-color: transparent;
+        animation: shine 4s linear infinite; /* Animation plus lente et continue */
+      }
+
+      /* Définition de l'animation */
+      @keyframes shine {
+        0% {
+          background-position: 200% center; /* Commence à droite */
+        }
+        100% {
+          background-position: -200% center; /* Termine à gauche */
+        }
+      }
+
+      /* Dégradé pour le logo principal (bleu ciel) */
+      .text-shine-sky-400 {
+        color: #38bdf8; /* Couleur de secours */
+        /* Dégradé : bleu, puis un point blanc brillant, puis bleu à nouveau */
+        background-image: linear-gradient(to right, #38bdf8 20%, #ffffff 50%, #38bdf8 80%);
+      }
+
+      /* Dégradé pour le logo de la page "À Propos" (bleu foncé) */
+      .text-shine-sky-700 {
+        color: #0369a1; /* Couleur de secours */
+        background-image: linear-gradient(to right, #0369a1 20%, #ffffff 50%, #0369a1 80%);
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 text-gray-800">
+    <!-- Barre de Navigation -->
+    <header class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50">
+      <nav class="max-w-6xl mx-auto px-2 sm:px-4 lg:px-6">
+        <div class="flex justify-between items-center h-20">
+          <!-- Logo / Titre -->
+          <div class="flex-shrink-0 flex items-center">
+            <a href="./index.html">
+              <div
+                class="h-14 w-14 rounded-full overflow-hidden flex items-center justify-center"
+              >
+                <img
+                  class="h-16 w-auto"
+                  src="./assets/logo_anabyo.png"
+                  alt="Logo AnaByo"
+                />
+              </div>
+            </a>
+            <a href="./index.html" class="ml-3 text-3xl font-bold">
+              <span class="text-shine text-shine-sky-700">Ana</span><span class="text-lime-500">Byo</span>
+            </a>
+          </div>
+          <!-- Menu Desktop -->
+          <div class="hidden md:flex md:items-center md:space-x-8">
+            <a
+              href="./index.html#confidentialite"
+              class="text-gray-600 hover:text-indigo-600 font-medium"
+              >Confidentialité</a
+            >
+            <a
+              href="./index.html#processus"
+              class="text-gray-600 hover:text-indigo-600 font-medium"
+              >Processus</a
+            >
+            <a
+              href="./index.html#tarifs"
+              class="text-gray-600 hover:text-indigo-600 font-medium"
+              >Tarifs</a
+            >
+            <   <span>À Propos</span>
+                <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+              </button>
+              <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 z-50">
+                <a href="./a-propos.html#apropos" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-indigo-600">
+                  <span class="font-semibold block">Qui suis-je ?</span>
+                  <span class="text-xs text-gray-500">Mon parcours et ma mission.</span>
+                </a>
+                <a href="./a-propos.html#documents" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-indigo-600">
+                  <span class="font-semibold block">Documents Juridiques</span>
+                  <span class="text-xs text-gray-500">CGV et modèle de NDA.</span>
+                </a>
+              </div>
+            </div>
+            <a
+              href="./index.html#contact-devis"
+              class="px-5 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+            >
+              Demander un devis
+            </a>
+          </div>
+          <!-- Menu mobile (simple) -->
+          <div class="md:hidden">
+            <a
+              href="./index.html#contact-devis"
+              class="px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+            >
+              Devis
+            </a>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <!-- Section À Propos -->
+      <section id="apropos" class="bg-white py-16 sm:py-24">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <img
+            class="w-24 h-24 rounded-full mx-auto"
+            src="https://placehold.co/100x100/EBF4FF/76A9FA?text=Bio"
+            alt="Portrait de votre nom"
+          />
+          <h2 class="mt-6 text-3xl font-bold text-gray-900">Qui suis-je ?</h2>
+          <p class="mt-4 text-lg text-gray-600">
+            Je suis Tom Bourachot, étudiant en Master 2 en bio-informatique à
+            l'Université de Bordeaux. Passionné par l'intersection entre la
+            biologie et la donnée, j'ai constaté que pour de nombreux
+            laboratoires, l'obstacle majeur n'est souvent pas l'analyse, mais la
+            préparation fastidieuse des données.
+          </p>
+          <p class="mt-4 text-lg text-gray-600">
+            Maîtrisant les outils d'automatisation (Python/Pandas, R/Tidyverse),
+            je sers de pont entre vos données brutes et vos logiciels d'analyse,
+            pour vous faire gagner un temps précieux.
+          </p>
+        </div>
+      </section>
+
+      <!-- Section Documents -->
+      <section id="documents" class="bg-gray-50 py-16 sm:py-24">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center">
+            <h2
+              class="text-base font-semibold text-indigo-600 tracking-wide uppercase"
+            >
+              Transparence
+            </h2>
+            <p class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900">
+              Documents Juridiques
+            </p>
+            <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
+              Pour une collaboration claire et sécurisée, vous pouvez consulter
+              mes documents-cadres à tout moment.
+            </p>
+          </div>
+          <div
+            class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto"
+          >
+            <!-- Document 1: CGV -->
+            <a
+              href="./documents/CGV_AnaByo.pdf"
+              target="_blank"
+              class="block bg-white p-8 rounded-lg border border-gray-200 hover:shadow-lg hover:border-indigo-500 transition-all"
+            >
+              <h3 class="text-xl font-semibold text-gray-900">
+                Conditions Générales de Vente (CGV)
+              </h3>
+              <p class="mt-3 text-gray-600">
+                Détaille les modalités de nos prestations : commande, paiement,
+                responsabilités et garanties.
+              </p>
+              <p class="mt-4 font-medium text-indigo-600">Consulter le PDF →</p>
+            </a>
+            <!-- Document 2: NDA -->
+            <a
+              href="./documents/nda_generes/NDA_AnaByo_CLIENT_MODELE.pdf"
+              target="_blank"
+              class="block bg-white p-8 rounded-lg border border-gray-200 hover:shadow-lg hover:border-indigo-500 transition-all"
+            >
+              <h3 class="text-xl font-semibold text-gray-900">
+                Modèle d'Accord de Confidentialité (NDA)
+              </h3>
+              <p class="mt-3 text-gray-600">
+                Mon engagement formel pour la protection de vos données
+                sensibles : sécurité, non-divulgation et destruction.
+              </p>
+              <p class="mt-4 font-medium text-indigo-600">Consulter le PDF →</p>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 py-12">
+      <div
+        class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-center md:text-left"
+      >
+        <div class="mb-4 md:mb-0">
+          <p>&copy; 2025 Bourachot Tom - AnaByo. Tous droits réservés.</p>
+          <p class="mt-2 text-sm">
+            Service indépendant de bio-informatique pour les laboratoires de
+            recherche.
+          </p>
+        </div>
+        <div class="my-4 md:my-0">
+          <a
+            href="./index.html#confidentialite"
+            class="text-gray-300 hover:text-white px-3"
+            >Confidentialité</a
+          >
+          <a
+            href="./a-propos.html#documents"
+            class="text-gray-300 hover:text-white px-3"
+            >Documents</a
+          >
+        </div>
+        <div>
+          <p class="text-sm">
+            Contact :
+            <a
+              href="mailto:anabyopro@gmail.com"
+              class="text-gray-300 hover:text-gray-200 cursor-pointer"
+              >anabyopro@gmail.com</a
+            >
+          </p>
+        </div>
+      </div>
+    </footer>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // --- Script pour le menu déroulant ---
+        const dropdownContainer = document.getElementById('dropdown-container');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+        let timeoutId;
+
+        if (dropdownContainer && dropdownMenu) {
+          const showDropdown = () => {
+            clearTimeout(timeoutId);
+            dropdownMenu.classList.remove('hidden');
+          };
+          const hideDropdown = () => {
+            timeoutId = setTimeout(() => dropdownMenu.classList.add('hidden'), 200);
+          };
+
+          dropdownContainer.addEventListener('mouseenter', showDropdown);
+          dropdownContainer.addEventListener('mouseleave', hideDropdown);
+        }
+      });
+    </script>
+  </body>
+</html>
