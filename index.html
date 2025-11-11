@@ -1,4 +1,4 @@
-<!DOCTYPE html><!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html><!DOCTYPE html>
 <html lang="fr" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
@@ -942,11 +942,12 @@
         const nextBtn = document.getElementById('next-btn');
 
         let currentIndex = 0;
+        let touchStartX = 0;
 
         function updateCarousel(newIndex, direction) {
           currentIndex = (newIndex + carouselData.length) % carouselData.length;
 
-          carouselView.innerHTML = ''; // Vider la vue
+          carouselView.innerHTML = ''; // Vider la vue pour la reconstruire
 
           const prevIndex = (currentIndex - 1 + carouselData.length) % carouselData.length;
           const nextIndex = (currentIndex + 1) % carouselData.length;
@@ -1051,12 +1052,32 @@
           }, 250); // Délai correspondant à la moitié de la transition CSS
         }
 
+        // --- Gestion du tactile (swipe) ---
+        carouselView.addEventListener('touchstart', (e) => {
+          touchStartX = e.touches[0].clientX;
+        });
+
+        carouselView.addEventListener('touchend', (e) => {
+          const touchEndX = e.changedTouches[0].clientX;
+          const swipeThreshold = 50; // Distance minimale en pixels pour un swipe
+
+          if (touchStartX - touchEndX > swipeThreshold) {
+            // Swipe vers la gauche (suivant)
+            handleCarouselUpdate(currentIndex + 1, 'next');
+          } else if (touchEndX - touchStartX > swipeThreshold) {
+            // Swipe vers la droite (précédent)
+            handleCarouselUpdate(currentIndex - 1, 'prev');
+          }
+        });
+
         prevBtn.addEventListener('click', () => handleCarouselUpdate(currentIndex - 1, 'prev'));
         nextBtn.addEventListener('click', () => handleCarouselUpdate(currentIndex + 1, 'next'));
 
         updateCarousel(0, 'next'); // Initialisation
 
         // --- Script pour le menu déroulant ---
+        // Le reste du script reste inchangé...
+
         const dropdownContainer = document.getElementById('dropdown-container');
         const dropdownMenu = document.getElementById('dropdown-menu');
         let timeoutId;
