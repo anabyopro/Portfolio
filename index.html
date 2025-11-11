@@ -992,8 +992,10 @@
 
           const updateVisuals = (value) => {
             const isAfter = value > 50;
-            beforeDiv.style.opacity = isAfter ? '0' : '1';
-            afterDiv.style.opacity = isAfter ? '1' : '0';
+            beforeDiv.style.opacity = isAfter ? '0' : '1'; // Le div "avant" est visible ou non
+            afterDiv.style.opacity = isAfter ? '1' : '0'; // Le div "après" est visible ou non
+            beforeDiv.style.pointerEvents = isAfter ? 'none' : 'auto'; // Désactive les clics/touch sur le div "avant" s'il est caché
+            afterDiv.style.pointerEvents = isAfter ? 'auto' : 'none'; // Désactive les clics/touch sur le div "après" s'il est caché
             descriptionText.textContent = isAfter ? data.solution_description : data.problem_description;
             titleElement.textContent = isAfter ? data.solution_title : data.title;
           };
