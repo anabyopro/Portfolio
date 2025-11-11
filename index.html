@@ -515,7 +515,7 @@
               id="plan-devis"
               class="bg-white p-8 rounded-lg shadow-lg border-2 border-transparent cursor-pointer transition-all flex flex-col"
             >
-              <h3 class="text-2xl font-semibold text-gray-900">Devis</h3>
+              <h3 class="text-2xl font-semibold text-gray-900">À la Tâche</h3>
               <p class="mt-2 text-gray-600">Pour tous vos besoins réguliers.</p>
               <p class="mt-6">
                 <span class="text-5xl font-extrabold text-gray-900">30 €</span>
@@ -578,13 +578,16 @@
                       </div>
                       <div class="relative flex items-start">
                         <div class="flex items-center h-5">
-                          <input id="urgent" name="urgent" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                          <input id="urgent" name="_priority" type="checkbox" value="1" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
                         </div>
                         <div class="ml-3 text-sm">
                           <label for="urgent" class="font-medium text-gray-700">Traitement urgent</label>
                           <p class="text-gray-500">Des frais supplémentaires s'appliquent pour une réponse prioritaire.</p>
                         </div>
                       </div>
+                      <input type="hidden" name="_priority" value="5"> <!-- Valeur par défaut pour une priorité normale -->
+
+
 
                       <div>
                         <button id="contact-submit-button" type="submit" class="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all transform hover:scale-[1.02]">
@@ -711,33 +714,12 @@
           },
         };
 
-        const urgentCheckbox = document.getElementById('urgent');
-        const urgentTag = '[Urgent] ';
-        let currentPlan = 'devis'; // Garder en mémoire le plan actuel
-
         function updateForm(plan) {
-          currentPlan = plan; // Mettre à jour le plan actuel
           contactTitle.textContent = content[plan].title;
-          contactDescription.innerHTML = content[plan].description;
+          contactDescription.innerHTML = content[plan].description; // Utiliser innerHTML pour interpréter le lien <a>
           contactMessageLabel.textContent = content[plan].messageLabel;
           contactSubmitButton.textContent = content[plan].buttonText;
-          updateSubject(); // Appeler la fonction centralisée pour mettre à jour le sujet
-        }
-
-        // Fonction centralisée pour mettre à jour le sujet de l'e-mail
-        function updateSubject() {
-          const isUrgent = urgentCheckbox.checked;
-          const baseSubject = content[currentPlan].subject;
-
-          if (isUrgent) {
-            contactSubject.value = urgentTag + baseSubject;
-          } else {
-            contactSubject.value = baseSubject;
-          }
-        }
-
-        if (urgentCheckbox) {
-          urgentCheckbox.addEventListener('change', updateSubject);
+          contactSubject.value = content[plan].subject;
         }
 
         function selectPlan(planElement, planType) {
@@ -984,10 +966,10 @@
           el.innerHTML = ` 
             <h3 class="text-center text-xl font-semibold text-white mb-4">${data.title}</h3>
             <div class="relative w-full flex-grow rounded-lg shadow-xl overflow-hidden">
-              <div class="absolute inset-0 w-full h-full p-4 bg-gray-700 rounded-lg transition-opacity duration-300 opacity-0">
+              <div class="absolute inset-0 w-full h-full p-4 bg-gray-700 rounded-lg transition-opacity duration-300 opacity-0 overflow-x-auto md:overflow-x-hidden">
                 ${data.html_after}
               </div>
-              <div class="absolute inset-0 w-full h-full p-4 bg-gray-700 rounded-lg transition-opacity duration-300 opacity-100">
+              <div class="absolute inset-0 w-full h-full p-4 bg-gray-700 rounded-lg transition-opacity duration-300 opacity-100 overflow-x-auto md:overflow-x-hidden">
                 ${data.html_before}
               </div>
             </div>
