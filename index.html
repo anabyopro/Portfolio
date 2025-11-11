@@ -1,4 +1,4 @@
-<!DOCTYPE html><!DOCTYPE html><!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html><!DOCTYPE html><!DOCTYPE html>
 <html lang="fr" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
@@ -960,7 +960,7 @@
 
           items.forEach(item => {
             const data = carouselData[item.index];
-            const el = document.createElement('div');
+            const el = document.createElement('div'); // el = element
             el.className = `carousel-item item-${item.type} cursor-pointer`;
             // Remplacer l'image simple par le composant de comparaison avant/après
             if (item.type === 'active') {
@@ -991,7 +991,10 @@
               const sliderContainer = el.querySelector('.w-full.max-w-md.text-center');
               const titleElement = el.querySelector('h3');
               const descriptionText = sliderContainer.querySelector('p');
-              const slider = sliderContainer.children[2];
+              const slider = sliderContainer.querySelector('input[type="range"]');
+
+              let activeTouch = false;
+              let startX = 0;
 
               const updateVisuals = (value) => {
                 if (value > 50) { // État "Après"
@@ -1013,14 +1016,36 @@
                 updateVisuals(slider.value);
               };
 
-              // Pendant le glissement, on met juste à jour les images
-              slider.addEventListener('input', (e) => updateVisuals(e.target.value));
+              // --- Gestion du curseur (slider) ---
+              slider.addEventListener('input', (e) => updateVisuals(e.target.value)); // Pour la souris sur ordinateur
+              slider.addEventListener('change', snapSlider); // Snap après utilisation
 
-              // Au relâchement (après un clic ou un glissement), on "snap" le curseur à l'extrémité
-              slider.addEventListener('change', snapSlider);
+              // --- Gestion du swipe tactile sur l'élément actif ---
+              const handleTouchMove = (e) => {
+                if (!activeTouch) return;
+                const currentX = e.touches[0].clientX;
+                const diff = startX - currentX;
+                // Convertir le mouvement horizontal en une valeur de slider (0-100)
+                // Un swipe de 150px suffit à traverser tout le slider
+                const newValue = Math.max(0, Math.min(100, (diff / 150) * 100));
+                slider.value = newValue;
+                updateVisuals(newValue);
+              };
+
+              el.addEventListener('touchstart', (e) => {
+                activeTouch = true;
+                startX = e.touches[0].clientX;
+              }, { passive: true });
+
+              el.addEventListener('touchmove', handleTouchMove, { passive: true });
+
+              el.addEventListener('touchend', () => {
+                if (!activeTouch) return;
+                activeTouch = false;
+                snapSlider(); // "Snap" le slider à la fin du geste
+              });
 
               updateVisuals(slider.value); // Initialiser l'état visuel
-
             } else {
               // NOUVELLE VERSION : Image floue en fond des cartes latérales
               el.classList.add(
@@ -1052,23 +1077,24 @@
           }, 250); // Délai correspondant à la moitié de la transition CSS
         }
 
-        // --- Gestion du tactile (swipe) ---
+        // --- Gestion du tactile (swipe) pour changer d'exemple ---
+        // On attache maintenant les écouteurs aux boutons pour éviter les conflits
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+
+        let carouselTouchStartX = 0;
         carouselView.addEventListener('touchstart', (e) => {
-          touchStartX = e.touches[0].clientX;
-        });
+            // On ne capture le début du swipe que si on est sur les bords (près des flèches)
+            if (e.target === prevButton || e.target === nextButton || e.target.closest('button')) {
+                carouselTouchStartX = e.touches[0].clientX;
+            } else {
+                carouselTouchStartX = 0; // Reset si on touche au milieu
+            }
+        }, { passive: true });
 
-        carouselView.addEventListener('touchend', (e) => {
-          const touchEndX = e.changedTouches[0].clientX;
-          const swipeThreshold = 50; // Distance minimale en pixels pour un swipe
-
-          if (touchStartX - touchEndX > swipeThreshold) {
-            // Swipe vers la gauche (suivant)
-            handleCarouselUpdate(currentIndex + 1, 'next');
-          } else if (touchEndX - touchStartX > swipeThreshold) {
-            // Swipe vers la droite (précédent)
-            handleCarouselUpdate(currentIndex - 1, 'prev');
-          }
-        });
+        // Les clics sur les boutons continuent de fonctionner normalement
+        prevBtn.addEventListener('click', () => handleCarouselUpdate(currentIndex - 1, 'prev'));
+        nextBtn.addEventListener('click', () => handleCarouselUpdate(currentIndex + 1, 'next'));
 
         prevBtn.addEventListener('click', () => handleCarouselUpdate(currentIndex - 1, 'prev'));
         nextBtn.addEventListener('click', () => handleCarouselUpdate(currentIndex + 1, 'next'));
