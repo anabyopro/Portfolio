@@ -1,4 +1,4 @@
-<!DOCTYPE html><!DOCTYPE html><!DOCTYPE html><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
@@ -515,7 +515,7 @@
               id="plan-devis"
               class="bg-white p-8 rounded-lg shadow-lg border-2 border-transparent cursor-pointer transition-all flex flex-col"
             >
-              <h3 class="text-2xl font-semibold text-gray-900">À la Tâche</h3>
+              <h3 class="text-2xl font-semibold text-gray-900">Devis</h3>
               <p class="mt-2 text-gray-600">Pour tous vos besoins réguliers.</p>
               <p class="mt-6">
                 <span class="text-5xl font-extrabold text-gray-900">30 €</span>
@@ -576,6 +576,16 @@
                           <textarea id="message" name="message" rows="4" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50"></textarea>
                         </div>
                       </div>
+                      <div class="relative flex items-start">
+                        <div class="flex items-center h-5">
+                          <input id="urgent" name="urgent" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                        </div>
+                        <div class="ml-3 text-sm">
+                          <label for="urgent" class="font-medium text-gray-700">Traitement urgent</label>
+                          <p class="text-gray-500">Des frais supplémentaires s'appliquent pour une réponse prioritaire.</p>
+                        </div>
+                      </div>
+
                       <div>
                         <button id="contact-submit-button" type="submit" class="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all transform hover:scale-[1.02]">
                           Envoyer
@@ -701,12 +711,33 @@
           },
         };
 
+        const urgentCheckbox = document.getElementById('urgent');
+        const urgentTag = '[Urgent] ';
+        let currentPlan = 'devis'; // Garder en mémoire le plan actuel
+
         function updateForm(plan) {
+          currentPlan = plan; // Mettre à jour le plan actuel
           contactTitle.textContent = content[plan].title;
-          contactDescription.innerHTML = content[plan].description; // Utiliser innerHTML pour interpréter le lien <a>
+          contactDescription.innerHTML = content[plan].description;
           contactMessageLabel.textContent = content[plan].messageLabel;
           contactSubmitButton.textContent = content[plan].buttonText;
-          contactSubject.value = content[plan].subject;
+          updateSubject(); // Appeler la fonction centralisée pour mettre à jour le sujet
+        }
+
+        // Fonction centralisée pour mettre à jour le sujet de l'e-mail
+        function updateSubject() {
+          const isUrgent = urgentCheckbox.checked;
+          const baseSubject = content[currentPlan].subject;
+
+          if (isUrgent) {
+            contactSubject.value = urgentTag + baseSubject;
+          } else {
+            contactSubject.value = baseSubject;
+          }
+        }
+
+        if (urgentCheckbox) {
+          urgentCheckbox.addEventListener('change', updateSubject);
         }
 
         function selectPlan(planElement, planType) {
@@ -833,18 +864,17 @@
         // J'ai déplacé les styles dans des media queries pour un affichage adaptatif.
         style.innerHTML = `
           .carousel-item { 
-            flex-shrink: 0;
+            flex-shrink: 0; /* Empêche les éléments de rétrécir */
             transition: all 0.5s ease-in-out;
+            min-height: 300px; /* Assure une hauteur minimale pour éviter la disparition */
           }
 
-          /* Styles pour mobile : un seul élément visible */
+          /* Styles pour mobile : l'élément actif prend toute la largeur */
           .item-active { width: 100%; order: 2; }
-          .item-prev, .item-next { display: none; } /* On cache les éléments latéraux */
 
           /* Styles pour écrans plus larges (tablettes et ordinateurs) */
           @media (min-width: 768px) {
-            .item-prev, .item-next {
-              display: flex; /* On ré-affiche les éléments latéraux */
+            .item-prev, .item-next { /* Les éléments latéraux sont stylisés ici */
               width: 22%;
               order: 1;
               transform: scale(0.9);
@@ -852,7 +882,7 @@
               z-index: 10;
             }
             .item-active {
-              width: 56%;
+              width: 56%; /* L'élément actif est plus petit sur grand écran pour faire de la place */
               order: 2;
               transform: scale(1);
               z-index: 20;
@@ -944,108 +974,90 @@
         let currentIndex = 0;
         let touchStartX = 0;
 
+        /**
+         * Crée et configure l'élément central interactif du carrousel.
+         * @param {HTMLElement} el - L'élément div conteneur.
+         * @param {object} data - Les données pour cet élément de carrousel.
+         */
+        function createActiveCarouselItem(el, data) {
+          el.classList.add('relative', 'flex', 'flex-col', 'justify-center', 'items-center', 'gap-4'); // 'h-full' est maintenant ajouté conditionnellement dans updateCarousel
+          el.innerHTML = ` 
+            <h3 class="text-center text-xl font-semibold text-white mb-4">${data.title}</h3>
+            <div class="relative w-full flex-grow rounded-lg shadow-xl overflow-hidden">
+              <div class="absolute inset-0 w-full h-full p-4 bg-gray-700 rounded-lg transition-opacity duration-300 opacity-0">
+                ${data.html_after}
+              </div>
+              <div class="absolute inset-0 w-full h-full p-4 bg-gray-700 rounded-lg transition-opacity duration-300 opacity-100">
+                ${data.html_before}
+              </div>
+            </div>
+            <div class="w-full max-w-md text-center mt-6">
+              <p class="text-white text-sm h-10 flex items-center justify-center transition-opacity duration-300"></p>
+              <div class="flex justify-between text-xs text-gray-300 font-bold px-1 mt-4">
+                <span>AVANT</span>
+                <span>APRÈS</span>
+              </div>
+              <input type="range" min="0" max="100" value="0" class="w-full h-2 bg-gray-200/20 rounded-lg appearance-none cursor-pointer accent-lime-400" />
+            </div>
+          `;
+
+          const afterDiv = el.querySelector('.relative.w-full.flex-grow').children[0];
+          const beforeDiv = el.querySelector('.relative.w-full.flex-grow').children[1];
+          const sliderContainer = el.querySelector('.w-full.max-w-md.text-center');
+          const titleElement = el.querySelector('h3');
+          const descriptionText = sliderContainer.querySelector('p');
+          const slider = sliderContainer.querySelector('input[type="range"]');
+
+          const updateVisuals = (value) => {
+            const isAfter = value > 50;
+            beforeDiv.style.opacity = isAfter ? '0' : '1';
+            afterDiv.style.opacity = isAfter ? '1' : '0';
+            descriptionText.textContent = isAfter ? data.solution_description : data.problem_description;
+            titleElement.textContent = isAfter ? data.solution_title : data.title;
+          };
+
+          const snapSlider = () => {
+            const currentValue = parseFloat(slider.value);
+            slider.value = (currentValue > 50) ? 100 : 0;
+            updateVisuals(slider.value);
+          };
+
+          slider.addEventListener('input', (e) => updateVisuals(e.target.value));
+          slider.addEventListener('change', snapSlider);
+
+          // Initialiser l'état visuel au chargement
+          updateVisuals(slider.value);
+        }
+
         function updateCarousel(newIndex, direction) {
           currentIndex = (newIndex + carouselData.length) % carouselData.length;
-
           carouselView.innerHTML = ''; // Vider la vue pour la reconstruire
 
-          const prevIndex = (currentIndex - 1 + carouselData.length) % carouselData.length;
-          const nextIndex = (currentIndex + 1) % carouselData.length;
+          const isMobile = window.innerWidth < 768;
+          let items = [];
 
-          const items = [
-            { index: prevIndex, type: 'prev' },
-            { index: currentIndex, type: 'active' },
-            { index: nextIndex, type: 'next' }
-          ];
+          if (isMobile) {
+            // Sur mobile, on ne construit QUE l'élément actif.
+            items.push({ index: currentIndex, type: 'active' });
+          } else {
+            // Sur desktop, on construit les trois éléments.
+            const prevIndex = (currentIndex - 1 + carouselData.length) % carouselData.length;
+            const nextIndex = (currentIndex + 1) % carouselData.length;
+            items = [{ index: prevIndex, type: 'prev' }, { index: currentIndex, type: 'active' }, { index: nextIndex, type: 'next' }];
+          }
 
+          // On parcourt la liste (de 1 ou 3 éléments) et on les ajoute au DOM.
+          // Il n'y a plus d'éléments cachés.
           items.forEach(item => {
             const data = carouselData[item.index];
             const el = document.createElement('div'); // el = element
             el.className = `carousel-item item-${item.type} cursor-pointer`;
             // Remplacer l'image simple par le composant de comparaison avant/après
             if (item.type === 'active') {
-              el.classList.add('relative', 'flex', 'flex-col', 'justify-center', 'items-center', 'h-full', 'gap-4');
-              el.innerHTML = ` 
-                <h3 class="text-center text-xl font-semibold text-white mb-4">${data.title}</h3>
-                <div class="relative w-full flex-grow rounded-lg shadow-xl overflow-hidden">
-                  <div class="absolute inset-0 w-full h-full p-4 bg-gray-700 rounded-lg transition-opacity duration-300 opacity-0">
-                    ${data.html_after}
-                  </div>
-                  <div class="absolute inset-0 w-full h-full p-4 bg-gray-700 rounded-lg transition-opacity duration-300 opacity-100">
-                    ${data.html_before}
-                  </div>
-                </div>
-              <div class="w-full max-w-md text-center mt-6">
-                  <p class="text-white text-sm h-10 flex items-center justify-center transition-opacity duration-300"></p>
-                  <div class="flex justify-between text-xs text-gray-300 font-bold px-1 mt-4">
-                    <span>AVANT</span>
-                    <span>APRÈS</span>
-                  </div>
-                  <input type="range" min="0" max="100" value="0" class="w-full h-2 bg-gray-200/20 rounded-lg appearance-none cursor-pointer accent-lime-400" />
-                </div>
-              `;
-
-              const imageContainer = el.querySelector('.relative.w-full.flex-grow');
-              const afterDiv = imageContainer.children[0];
-              const beforeDiv = imageContainer.children[1];
-              const sliderContainer = el.querySelector('.w-full.max-w-md.text-center');
-              const titleElement = el.querySelector('h3');
-              const descriptionText = sliderContainer.querySelector('p');
-              const slider = sliderContainer.querySelector('input[type="range"]');
-
-              let activeTouch = false;
-              let startX = 0;
-
-              const updateVisuals = (value) => {
-                if (value > 50) { // État "Après"
-                  beforeDiv.style.opacity = '0';
-                  afterDiv.style.opacity = '1';
-                  descriptionText.textContent = data.solution_description;
-                  titleElement.textContent = data.solution_title;
-                } else { // État "Avant"
-                  beforeDiv.style.opacity = '1';
-                  afterDiv.style.opacity = '0';
-                  descriptionText.textContent = data.problem_description;
-                  titleElement.textContent = data.title;
-                }
-              };
-
-              const snapSlider = () => {
-                const currentValue = parseFloat(slider.value);
-                slider.value = (currentValue > 50) ? 100 : 0;
-                updateVisuals(slider.value);
-              };
-
-              // --- Gestion du curseur (slider) ---
-              slider.addEventListener('input', (e) => updateVisuals(e.target.value)); // Pour la souris sur ordinateur
-              slider.addEventListener('change', snapSlider); // Snap après utilisation
-
-              // --- Gestion du swipe tactile sur l'élément actif ---
-              const handleTouchMove = (e) => {
-                if (!activeTouch) return;
-                const currentX = e.touches[0].clientX;
-                const diff = startX - currentX;
-                // Convertir le mouvement horizontal en une valeur de slider (0-100)
-                // Un swipe de 150px suffit à traverser tout le slider
-                const newValue = Math.max(0, Math.min(100, (diff / 150) * 100));
-                slider.value = newValue;
-                updateVisuals(newValue);
-              };
-
-              el.addEventListener('touchstart', (e) => {
-                activeTouch = true;
-                startX = e.touches[0].clientX;
-              }, { passive: true });
-
-              el.addEventListener('touchmove', handleTouchMove, { passive: true });
-
-              el.addEventListener('touchend', () => {
-                if (!activeTouch) return;
-                activeTouch = false;
-                snapSlider(); // "Snap" le slider à la fin du geste
-              });
-
-              updateVisuals(slider.value); // Initialiser l'état visuel
+              if (!isMobile) {
+                el.classList.add('h-full'); // Ajoute h-full seulement sur desktop pour que l'élément central prenne toute la hauteur
+              }
+              createActiveCarouselItem(el, data);
             } else {
               // NOUVELLE VERSION : Image floue en fond des cartes latérales
               el.classList.add(
@@ -1077,29 +1089,21 @@
           }, 250); // Délai correspondant à la moitié de la transition CSS
         }
 
-        // --- Gestion du tactile (swipe) pour changer d'exemple ---
-        // On attache maintenant les écouteurs aux boutons pour éviter les conflits
-        const prevButton = document.getElementById('prev-btn');
-        const nextButton = document.getElementById('next-btn');
-
-        let carouselTouchStartX = 0;
-        carouselView.addEventListener('touchstart', (e) => {
-            // On ne capture le début du swipe que si on est sur les bords (près des flèches)
-            if (e.target === prevButton || e.target === nextButton || e.target.closest('button')) {
-                carouselTouchStartX = e.touches[0].clientX;
-            } else {
-                carouselTouchStartX = 0; // Reset si on touche au milieu
-            }
-        }, { passive: true });
-
-        // Les clics sur les boutons continuent de fonctionner normalement
-        prevBtn.addEventListener('click', () => handleCarouselUpdate(currentIndex - 1, 'prev'));
-        nextBtn.addEventListener('click', () => handleCarouselUpdate(currentIndex + 1, 'next'));
-
         prevBtn.addEventListener('click', () => handleCarouselUpdate(currentIndex - 1, 'prev'));
         nextBtn.addEventListener('click', () => handleCarouselUpdate(currentIndex + 1, 'next'));
 
         updateCarousel(0, 'next'); // Initialisation
+
+        // --- Redessiner le carrousel lors du redimensionnement de la fenêtre ---
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+          // Annule le timeout précédent pour ne pas surcharger le navigateur
+          clearTimeout(resizeTimeout);
+          // Met à jour le carrousel après un court délai pour éviter les rendus inutiles
+          resizeTimeout = setTimeout(() => {
+            updateCarousel(currentIndex, 'next');
+          }, 100);
+        });
 
         // --- Script pour le menu déroulant ---
         // Le reste du script reste inchangé...
@@ -1138,5 +1142,3 @@
     </script>
   </body>
 </html>
-
-
