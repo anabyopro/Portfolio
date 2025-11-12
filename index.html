@@ -515,7 +515,7 @@
               id="plan-devis"
               class="bg-white p-8 rounded-lg shadow-lg border-2 border-transparent cursor-pointer transition-all flex flex-col"
             >
-              <h3 class="text-2xl font-semibold text-gray-900">À la Tâche</h3>
+              <h3 class="text-2xl font-semibold text-gray-900">Demande de devis</h3>
               <p class="mt-2 text-gray-600">Pour tous vos besoins réguliers.</p>
               <p class="mt-6">
                 <span class="text-5xl font-extrabold text-gray-900">30 €</span>
@@ -530,7 +530,7 @@
       <section id="contact-devis" class="bg-gray-100 pt-16 pb-24 fade-in-section">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start" id="demande-de-devis">
             
             <div class="text-left lg:sticky lg:top-24"> <h2 id="contact-title" class="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight">
                 </h2>
@@ -576,7 +576,7 @@
                           <textarea id="message" name="message" rows="4" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50"></textarea>
                         </div>
                       </div>
-                      <div class="relative flex items-start">
+                      <div id="urgent-request-container" class="relative flex items-start">
                         <div class="flex items-center h-5">
                           <input id="urgent" name="_priority" type="checkbox" value="1" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
                         </div>
@@ -690,6 +690,7 @@
         const contactMessageLabel = document.getElementById("contact-message-label");
         const contactSubmitButton = document.getElementById("contact-submit-button");
         const contactSubject = document.getElementById("contact-subject");
+        const urgentRequestContainer = document.getElementById("urgent-request-container");
 
         const selectedClasses = ["border-indigo-600", "shadow-xl"];
         const defaultClasses = ["border-transparent", "shadow-lg"];
@@ -700,7 +701,7 @@
             description:
               "Prouvons d'abord la valeur ajoutée. Je réalise votre première tâche de formatage gratuitement sur un fichier test ou d'assemblage sur deux fichiers pour que vous puissiez évaluer la qualité du service.",
             messageLabel:
-              'Décrivez la tâche pour l\'essai gratuit (ex: "Fusionner ces 2 fichiers en un seul")',
+              'Décrivez la tâche pour l\'essai gratuit',
             buttonText: "Lancer mon essai gratuit",
             subject: "Nouvelle demande d'essai gratuit",
           },
@@ -708,7 +709,7 @@
             title: "Recevez votre devis personnalisé", 
             description: 'Le tarif de base sert de référence pour établir un devis précis. Une "tâche" est évaluée pour vous fournir une proposition chiffrée.',
             messageLabel:
-              'Décrivez votre besoin (ex: "J\'ai 20 fichiers Excel à fusionner...")',
+              'Décrivez votre besoin',
             buttonText: "Obtenir mon devis",
             subject: "Nouvelle demande de devis",
           },
@@ -720,6 +721,13 @@
           contactMessageLabel.textContent = content[plan].messageLabel;
           contactSubmitButton.textContent = content[plan].buttonText;
           contactSubject.value = content[plan].subject;
+
+          // Affiche ou masque l'option urgente
+          if (plan === 'devis') {
+            urgentRequestContainer.style.display = 'flex';
+          } else {
+            urgentRequestContainer.style.display = 'none';
+          }
         }
 
         function selectPlan(planElement, planType) {
@@ -763,7 +771,7 @@
           ctaHeaderDevis.addEventListener("click", (event) => {
             event.preventDefault(); // Empêche le saut d'ancre par défaut
             selectPlan(planDevis, "devis");
-            const targetElement = document.getElementById('contact-devis');
+            const targetElement = document.getElementById('demande-de-devis');
             const headerOffset = 100; // Hauteur du header + marge
             const elementPosition = targetElement.getBoundingClientRect().top;
             const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
@@ -774,7 +782,7 @@
           ctaHeroEssai.addEventListener("click", (event) => {
             event.preventDefault(); // Empêche le saut d'ancre par défaut
             selectPlan(planEssai, "essai");
-            const targetElement = document.getElementById('contact-devis');
+            const targetElement = document.getElementById('demande-de-devis');
             const headerOffset = 100; // Hauteur du header + marge
             const elementPosition = targetElement.getBoundingClientRect().top;
             const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
