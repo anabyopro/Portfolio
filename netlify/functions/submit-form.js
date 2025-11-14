@@ -10,6 +10,12 @@ exports.handler = async function (event, context) {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
+  // Vérification cruciale : la clé API est-elle disponible ?
+  if (!process.env.RESEND_API_KEY) {
+    console.error('Resend API Key is not set in environment variables.');
+    return { statusCode: 500, body: 'Server configuration error: Missing API Key.' };
+  }
+
   // Initialisation de Resend avec la clé API stockée dans les variables d'environnement de Netlify
   const resend = new Resend(process.env.RESEND_API_KEY);
 
