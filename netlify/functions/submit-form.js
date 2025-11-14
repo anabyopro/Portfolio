@@ -29,47 +29,39 @@ exports.handler = async function (event, context) {
   try {
     console.log('Form data received:', formData);
 
-    // 1. Envoi de l'email de notification à vous-même
-    const { data: notifData, error: notifError } = await resend.emails.send({
-      from: 'AnaByo <onboarding@resend.dev>',
+    // On prépare les deux emails à envoyer
+    const notificationEmail = {
+      from: 'AnaByo <onboarding@resend.dev>', // TODO: Remplacer une fois le domaine vérifié
       to: ['anabyopro@gmail.com'],
-      subject: `[NOTIFICATION] ${subject}`, // On ajoute un préfixe pour le différencier
-      html: `
-        <h1>${subject}</h1>
-        <p><strong>Nom :</strong> ${fullName}</p>
-        <p><strong>Email :</strong> ${email}</p>
-        <p><strong>Laboratoire :</strong> ${laboratory || 'Non spécifié'}</p>
-        <p><strong>Urgent :</strong> ${urgent || 'Non'}</p>
-        <hr>
-        <p><strong>Message :</strong></p>
-        <p>${message.replace(/\n/g, '<br>')}</p>
-      `,
-    });
+      subject: `[NOTIFICATION] ${subject}`,
+      html: `<h1>${subject}</h1><p><strong>Nom :</strong> ${fullName}</p><p><strong>Email :</strong> ${email}</p><p><strong>Laboratoire :</strong> ${laboratory || 'Non spécifié'}</p><p><strong>Urgent :</strong> ${urgent || 'Non'}</p><hr><p><strong>Message :</strong></p><p>${message.replace(/\n/g, '<br>')}</p>`,
+    };
 
-    if (notifError) {
-      console.error({ level: 'error', message: 'Resend notification email failed', error: notifError });
-    } else {
-      console.log({ level: 'info', message: 'Resend notification email success', data: notifData });
-    }
-
-    // 2. Envoi de l'email de confirmation au client
-    const { data: confirmData, error: confirmError } = await resend.emails.send({
-      from: 'AnaByo <onboarding@resend.dev>',
+    const confirmationEmail = {
+      from: 'AnaByo <onboarding@resend.dev>', // TODO: Remplacer une fois le domaine vérifié
       to: [email],
       subject: 'Confirmation de votre demande chez AnaByo',
-      html: `
-        <p>Bonjour ${fullName},</p>
-        <p>Merci de nous avoir contactés !</p>
-        <p>Nous avons bien reçu votre demande et nous vous répondrons sous 24 heures ouvrées.</p>
-        <p>À très bientôt,<br>L'équipe AnaByo</p>
-      `,
-    });
+      html: `<p>Bonjour ${fullName},</p><p>Merci de nous avoir contactés !</p><p>Nous avons bien reçu votre demande et nous vous répondrons sous 24 heures ouvrées.</p><p>À très bientôt,<br>L'équipe AnaByo</p>`,
+    };
 
-    if (confirmError) {
-      console.error({ level: 'error', message: 'Resend confirmation email failed', error: confirmError });
-    } else {
-      console.log({ level: 'info', message: 'Resend confirmation email success', data: confirmData });
-    }
+    // On envoie les deux emails en parallèle pour plus d'efficacité
+    const emailPromises = [
+      resend.emails.send(notificationEmail),
+      resend.emails.send(confirmationEmail)
+    ];
+
+    // Promise.allSettled attend que toutes les promesses soient terminées (succès ou échec)
+    const results = await Promise.allSettled(emailPromises);
+
+    // On vérifie le résultat de chaque envoi
+    results.forEach((result, index) => {
+      const emailType = index === 0 ? 'Notification' : 'Confirmation';
+      if (result.status === 'fulfilled') {
+        console.log({ level: 'info', message: `Resend ${emailType} email success`, data: result.value });
+      } else {
+        console.error({ level: 'error', message: `Resend ${emailType} email failed`, error: result.reason });
+      }
+    });
 
     console.log('Redirecting to /remerciement.html');
     // 3. Redirection vers une page de remerciement après succès
