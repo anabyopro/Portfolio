@@ -1,7 +1,7 @@
 [build]
   functions = "netlify/functions/"
   command = "npm install"
-  publish = "."
+  publish = "." # Publie le répertoire racine où se trouve index.html
 
 [functions]
   node_bundler = "esbuild"
