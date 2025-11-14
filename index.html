@@ -550,9 +550,10 @@
             </div>
 
             <div class="bg-white p-8 rounded-xl shadow-xl border border-gray-100">
-              <form action="https://formspree.io/f/xvgvvwoy" method="POST">
+              <form action="/.netlify/functions/submit-form" method="POST">
                 <div class="grid grid-cols-1 gap-y-6">
-                      <input id="contact-subject" type="hidden" name="_subject" value="Nouvelle demande de devis" />
+                      <input id="contact-subject" type="hidden" name="subject" value="Nouvelle demande de devis" />
+
                       <div>
                         <label for="full-name" class="block text-sm font-medium text-gray-700">Nom complet</label>
                         <div class="mt-1">
@@ -577,19 +578,19 @@
                         </div>
                       </div>
                       <div id="urgent-request-container" class="relative flex items-start">
-                        <div class="flex items-center h-5">
-                          <input id="urgent" name="_priority" type="checkbox" value="1" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
-                        </div>
-                        <div class="ml-3 text-sm">
-                          <label for="urgent" class="font-medium text-gray-700">Traitement urgent
-                            <span class="font-bold text-indigo-600">(+50% sur le devis)</span>
-                          </label>
-                          <p class="text-gray-500">Garantit une livraison prioritaire sous 48h ouvrées (après acceptation du devis).</p>
-                        </div>
+                          <div class="flex items-center h-5">
+                              <!-- Ce premier input est pour la donnée que vous recevrez. Il est caché. -->
+                              <input type="hidden" name="Traitement Urgent" value="Non">
+                              <!-- La case à cocher visible par l'utilisateur -->
+                              <input id="urgent-checkbox" name="Traitement Urgent" type="checkbox" value="Oui (+50%)" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                          </div>
+                          <div class="ml-3 text-sm">
+                              <label for="urgent-checkbox" class="font-medium text-gray-700">Traitement urgent
+                                  <span class="font-bold text-indigo-600">(+50% sur le devis)</span>
+                              </label>
+                              <p class="text-gray-500">Garantit une livraison prioritaire sous 48h ouvrées (après acceptation du devis).</p>
+                          </div>
                       </div>
-                      <input type="hidden" name="_priority" value="5"> <!-- Valeur par défaut pour une priorité normale -->
-
-
 
                       <div>
                         <button id="contact-submit-button" type="submit" class="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all transform hover:scale-[1.02]">
@@ -723,6 +724,7 @@
           contactMessageLabel.textContent = content[plan].messageLabel;
           contactSubmitButton.textContent = content[plan].buttonText;
           contactSubject.value = content[plan].subject;
+          document.getElementById('urgent-checkbox').checked = false; // Décocher la case par défaut
 
           // Affiche ou masque l'option urgente
           if (plan === 'devis') {
@@ -732,6 +734,18 @@
           }
         }
 
+        // Mettre à jour le sujet de l'email si la case "urgent" est cochée
+        const urgentCheckbox = document.getElementById('urgent-checkbox');
+        if (urgentCheckbox) {
+            urgentCheckbox.addEventListener('change', function() {
+                const originalSubject = content[planDevis.classList.contains('border-indigo-600') ? 'devis' : 'essai'].subject;
+                if (this.checked) {
+                    contactSubject.value = `[URGENT] ${originalSubject}`;
+                } else {
+                    contactSubject.value = originalSubject;
+                }
+            });
+        }
         function selectPlan(planElement, planType) {
           // Reset both plans
           planEssai.classList.remove(...selectedClasses);
