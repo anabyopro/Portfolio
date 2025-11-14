@@ -21,8 +21,10 @@ exports.handler = async function (event, context) {
   const subject = formData.subject || 'Nouvelle demande depuis le site';
 
   try {
+    console.log('Form data received:', formData);
+
     // 1. Envoi de l'email de notification à vous-même
-    await resend.emails.send({
+    const { data: notifData, error: notifError } = await resend.emails.send({
       from: 'AnaByo <onboarding@resend.dev>', // Adresse d'envoi fournie par Resend pour les tests
       to: ['anabyopro@gmail.com'],
       subject: urgent === 'Oui (+50%)' ? `[URGENT] ${subject}` : subject,
@@ -38,8 +40,16 @@ exports.handler = async function (event, context) {
       `,
     });
 
+    if (notifError) {
+      console.error({ level: 'error', message: 'Resend notification email failed', error: notifError });
+    } else {
+      console.log({ level: 'info', message: 'Resend notification email success', data: notifData });
+    }
+
     // 2. Envoi de l'email de confirmation au client
-    await resend.emails.send({
+    // On vérifie que l'email client n'est pas le même que le votre pour éviter les doublons dans ce cas précis
+    if (email.toLowerCase() !== 'anabyopro@gmail.com') {
+      const { data: confirmData, error: confirmError } = await resend.emails.send({
       from: 'AnaByo <onboarding@resend.dev>',
       to: [email],
       subject: 'Confirmation de votre demande chez AnaByo',
@@ -51,6 +61,14 @@ exports.handler = async function (event, context) {
       `,
     });
 
+      if (confirmError) {
+        console.error({ level: 'error', message: 'Resend confirmation email failed', error: confirmError });
+      } else {
+        console.log({ level: 'info', message: 'Resend confirmation email success', data: confirmData });
+      }
+    }
+
+    console.log('Redirecting to /remerciement.html');
     // 3. Redirection vers une page de remerciement après succès
     // Assurez-vous d'avoir une page "remerciement.html" sur votre site
     return {
@@ -62,7 +80,7 @@ exports.handler = async function (event, context) {
 
   } catch (error) {
     // En cas d'erreur, on affiche l'erreur dans les logs de Netlify
-    // et on redirige vers une page d'erreur
+    // et on retourne une erreur
     console.error({ error });
     return {
       statusCode: 500,
