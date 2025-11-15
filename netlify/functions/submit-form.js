@@ -99,7 +99,7 @@ exports.handler = async function (event, context) {
     // On envoie les deux emails en parallèle pour plus d'efficacité
     const emailPromises = [
       resend.emails.send(notificationEmail),
-      resend.emails.send(confirmationEmail)
+      resend.emails.send(confirmationEmail),
     ];
 
     // Promise.allSettled attend que toutes les promesses soient terminées (succès ou échec)

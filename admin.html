@@ -75,28 +75,55 @@
     </style>
   </head>
   <!-- Fenêtre modale pour afficher le message -->
-<div id="message-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
+  <div
+    id="message-modal"
+    class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden"
+  >
     <div class="bg-white p-8 rounded-lg shadow-xl max-w-2xl w-full">
-        <div class="flex justify-between items-center mb-4">
-            <h2 id="modal-title" class="text-2xl font-bold">Détails de la demande</h2>
-            <button id="close-modal-btn" class="text-gray-500 hover:text-gray-800 text-3xl leading-none">&times;</button>
+      <div class="flex justify-between items-center mb-4">
+        <h2 id="modal-title" class="text-2xl font-bold">
+          Détails de la demande
+        </h2>
+        <button
+          id="close-modal-btn"
+          class="text-gray-500 hover:text-gray-800 text-3xl leading-none"
+        >
+          &times;
+        </button>
+      </div>
+      <div id="modal-main-content" class="max-h-[70vh] overflow-y-auto pr-4">
+        <div id="message-details">
+          <h3 class="text-lg font-semibold mt-6 mb-2">
+            Détails du traitement :
+          </h3>
+          <div
+            id="modal-treatments"
+            class="text-gray-700 text-sm space-y-1"
+          ></div>
+          <h3 class="text-lg font-semibold mt-6 mb-2">Message du client :</h3>
+          <div
+            id="modal-content"
+            class="text-gray-700 whitespace-pre-wrap"
+          ></div>
         </div>
-        <div id="modal-main-content" class="max-h-[70vh] overflow-y-auto pr-4">
-            <div id="message-details">
-                <h3 class="text-lg font-semibold mt-6 mb-2">Détails du traitement :</h3>
-                <div id="modal-treatments" class="text-gray-700 text-sm space-y-1"></div>
-                <h3 class="text-lg font-semibold mt-6 mb-2">Message du client :</h3>
-                <div id="modal-content" class="text-gray-700 whitespace-pre-wrap"></div>
-            </div>
-            <div id="json-details" class="hidden">
-                <p class="text-sm text-gray-600 mb-2">Copiez ce bloc et collez-le dans votre fichier `config.json`.</p>
-                <pre id="json-output" class="bg-gray-100 p-4 rounded-md text-sm text-gray-800 whitespace-pre-wrap"></pre>
-                <button id="copy-json-btn" class="mt-4 w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700">Copier le JSON</button>
-            </div>
+        <div id="json-details" class="hidden">
+          <p class="text-sm text-gray-600 mb-2">
+            Copiez ce bloc et collez-le dans votre fichier `config.json`.
+          </p>
+          <pre
+            id="json-output"
+            class="bg-gray-100 p-4 rounded-md text-sm text-gray-800 whitespace-pre-wrap"
+          ></pre>
+          <button
+            id="copy-json-btn"
+            class="mt-4 w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700"
+          >
+            Copier le JSON
+          </button>
         </div>
+      </div>
     </div>
-</div>
-
+  </div>
 
   <body class="bg-gray-100 text-gray-800">
     <div
@@ -139,16 +166,28 @@
       <!-- Onglets de navigation -->
       <div class="mb-8 border-b border-gray-300">
         <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-          <button data-tab="recue" class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-indigo-500 text-indigo-600">
+          <button
+            data-tab="recue"
+            class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-indigo-500 text-indigo-600"
+          >
             Demandes en cours
           </button>
-          <button data-tab="acceptee" class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+          <button
+            data-tab="acceptee"
+            class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+          >
             En attente de devis
           </button>
-          <button data-tab="en-cours" class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+          <button
+            data-tab="en-cours"
+            class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+          >
             En cours de traitement
           </button>
-          <button data-tab="terminee" class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+          <button
+            data-tab="terminee"
+            class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+          >
             Terminées
           </button>
         </nav>
@@ -212,448 +251,347 @@
         const passwordInput = document.getElementById("password-input");
         const passwordSubmit = document.getElementById("password-submit");
         const authError = document.getElementById("auth-error");
-        const tableBody = document.getElementById('requests-table-body');
-        const refreshBtn = document.getElementById('refresh-btn');
-        const modalTitle = document.getElementById('modal-title');
-        const messageDetails = document.getElementById('message-details');
-        const jsonDetails = document.getElementById('json-details');
-        const tabs = document.querySelectorAll('.tab-btn');
-        const modalTreatments = document.getElementById('modal-treatments');
-        const messageModal = document.getElementById('message-modal');
-        const modalContent = document.getElementById('modal-content');
-        const closeModalBtn = document.getElementById('close-modal-btn');
+        const tableBody = document.getElementById("requests-table-body");
+        const refreshBtn = document.getElementById("refresh-btn");
+        const modalTitle = document.getElementById("modal-title");
+        const messageDetails = document.getElementById("message-details");
+        const jsonDetails = document.getElementById("json-details");
+        const tabs = document.querySelectorAll(".tab-btn");
+        const modalTreatments = document.getElementById("modal-treatments");
+        const messageModal = document.getElementById("message-modal");
+        const modalContent = document.getElementById("modal-content");
+        const closeModalBtn = document.getElementById("close-modal-btn");
 
         const statusClasses = {
-            'Reçue': 'status-recue',
-            'En cours': 'status-en-cours',
-            'Terminée': 'status-terminee',
-            'Acceptée': 'status-acceptée',
-            'Refusée': 'status-refusee',
+          Reçue: "status-recue",
+          "En cours": "status-en-cours",
+          Terminée: "status-terminee",
+          Acceptée: "status-acceptée",
+          Refusée: "status-refusee",
         };
 
         let allRequests = [];
-        let currentTab = 'recue';
+        let currentTab = "recue";
 
         async function fetchAndDisplayRequests() {
-            showLoadingState();
-            try {
-                const password = passwordInput.value;
-                const response = await fetch('/.netlify/functions/get-requests', {
-                    headers: {
-                        'x-admin-password': password
-                    }
-                });
+          showLoadingState();
+          try {
+            const password = passwordInput.value;
+            const response = await fetch("/.netlify/functions/get-requests", {
+              headers: {
+                "x-admin-password": password,
+              },
+            });
 
-                if (!response.ok) {
-                    if (response.status === 401) { // Non autorisé
-                        throw new Error('Mot de passe incorrect.');
-                    }
-                    throw new Error(`Erreur HTTP: ${response.status}`);
-                }
-                allRequests = await response.json();
-                renderTableForCurrentTab();
-
-            } catch (error) {
-                handleFetchError(error);
+            if (!response.ok) {
+              if (response.status === 401) {
+                // Non autorisé
+                throw new Error("Mot de passe incorrect.");
+              }
+              throw new Error(`Erreur HTTP: ${response.status}`);
             }
+            allRequests = await response.json();
+            updateTabCounts(); // Mettre à jour les compteurs
+            renderTableForCurrentTab();
+          } catch (error) {
+            handleFetchError(error);
+          }
+        }
+
+        function updateTabCounts() {
+          const counts = {
+            recue: allRequests.filter((req) => req.statut === "Reçue").length,
+            acceptee: allRequests.filter((req) => req.statut === "Acceptée")
+              .length,
+            "en-cours": allRequests.filter((req) => req.statut === "En cours")
+              .length,
+            terminee: allRequests.filter((req) => req.statut === "Terminée")
+              .length,
+          };
+
+          document.querySelector(
+            'button[data-tab="recue"]'
+          ).textContent = `Demandes en cours (${counts.recue})`;
+          document.querySelector(
+            'button[data-tab="acceptee"]'
+          ).textContent = `En attente de devis (${counts.acceptee})`;
+          document.querySelector(
+            'button[data-tab="en-cours"]'
+          ).textContent = `En cours de traitement (${counts["en-cours"]})`;
+          document.querySelector(
+            'button[data-tab="terminee"]'
+          ).textContent = `Terminées (${counts.terminee})`;
         }
 
         function renderTableForCurrentTab() {
-            const filteredRequests = allRequests.filter(req => {
-                if (currentTab === 'recue') return req.statut === 'Reçue';
-                if (currentTab === 'acceptee') return req.statut === 'Acceptée';
-                if (currentTab === 'en-cours') return req.statut === 'En cours';
-                if (currentTab === 'terminee') return req.statut === 'Terminée';
-                return false;
-            });
+          const filteredRequests = allRequests.filter((req) => {
+            if (currentTab === "recue") return req.statut === "Reçue";
+            if (currentTab === "acceptee") return req.statut === "Acceptée";
+            if (currentTab === "en-cours") return req.statut === "En cours";
+            if (currentTab === "terminee") return req.statut === "Terminée";
+            return false;
+          });
 
-            tableBody.innerHTML = ''; // Vider le tableau
+          tableBody.innerHTML = ""; // Vider le tableau
 
-            if (filteredRequests.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-gray-500">Aucune demande dans cette section.</td></tr>`;
-                return;
-            }
+          if (filteredRequests.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-gray-500">Aucune demande dans cette section.</td></tr>`;
+            return;
+          }
 
-            filteredRequests.forEach(req => {
-                const date = new Date(req.date_creation).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                const statusClass = statusClasses[req.statut] || 'bg-gray-200 text-gray-800';
+          filteredRequests.forEach((req) => {
+            const date = new Date(req.date_creation).toLocaleDateString(
+              "fr-FR",
+              { day: "2-digit", month: "2-digit", year: "numeric" }
+            );
+            const statusClass =
+              statusClasses[req.statut] || "bg-gray-200 text-gray-800";
 
-                const row = document.createElement('tr');
-                row.dataset.id = req.id;
-                row.dataset.message = req.message;
-                row.dataset.treatments = JSON.stringify(req.treatment_details);
-                const isUrgent = req.is_urgent;
+            const row = document.createElement("tr");
+            row.dataset.id = req.id;
+            row.dataset.message = req.message;
+            row.dataset.treatments = JSON.stringify(req.treatment_details);
+            const isUrgent = req.is_urgent;
 
-                let actionsHtml = '';
-                // Logique des boutons en fonction du statut
-                if (req.statut === 'Reçue') {
-                    actionsHtml = `<div class="flex flex-col gap-2">
+            let actionsHtml = "";
+            // Logique des boutons en fonction du statut
+            if (req.statut === "Reçue") {
+              actionsHtml = `<div class="flex flex-col gap-2">
                         <input type="text" class="bluefiles-link-input w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Lien BlueFiles">
                         <button data-action="Acceptée" class="action-btn btn-start">Accepter</button>
                         <button data-action="Refusée" class="action-btn btn-reject mt-1">Refuser</button>
                     </div>`;
-                }
-                else if (req.statut === 'Acceptée') {
-                    actionsHtml = `<div class="flex flex-col gap-2">
+            } else if (req.statut === "Acceptée") {
+              actionsHtml = `<div class="flex flex-col gap-2">
                         <button data-action="json" class="action-btn btn-complete">Générer JSON</button>
                         <button data-action="En cours" class="action-btn btn-start mt-1">Devis Accepté</button>
                         <button data-action="Refusée" class="action-btn btn-reject mt-1">Devis Refusé</button>
                     </div>`;
-                }
-                else if (req.statut === 'En cours') {
-                    actionsHtml = `<button data-action="Terminée" class="action-btn btn-complete">Finaliser Mission</button>`;
-                }
+            } else if (req.statut === "En cours") {
+              actionsHtml = `<button data-action="Terminée" class="action-btn btn-complete">Finaliser Mission</button>`;
+            }
 
-                row.innerHTML = `
+            row.innerHTML = `
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${date}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-medium text-gray-900">${req.nom_client}</div>
-                        <div class="text-sm text-gray-500">${req.email_client}</div>
+                        <div class="text-sm font-medium text-gray-900">${
+                          req.nom_client
+                        }</div>
+                        <div class="text-sm text-gray-500">${
+                          req.email_client
+                        }</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                         ${req.type_demande}
-                        ${isUrgent ? `<span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Urgent</span>` : ''}
+                        ${
+                          isUrgent
+                            ? `<span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Urgent</span>`
+                            : ""
+                        }
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap"><span class="status-badge ${statusClass}">${req.statut}</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap"><span class="status-badge ${statusClass}">${
+              req.statut
+            }</span></td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><button class="view-message-btn text-indigo-600 hover:text-indigo-900 font-medium">Voir</button></td>
                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium space-x-2">${actionsHtml}</td>
                 `;
-                tableBody.appendChild(row);
-            });
+            tableBody.appendChild(row);
+          });
         }
 
         function showLoadingState() {
-            tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-gray-500">Chargement des demandes...</td></tr>`;
+          tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-gray-500">Chargement des demandes...</td></tr>`;
         }
 
         function handleFetchError(error) {
-            console.error("Erreur:", error.message);
-            if (error.message.includes('Mot de passe incorrect')) {
-                authOverlay.classList.remove('hidden');
-                adminPanel.classList.add('hidden');
-                authError.innerText = "Mot de passe incorrect.";
-                authError.classList.remove('hidden');
-                passwordInput.classList.add('border-red-500');
+          console.error("Erreur:", error.message);
+          if (error.message.includes("Mot de passe incorrect")) {
+            authOverlay.classList.remove("hidden");
+            adminPanel.classList.add("hidden");
+            authError.innerText = "Mot de passe incorrect.";
+            authError.classList.remove("hidden");
+            passwordInput.classList.add("border-red-500");
+          } else {
+            tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-red-500">Erreur lors du chargement des données.</td></tr>`;
+          }
+        }
+
+        function handleLogin() {
+          authOverlay.classList.add("hidden");
+          adminPanel.classList.remove("hidden");
+          fetchAndDisplayRequests();
+        }
+
+        passwordSubmit.addEventListener("click", handleLogin);
+        passwordInput.addEventListener("keyup", (event) => {
+          if (event.key === "Enter") handleLogin();
+        });
+        passwordInput.addEventListener("input", () => {
+          authError.classList.add("hidden");
+          passwordInput.classList.remove("border-red-500");
+        });
+
+        refreshBtn.addEventListener("click", fetchAndDisplayRequests);
+
+        tabs.forEach((tab) => {
+          tab.addEventListener("click", () => {
+            currentTab = tab.dataset.tab;
+            tabs.forEach((t) => {
+              t.classList.remove("border-indigo-500", "text-indigo-600");
+              t.classList.add(
+                "border-transparent",
+                "text-gray-500",
+                "hover:text-gray-700",
+                "hover:border-gray-300"
+              );
+            });
+            tab.classList.add("border-indigo-500", "text-indigo-600");
+            tab.classList.remove(
+              "border-transparent",
+              "text-gray-500",
+              "hover:text-gray-700",
+              "hover:border-gray-300"
+            );
+            renderTableForCurrentTab();
+          });
+        });
+
+        tableBody.addEventListener("click", async (event) => {
+          const target = event.target;
+
+          if (target.classList.contains("view-message-btn")) {
+            const row = target.closest("tr");
+            modalTitle.textContent = "Détails de la demande";
+            messageDetails.classList.remove("hidden");
+            jsonDetails.classList.add("hidden");
+            const message = row.dataset.message || "Aucun message.";
+            const treatments = JSON.parse(row.dataset.treatments || "[]");
+
+            modalContent.textContent = message;
+            modalTreatments.innerHTML = "";
+            if (treatments.length > 0) {
+              treatments.forEach((t) => {
+                const p = document.createElement("p");
+                p.innerHTML = `&bull; <strong>${t.type}:</strong> ${t.count} fichier(s)`;
+                modalTreatments.appendChild(p);
+              });
             } else {
-                tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-red-500">Erreur lors du chargement des données.</td></tr>`;
+              modalTreatments.innerHTML =
+                "<p>Aucun détail de traitement spécifié.</p>";
             }
-        }
+            messageModal.classList.remove("hidden");
+          } else if (target.classList.contains("action-btn")) {
+            event.stopPropagation();
+            const row = target.closest("tr");
+            const id = row.dataset.id;
+            const newStatus = target.dataset.action;
 
-        function handleLogin() {
-            authOverlay.classList.add('hidden');
-            adminPanel.classList.remove('hidden');
-            fetchAndDisplayRequests();
-        }
-
-        passwordSubmit.addEventListener('click', handleLogin);
-        passwordInput.addEventListener('keyup', (event) => {
-            if (event.key === 'Enter') handleLogin();
-        });
-        passwordInput.addEventListener('input', () => {
-            authError.classList.add('hidden');
-            passwordInput.classList.remove('border-red-500');
-        });
-
-        refreshBtn.addEventListener('click', fetchAndDisplayRequests);
-
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                currentTab = tab.dataset.tab;
-                tabs.forEach(t => {
-                    t.classList.remove('border-indigo-500', 'text-indigo-600');
-                    t.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-                });
-                tab.classList.add('border-indigo-500', 'text-indigo-600');
-                tab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-                renderTableForCurrentTab();
-            });
-        });
-
-        tableBody.addEventListener('click', async (event) => {
-            const target = event.target;
-
-            if (target.classList.contains('view-message-btn')) {
-                const row = target.closest('tr');
-                modalTitle.textContent = 'Détails de la demande';
-                messageDetails.classList.remove('hidden');
-                jsonDetails.classList.add('hidden');
-                const message = row.dataset.message || "Aucun message.";
-                const treatments = JSON.parse(row.dataset.treatments || '[]');
-
-                modalContent.textContent = message;
-                modalTreatments.innerHTML = '';
-                if (treatments.length > 0) {
-                    treatments.forEach(t => {
-                        const p = document.createElement('p');
-                        p.innerHTML = `&bull; <strong>${t.type}:</strong> ${t.count} fichier(s)`;
-                        modalTreatments.appendChild(p);
-                    });
-                } else {
-                    modalTreatments.innerHTML = '<p>Aucun détail de traitement spécifié.</p>';
-                }
-                messageModal.classList.remove('hidden');
+            // Confirmation pour les actions destructives
+            if (
+              newStatus === "Refusée" &&
+              !confirm(
+                "Êtes-vous sûr de vouloir refuser/annuler cette demande ? Cette action est irréversible et enverra un email au client."
+              )
+            ) {
+              return;
             }
 
-            else if (target.classList.contains('action-btn')) {
-                event.stopPropagation();
-                const row = target.closest('tr');
-                const id = row.dataset.id;
-                const newStatus = target.dataset.action;
+            target.disabled = true;
+            target.textContent = "...";
 
-                // Confirmation pour les actions destructives
-                if (newStatus === 'Refusée' && !confirm('Êtes-vous sûr de vouloir refuser/annuler cette demande ? Cette action est irréversible et enverra un email au client.')) {
-                    return;
-                }
+            let bodyPayload = { id, newStatus };
 
-                target.disabled = true;
-                target.textContent = '...';
-
-                let bodyPayload = { id, newStatus };
-
-                if (newStatus === 'Acceptée') {
-                    const bluefilesInput = row.querySelector('.bluefiles-link-input');
-                    if (!bluefilesInput.value) {
-                        alert("Veuillez fournir un lien BlueFiles avant d'accepter.");
-                        target.disabled = false;
-                        target.textContent = 'Accepter';
-                        return;
-                    }
-                    bodyPayload.bluefilesLink = bluefilesInput.value;
-                }
-
-                // Cas spécial pour l'ajout au JSON
-                if (newStatus === 'json') {
-                    try {
-                        const response = await fetch('/.netlify/functions/update-request', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-password': passwordInput.value }, body: JSON.stringify(bodyPayload) });
-                        if (!response.ok) throw new Error('Erreur serveur.');
-                        
-                        const configData = await response.json();
-                        
-                        // Afficher le JSON dans la modale
-                        modalTitle.textContent = 'Configuration pour Devis';
-                        messageDetails.classList.add('hidden');
-                        jsonDetails.classList.remove('hidden');
-                        
-                        const jsonOutput = document.getElementById('json-output');
-                        jsonOutput.textContent = JSON.stringify(configData, null, 2);
-                        
-                        messageModal.classList.remove('hidden');
-
-                    } catch (error) {
-                        alert("Erreur lors de la génération du JSON.");
-                    } finally {
-                        target.disabled = false;
-                        target.textContent = 'Générer JSON';
-                    }
-                    return; // On arrête l'exécution ici pour ne pas rafraîchir la table
-                }
-
-                try {
-                    const response = await fetch('/.netlify/functions/update-request', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'x-admin-password': passwordInput.value
-                        },
-                        body: JSON.stringify(bodyPayload)
-                    });
-
-                    if (!response.ok) throw new Error('La mise à jour a échoué.');
-
-                    await fetchAndDisplayRequests();
-
-                } catch (error) {
-                    console.error("Erreur de mise à jour:", error);
-                    alert("Une erreur est survenue. Veuillez rafraîchir la page.");
-                    target.disabled = false;
-                }
+            if (newStatus === "Acceptée") {
+              const bluefilesInput = row.querySelector(".bluefiles-link-input");
+              if (!bluefilesInput.value) {
+                alert("Veuillez fournir un lien BlueFiles avant d'accepter.");
+                target.disabled = false;
+                target.textContent = "Accepter";
+                return;
+              }
+              bodyPayload.bluefilesLink = bluefilesInput.value;
             }
-        });
 
-        document.getElementById('copy-json-btn').addEventListener('click', () => {
-            const jsonText = document.getElementById('json-output').textContent;
-            navigator.clipboard.writeText(jsonText).then(() => {
-                alert('Configuration JSON copiée dans le presse-papiers !');
-            }, (err) => {
-                alert('Erreur lors de la copie.');
-                console.error('Erreur de copie: ', err);
-            });
-        });
+            // Cas spécial pour l'ajout au JSON
+            if (newStatus === "json") {
+              try {
+                const response = await fetch(
+                  "/.netlify/functions/update-request",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      "x-admin-password": passwordInput.value,
+                    },
+                    body: JSON.stringify(bodyPayload),
+                  }
+                );
+                if (!response.ok) throw new Error("Erreur serveur.");
 
-        closeModalBtn.addEventListener('click', () => {
-            messageModal.classList.add('hidden');
-        });
+                const configData = await response.json();
 
-        passwordInput.focus();
-      });
-    </script>
-  </body>
-</html>
-                tableBody.innerHTML = ''; // Vider le tableau
+                // Afficher le JSON dans la modale
+                modalTitle.textContent = "Configuration pour Devis";
+                messageDetails.classList.add("hidden");
+                jsonDetails.classList.remove("hidden");
 
-                if (requests.length === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-gray-500">Aucune demande pour le moment.</td></tr>`;
-                    return;
+                const jsonOutput = document.getElementById("json-output");
+                jsonOutput.textContent = JSON.stringify(configData, null, 2);
+
+                messageModal.classList.remove("hidden");
+              } catch (error) {
+                alert("Erreur lors de la génération du JSON.");
+              } finally {
+                target.disabled = false;
+                target.textContent = "Générer JSON";
+              }
+              return; // On arrête l'exécution ici pour ne pas rafraîchir la table
+            }
+
+            try {
+              const response = await fetch(
+                "/.netlify/functions/update-request",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "x-admin-password": passwordInput.value,
+                  },
+                  body: JSON.stringify(bodyPayload),
                 }
+              );
 
-                requests.forEach(req => {
-                    const date = new Date(req.date_creation).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                    const statusClass = statusClasses[req.statut] || 'bg-gray-200 text-gray-800';
+              if (!response.ok) throw new Error("La mise à jour a échoué.");
 
-                    const row = document.createElement('tr');
-                    row.dataset.id = req.id; // On stocke l'ID de la demande sur la ligne du tableau
-                    row.dataset.message = req.message; // On stocke le message
-                    row.dataset.treatments = JSON.stringify(req.treatment_details);
-                    const isUrgent = req.is_urgent;
-
-                    row.innerHTML = `
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${date}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900">${req.nom_client}</div>
-                            <div class="text-sm text-gray-500">${req.email_client}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                            ${req.type_demande}
-                            ${isUrgent ? `<span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Urgent</span>` : ''}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="status-badge ${statusClass}">${req.statut}</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <button class="view-message-btn text-indigo-600 hover:text-indigo-900 font-medium">Voir</button>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium space-x-2">
-                            ${req.statut === 'Reçue' ? `<div class="flex flex-col gap-2"><input type="text" class="bluefiles-link-input w-full px-2 py-1 border border-gray-300 rounded-md" placeholder="Lien BlueFiles"><button data-action="Acceptée" class="action-btn btn-start">Accepter</button></div>` : ''}
-                            ${req.statut === 'Acceptée' ? `<button data-action="En cours" class="action-btn btn-start">Démarrer Traitement</button>` : ''}
-                            ${req.statut === 'En cours' ? `<button data-action="Terminée" class="action-btn btn-complete">Terminer</button>` : ''}
-                            ${req.statut === 'Acceptée' ? `<button data-action="json" class="action-btn btn-complete mt-2">Ajouter au .json</button>` : ''}
-                            ${req.statut !== 'Terminée' && req.statut !== 'Refusée' ? `<button data-action="Refusée" class="action-btn btn-reject">${req.statut === 'Acceptée' ? 'Annuler' : 'Refuser'}</button>` : ''}
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-
+              await fetchAndDisplayRequests();
             } catch (error) {
-                console.error("Erreur:", error.message);
-                // Si l'erreur vient du mot de passe, on ré-affiche le formulaire de connexion
-                if (error.message.includes('Mot de passe incorrect')) {
-                    authOverlay.classList.remove('hidden');
-                    adminPanel.classList.add('hidden');
-                    authError.innerText = "Mot de passe incorrect.";
-                    authError.classList.remove('hidden');
-                    passwordInput.classList.add('border-red-500');
-                } else {
-                    tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-red-500">Erreur lors du chargement des données.</td></tr>`;
-                }
+              console.error("Erreur de mise à jour:", error);
+              alert("Une erreur est survenue. Veuillez rafraîchir la page.");
+              target.disabled = false;
             }
-        }
-
-        function handleLogin() {
-            authOverlay.classList.add('hidden');
-            adminPanel.classList.remove('hidden');
-            fetchAndDisplayRequests();
-        }
-
-        passwordSubmit.addEventListener('click', handleLogin);
-        passwordInput.addEventListener('keyup', (event) => {
-            if (event.key === 'Enter') {
-                handleLogin();
-            }
-        });
-        passwordInput.addEventListener('input', () => {
-            authError.classList.add('hidden');
-            passwordInput.classList.remove('border-red-500');
-        });
-
-        refreshBtn.addEventListener('click', fetchAndDisplayRequests);
-
-        // Gérer les clics sur les boutons d'action (pour la prochaine étape)
-        tableBody.addEventListener('click', async (event) => {
-            const target = event.target; // L'élément cliqué
-
-            // Si on clique sur "Voir message"
-            if (target.classList.contains('view-message-btn')) {
-                const row = target.closest('tr');
-                const message = row.dataset.message || "Aucun message.";
-                const treatments = JSON.parse(row.dataset.treatments || '[]');
-
-                modalContent.textContent = message;
-                modalTreatments.innerHTML = '';
-                if (treatments.length > 0) {
-                    treatments.forEach(t => {
-                        const p = document.createElement('p');
-                        p.innerHTML = `&bull; <strong>${t.type}:</strong> ${t.count} fichier(s)`;
-                        modalTreatments.appendChild(p);
-                    });
-                } else {
-                    modalTreatments.innerHTML = '<p>Aucun détail de traitement spécifié.</p>';
-                }
-
-                messageModal.classList.remove('hidden');
-            }
-
-            // Si on clique sur un bouton d'action (Démarrer, Terminer, etc.)
-            else if (target.classList.contains('action-btn')) {
-                event.stopPropagation();
-                const row = target.closest('tr');
-                const id = row.dataset.id;
-                const newStatus = target.dataset.action;
-
-                target.disabled = true; // Désactiver le bouton pour éviter les double-clics
-                target.textContent = '...';
-
-                let bodyPayload = { id, newStatus };
-
-                // Cas spécial pour l'acceptation : on récupère le lien BlueFiles
-                if (newStatus === 'Acceptée') {
-                    const bluefilesInput = row.querySelector('.bluefiles-link-input');
-                    if (!bluefilesInput.value) {
-                        alert("Veuillez fournir un lien BlueFiles avant d'accepter.");
-                        target.disabled = false;
-                        target.textContent = 'Accepter';
-                        return;
-                    }
-                    bodyPayload.bluefilesLink = bluefilesInput.value;
-                }
-
-                try {
-                    const response = await fetch('/.netlify/functions/update-request', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'x-admin-password': passwordInput.value
-                        },
-                        body: JSON.stringify(bodyPayload)
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('La mise à jour a échoué.');
-                    }
-
-                    // Si la mise à jour a réussi, on rafraîchit tout le tableau
-                    await fetchAndDisplayRequests();
-
-                } catch (error) {
-                    console.error("Erreur de mise à jour:", error);
-                    alert("Une erreur est survenue. Veuillez rafraîchir la page.");
-                    target.disabled = false; // Réactiver le bouton en cas d'erreur
-                }
-            }
-        });
-
-        // Fermer la modale
-        closeModalBtn.addEventListener('click', () => {
-            messageModal.classList.add('hidden');
-        });
-
-        // Mettre le focus sur le champ de mot de passe au chargement
-        passwordInput.focus();
-      });
-    </script>
-  </body>
-</html>
           }
         });
+
+        document
+          .getElementById("copy-json-btn")
+          .addEventListener("click", () => {
+            const jsonText = document.getElementById("json-output").textContent;
+            navigator.clipboard.writeText(jsonText).then(
+              () => {
+                alert("Configuration JSON copiée dans le presse-papiers !");
+              },
+              (err) => {
+                alert("Erreur lors de la copie.");
+                console.error("Erreur de copie: ", err);
+              }
+            );
+          });
+
+        closeModalBtn.addEventListener("click", () => {
+          messageModal.classList.add("hidden");
+        });
+
+        passwordInput.focus();
       });
     </script>
   </body>
