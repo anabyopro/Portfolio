@@ -3,3 +3,5 @@ node_modules/
 
 # Fichier des variables d'environnement locales
 .env
+# Local Netlify folder
+.netlify

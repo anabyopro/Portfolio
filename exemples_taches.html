@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exemples de Traitements - AnaByo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .excel-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.8rem;
+        line-height: 1.2;
+        color: #333;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .excel-table th,
+      .excel-table td {
+        border: 1px solid #ccc;
+        padding: 4px 6px;
+        text-align: left;
+      }
+      .excel-table th {
+        background-color: #e9e9e9;
+        font-weight: bold;
+        text-align: center;
+      }
+      .excel-table .cell-dirty {
+        background-color: #fff0f0;
+        color: #c00;
+      }
+      .excel-table .cell-merged {
+        background-color: #e0f2f1;
+        font-style: italic;
+      }
+      .excel-table .cell-long {
+        background-color: #e3f2fd;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 text-gray-800">
+    <!-- Header simple -->
+    <header class="bg-gray-900 shadow-lg text-white sticky top-0 z-50">
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20">
+          <a href="./index.html" class="flex-shrink-0 flex items-center">
+            <img
+              class="h-16 w-auto"
+              src="./assets/logo_anabyo.png"
+              alt="Logo AnaByo"
+            />
+            <span class="ml-3 text-3xl font-bold text-white"
+              ><span class="text-sky-400">Ana</span
+              ><span class="text-lime-400">Byo</span></span
+            >
+          </a>
+          <!-- Menu Desktop -->
+          <div class="hidden md:flex md:items-center md:space-x-8">
+            <a
+              href="./index.html#confidentialite"
+              class="font-medium hover:text-sky-300"
+              >Confidentialité</a
+            >
+            <a
+              href="./index.html#processus"
+              class="font-medium hover:text-sky-300"
+              >Processus</a
+            >
+            <a href="./index.html#tarifs" class="font-medium hover:text-sky-300"
+              >Tarifs</a
+            >
+            <!-- Menu Déroulant -->
+            <div class="relative" id="dropdown-container">
+              <button
+                id="dropdown-button"
+                class="flex items-center font-medium hover:text-sky-300"
+              >
+                <span>À Propos</span>
+                <svg
+                  class="w-4 h-4 ml-1"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </button>
+              <div
+                id="dropdown-menu"
+                class="hidden absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 z-50"
+              >
+                <a
+                  href="./qui-suis-je.html"
+                  class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600"
+                >
+                  Qui suis-je ?
+                </a>
+                <a
+                  href="./documents.html"
+                  class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600"
+                >
+                  Documents
+                </a>
+                <a
+                  href="./mentions-legales.html"
+                  class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600"
+                >
+                  Mentions Légales
+                </a>
+              </div>
+            </div>
+            <a
+              href="./index.html#contact-devis"
+              class="px-5 py-2 bg-sky-600 text-white rounded-lg font-medium hover:bg-sky-700 transition-colors"
+            >
+              Demander un devis
+            </a>
+          </div>
+          <!-- Menu mobile (simple) -->
+          <div class="md:hidden flex items-center">
+            <button
+              id="mobile-menu-button"
+              class="inline-flex items-center justify-center p-2 rounded-md hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+            >
+              <span class="sr-only">Ouvrir le menu principal</span>
+              <svg
+                id="hamburger-icon"
+                class="h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16m-7 6h7"
+                />
+              </svg>
+              <svg
+                id="close-icon"
+                class="hidden h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </nav>
+      <!-- Menu mobile, affiché/caché par JS -->
+      <div
+        class="hidden md:hidden bg-gray-800/95 backdrop-blur-sm"
+        id="mobile-menu"
+      >
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <a
+            href="./index.html#confidentialite"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
+            >Confidentialité</a
+          >
+          <a
+            href="./index.html#processus"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
+            >Processus</a
+          >
+          <a
+            href="./index.html#tarifs"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
+            >Tarifs</a
+          >
+          <a
+            href="./qui-suis-je.html"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
+            >Qui suis-je ?</a
+          >
+          <a
+            href="./documents.html"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
+            >Documents</a
+          >
+          <a
+            href="./mentions-legales.html"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
+            >Mentions Légales</a
+          >
+          <a
+            href="./index.html#contact-devis"
+            class="block px-3 py-2 rounded-md text-base font-medium text-sky-400 bg-sky-900/50 hover:bg-sky-800/50"
+            >Demander un devis</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <main class="py-16 sm:py-24">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900">
+            Exemples de Traitements
+          </h1>
+          <p class="mt-4 max-w-3xl mx-auto text-lg text-gray-600">
+            Visualisez concrètement comment nous transformons des données brutes
+            et complexes en fichiers propres, structurés et prêts pour
+            l'analyse.
+          </p>
+        </div>
+
+        <div class="space-y-20">
+          <!-- Exemple 1: Nettoyage de données -->
+          <div class="bg-white p-8 rounded-xl shadow-lg border">
+            <h2 class="text-2xl font-bold text-gray-900">
+              1. Nettoyage et Standardisation
+            </h2>
+            <p class="mt-2 text-gray-600">
+              Les noms varient, les valeurs manquantes sont incohérentes...
+              L'analyse est impossible. <br /><strong class="text-indigo-600"
+                >Solution :</strong
+              >
+              Les données sont uniformisées, prêtes à être analysées sans
+              erreur.
+            </p>
+            <div
+              class="mt-8 grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] items-center gap-6"
+            >
+              <!-- Avant -->
+              <div class="border rounded-lg p-4 bg-gray-50">
+                <h3 class="font-bold text-center mb-2 text-red-600">AVANT</h3>
+                <div class="overflow-x-auto">
+                  <table class="excel-table">
+                    <thead>
+                      <tr>
+                        <th>ID_PATIENT</th>
+                        <th>Date</th>
+                        <th>Marqueur_A</th>
+                        <th>Resultat</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>PAT-01</td>
+                        <td class="cell-dirty">10/05/2023</td>
+                        <td class="cell-dirty">12.5</td>
+                        <td>positif</td>
+                      </tr>
+                      <tr>
+                        <td class="cell-dirty">pat-02</td>
+                        <td>11-05-2023</td>
+                        <td>8.9</td>
+                        <td class="cell-dirty">Pos</td>
+                      </tr>
+                      <tr>
+                        <td>PAT-03</td>
+                        <td>12/05/23</td>
+                        <td class="cell-dirty">15,2</td>
+                        <td class="cell-dirty">negatif</td>
+                      </tr>
+                      <tr>
+                        <td>PAT-04</td>
+                        <td>13/05/2023</td>
+                        <td>-</td>
+                        <td>positif</td>
+                      </tr>
+                      <tr>
+                        <td class="cell-dirty">Pat-05</td>
+                        <td>2023-05-14</td>
+                        <td>11.7</td>
+                        <td class="cell-dirty">NEG</td>
+                      </tr>
+                      <tr>
+                        <td>PAT-06</td>
+                        <td>15/05/2023</td>
+                        <td class="cell-dirty">manquant</td>
+                        <td>n/a</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!-- Flèche -->
+              <div class="text-center">
+                <svg
+                  class="w-12 h-12 text-indigo-500 mx-auto hidden lg:block"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  ></path>
+                </svg>
+                <svg
+                  class="w-12 h-12 text-indigo-500 mx-auto lg:hidden"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 17l-4 4m0 0l-4-4m4 4V3"
+                  ></path>
+                </svg>
+              </div>
+              <!-- Après -->
+              <div class="border rounded-lg p-4 bg-gray-50">
+                <h3 class="font-bold text-center mb-2 text-green-600">APRÈS</h3>
+                <div class="overflow-x-auto">
+                  <table class="excel-table">
+                    <thead>
+                      <tr>
+                        <th>ID_PATIENT</th>
+                        <th>Date</th>
+                        <th>Marqueur_A</th>
+                        <th>Resultat</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>PAT-01</td>
+                        <td>2023-05-10</td>
+                        <td>12.5</td>
+                        <td>positif</td>
+                      </tr>
+                      <tr>
+                        <td>PAT-02</td>
+                        <td>2023-05-11</td>
+                        <td>8.9</td>
+                        <td>positif</td>
+                      </tr>
+                      <tr>
+                        <td>PAT-03</td>
+                        <td>2023-05-12</td>
+                        <td>15.2</td>
+                        <td>negatif</td>
+                      </tr>
+                      <tr>
+                        <td>PAT-04</td>
+                        <td>2023-05-13</td>
+                        <td>NA</td>
+                        <td>positif</td>
+                      </tr>
+                      <tr>
+                        <td>PAT-05</td>
+                        <td>2023-05-14</td>
+                        <td>11.7</td>
+                        <td>negatif</td>
+                      </tr>
+                      <tr>
+                        <td>PAT-06</td>
+                        <td>2023-05-15</td>
+                        <td>NA</td>
+                        <td>NA</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Exemple 2: Fusion de fichiers -->
+          <div class="bg-white p-8 rounded-xl shadow-lg border">
+            <h2 class="text-2xl font-bold text-gray-900">
+              2. Fusion et Agrégation
+            </h2>
+            <p class="mt-2 text-gray-600">
+              Les données sont dans plusieurs fichiers, un par expérience. Les
+              copier-coller sont lents et risqués. <br /><strong
+                class="text-indigo-600"
+                >Solution :</strong
+              >
+              Un seul "fichier maître" est créé, incluant une colonne qui trace
+              l'origine de chaque donnée.
+            </p>
+            <div
+              class="mt-8 grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] items-center gap-6"
+            >
+              <!-- Avant -->
+              <div class="border rounded-lg p-4 bg-gray-50">
+                <h3 class="font-bold text-center mb-2 text-red-600">AVANT</h3>
+                <div class="grid grid-cols-2 gap-4 overflow-x-auto">
+                  <table class="excel-table">
+                    <caption class="text-gray-700 font-bold">
+                      Exp1.xlsx
+                    </caption>
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Valeur</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>A</td>
+                        <td>10</td>
+                      </tr>
+                      <tr>
+                        <td>B</td>
+                        <td>12</td>
+                      </tr>
+                      <tr>
+                        <td>C</td>
+                        <td>14</td>
+                      </tr>
+                      <tr>
+                        <td>D</td>
+                        <td>9</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <table class="excel-table">
+                    <caption class="text-gray-700 font-bold">
+                      Exp2.xlsx
+                    </caption>
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Valeur</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>A</td>
+                        <td>15</td>
+                      </tr>
+                      <tr>
+                        <td>C</td>
+                        <td>11</td>
+                      </tr>
+                      <tr>
+                        <td>E</td>
+                        <td>18</td>
+                      </tr>
+                      <tr>
+                        <td>F</td>
+                        <td>13</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!-- Flèche -->
+              <div class="text-center">
+                <svg
+                  class="w-12 h-12 text-indigo-500 mx-auto hidden lg:block"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  ></path>
+                </svg>
+                <svg
+                  class="w-12 h-12 text-indigo-500 mx-auto lg:hidden"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 17l-4 4m0 0l-4-4m4 4V3"
+                  ></path>
+                </svg>
+              </div>
+              <!-- Après -->
+              <div class="border rounded-lg p-4 bg-gray-50">
+                <h3 class="font-bold text-center mb-2 text-green-600">APRÈS</h3>
+                <div class="overflow-x-auto">
+                  <table class="excel-table">
+                    <caption class="text-gray-700 font-bold">
+                      Masterfile.xlsx
+                    </caption>
+                    <thead>
+                      <tr>
+                        <th class="cell-merged">source</th>
+                        <th>ID</th>
+                        <th>valeur</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="cell-merged">exp1.xlsx</td>
+                        <td>A</td>
+                        <td>10</td>
+                      </tr>
+                      <tr>
+                        <td class="cell-merged">exp1.xlsx</td>
+                        <td>B</td>
+                        <td>12</td>
+                      </tr>
+                      <tr>
+                        <td class="cell-merged">exp1.xlsx</td>
+                        <td>C</td>
+                        <td>14</td>
+                      </tr>
+                      <tr>
+                        <td class="cell-merged">exp1.xlsx</td>
+                        <td>D</td>
+                        <td>9</td>
+                      </tr>
+                      <tr>
+                        <td class="cell-merged">exp2.xlsx</td>
+                        <td>A</td>
+                        <td>15</td>
+                      </tr>
+                      <tr>
+                        <td class="cell-merged">exp2.xlsx</td>
+                        <td>C</td>
+                        <td>11</td>
+                      </tr>
+                      <tr>
+                        <td class="cell-merged">exp2.xlsx</td>
+                        <td>E</td>
+                        <td>18</td>
+                      </tr>
+                      <tr>
+                        <td class="cell-merged">exp2.xlsx</td>
+                        <td>F</td>
+                        <td>13</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Exemple 3: Pivot de données -->
+          <div class="bg-white p-8 rounded-xl shadow-lg border">
+            <h2 class="text-2xl font-bold text-gray-900">
+              3. Conversion de Format (Wide vers Long)
+            </h2>
+            <p class="mt-2 text-gray-600">
+              Le format "large" est facile à lire pour un humain, mais
+              incompatible avec la plupart des logiciels d'analyse.
+              <br /><strong class="text-indigo-600">Solution :</strong> Les
+              données sont pivotées en format "long" : une ligne par
+              observation, prêt pour l'analyse statistique.
+            </p>
+            <div
+              class="mt-8 grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] items-center gap-6"
+            >
+              <!-- Avant -->
+              <div class="border rounded-lg p-4 bg-gray-50">
+                <h3 class="font-bold text-center mb-2 text-red-600">AVANT</h3>
+                <div class="overflow-x-auto">
+                  <table class="excel-table">
+                    <thead>
+                      <tr>
+                        <th>Sujet</th>
+                        <th>Jour_0</th>
+                        <th>Jour_7</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Sujet_1</td>
+                        <td>10.2</td>
+                        <td>15.4</td>
+                      </tr>
+                      <tr>
+                        <td>Sujet_2</td>
+                        <td>9.8</td>
+                        <td>12.1</td>
+                      </tr>
+                      <tr>
+                        <td>Sujet_3</td>
+                        <td>11.1</td>
+                        <td>14.9</td>
+                      </tr>
+                      <tr>
+                        <td>Sujet_4</td>
+                        <td>12.0</td>
+                        <td>16.2</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!-- Flèche -->
+              <div class="text-center">
+                <svg
+                  class="w-12 h-12 text-indigo-500 mx-auto hidden lg:block"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  ></path>
+                </svg>
+                <svg
+                  class="w-12 h-12 text-indigo-500 mx-auto lg:hidden"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 17l-4 4m0 0l-4-4m4 4V3"
+                  ></path>
+                </svg>
+              </div>
+              <!-- Après -->
+              <div class="border rounded-lg p-4 bg-gray-50">
+                <h3 class="font-bold text-center mb-2 text-green-600">APRÈS</h3>
+                <div class="overflow-x-auto">
+                  <table class="excel-table">
+                    <thead>
+                      <tr>
+                        <th>Sujet</th>
+                        <th>temps</th>
+                        <th class="cell-long">valeur</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Sujet_1</td>
+                        <td>jour_0</td>
+                        <td class="cell-long">10.2</td>
+                      </tr>
+                      <tr>
+                        <td>Sujet_1</td>
+                        <td>jour_7</td>
+                        <td class="cell-long">15.4</td>
+                      </tr>
+                      <tr>
+                        <td>Sujet_2</td>
+                        <td>jour_0</td>
+                        <td class="cell-long">9.8</td>
+                      </tr>
+                      <tr>
+                        <td>Sujet_2</td>
+                        <td>jour_7</td>
+                        <td class="cell-long">12.1</td>
+                      </tr>
+                      <tr>
+                        <td>Sujet_3</td>
+                        <td>jour_0</td>
+                        <td class="cell-long">11.1</td>
+                      </tr>
+                      <tr>
+                        <td>Sujet_3</td>
+                        <td>jour_7</td>
+                        <td class="cell-long">14.9</td>
+                      </tr>
+                      <tr>
+                        <td>Sujet_4</td>
+                        <td>jour_0</td>
+                        <td class="cell-long">12.0</td>
+                      </tr>
+                      <tr>
+                        <td>Sujet_4</td>
+                        <td>jour_7</td>
+                        <td class="cell-long">16.2</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-10 border-t border-gray-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          class="flex flex-col-reverse md:flex-row justify-between items-center gap-6 md:gap-0"
+        >
+          <div class="text-center md:text-left">
+            <p class="text-sm font-medium text-gray-300">
+              &copy; 2025 Bourachot Tom - AnaByo
+            </p>
+            <p class="mt-1 text-xs text-gray-500">Tous droits réservés.</p>
+          </div>
+          <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+            <nav class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
+              <a
+                href="./index.html#confidentialite"
+                class="hover:text-white transition-colors duration-200"
+                >Confidentialité</a
+              >
+              <a
+                href="./documents.html"
+                class="hover:text-white transition-colors duration-200"
+                >Documents</a
+              >
+              <a
+                href="./mentions-legales.html"
+                class="hover:text-white transition-colors duration-200"
+                >Mentions Légales</a
+              >
+            </nav>
+            <div class="hidden md:block h-4 w-px bg-gray-700"></div>
+            <div
+              class="text-sm flex flex-col md:flex-row items-center gap-1 md:gap-2"
+            >
+              <span class="text-gray-500">Contact hors demande de devis :</span>
+              <a
+                href="mailto:anabyopro@gmail.com"
+                id="copy-email-link"
+                class="text-gray-200 hover:text-indigo-100 transition-colors duration-200 cursor-pointer font-medium"
+              >
+                anabyopro@gmail.com
+              </a>
+            </div>
+            <div class="hidden md:block h-4 w-px bg-gray-700"></div>
+            <a
+              href="https://www.linkedin.com/in/tom-bourachot44/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-gray-400 hover:text-white transition-colors duration-200"
+            >
+              <span class="sr-only">LinkedIn</span>
+              <svg
+                class="w-6 h-6"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // --- Script pour le menu déroulant ---
+        const dropdownContainer = document.getElementById("dropdown-container");
+        const dropdownMenu = document.getElementById("dropdown-menu");
+        let timeoutId;
+        if (dropdownContainer && dropdownMenu) {
+          const showDropdown = () => {
+            clearTimeout(timeoutId);
+            dropdownMenu.classList.remove("hidden");
+          };
+          const hideDropdown = () => {
+            timeoutId = setTimeout(
+              () => dropdownMenu.classList.add("hidden"),
+              200
+            );
+          };
+          dropdownContainer.addEventListener("mouseenter", showDropdown);
+          dropdownContainer.addEventListener("mouseleave", hideDropdown);
+        }
+        // --- Script pour le menu mobile ---
+        const mobileMenuButton = document.getElementById("mobile-menu-button");
+        const mobileMenu = document.getElementById("mobile-menu");
+        const hamburgerIcon = document.getElementById("hamburger-icon");
+        const closeIcon = document.getElementById("close-icon");
+        if (mobileMenuButton && mobileMenu) {
+          mobileMenuButton.addEventListener("click", () => {
+            mobileMenu.classList.toggle("hidden");
+            hamburgerIcon.classList.toggle("hidden");
+            closeIcon.classList.toggle("hidden");
+          });
+        }
+        // Gérer la copie de l'e-mail
+        const copyEmailLink = document.getElementById("copy-email-link");
+        if (copyEmailLink) {
+          copyEmailLink.addEventListener("click", function (event) {
+            event.preventDefault();
+            navigator.clipboard.writeText(this.innerText).then(() => {
+              alert("Adresse e-mail copiée !");
+            });
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

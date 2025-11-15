@@ -25,7 +25,7 @@ exports.handler = async function (event, context) {
   const params = new URLSearchParams(event.body);
   const formData = Object.fromEntries(params.entries());
 
-  const { "full-name": fullName, email, message, laboratory, "Traitement Urgent": urgent, subject: formSubject, treatment_details } = formData;
+  const { "full-name": fullName, email, message, laboratory, "Traitement Urgent": urgent, subject: formSubject, fonction, adresse } = formData;
   const subject = formData.subject || 'Nouvelle demande depuis le site';
 
   try {
@@ -43,19 +43,22 @@ exports.handler = async function (event, context) {
       .from('demandes_clients')
       .insert({
         tracking_id: tracking_id,
-        nom_client: fullName,
+        nom_client: laboratory, // Le nom du client est maintenant le laboratoire
+        representant: fullName, // Le nom du contact est le représentant
         email_client: email,
         message: message,
+        fonction: fonction,
+        adresse: adresse,
         type_demande: formSubject.includes('essai') ? 'Essai gratuit' : 'Devis',
-        treatment_details: (treatment_details && treatment_details !== '[]') ? JSON.parse(treatment_details) : null,
+        treatment_details: null, // Ce champ n'est plus utilisé
         is_urgent: urgent && urgent.startsWith('Oui'), // Sera true si la case est cochée
         // Le statut 'Reçue' est la valeur par défaut dans la DB, pas besoin de le spécifier
       });
 
     if (supabaseError) {
       console.error('Supabase insert error:', supabaseError);
-      // On continue même en cas d'erreur pour que le client reçoive quand même un email,
-      // mais on logue l'erreur pour que vous puissiez la corriger.
+      // Si l'écriture dans la base de données échoue, on arrête tout.
+      throw new Error(`Erreur lors de l'enregistrement dans la base de données : ${supabaseError.message}`);
     } else {
       console.log(`Request ${tracking_id} saved to Supabase.`);
     }
@@ -71,17 +74,10 @@ exports.handler = async function (event, context) {
       html: `
         <h1>${subject}</h1>
         <p><strong>Nom :</strong> ${fullName}</p>
-        <p><strong>Email :</strong> ${email}</p>
         <p><strong>Laboratoire :</strong> ${laboratory || 'Non spécifié'}</p>
+        <p><strong>Email :</strong> ${email}</p>
+        <p><strong>Fonction :</strong> ${fonction || 'Non spécifié'}</p>
         <p><strong>Urgent :</strong> ${urgent || 'Non'}</p>
-        <hr>
-        <h3>Détails des traitements demandés :</h3>
-        <ul>
-          ${(treatment_details && treatment_details !== '[]' && JSON.parse(treatment_details).length > 0)
-            ? JSON.parse(treatment_details).map(t => `<li>&bull; <strong>${t.type} :</strong> ${t.count} fichier(s)</li>`).join('')
-            : '<li>Aucun détail spécifié.</li>'
-          }
-        </ul>
         <hr>
         <h3>Message :</h3>
         <p>${message.replace(/\n/g, '<br>')}</p>
@@ -98,10 +94,11 @@ exports.handler = async function (event, context) {
 
     // On envoie les deux emails en parallèle pour plus d'efficacité
     const emailPromises = [
-      resend.emails.send(notificationEmail),
-      resend.emails.send(confirmationEmail),
+      resend.emails.send(notificationEmail)
     ];
 
+    // On ajoute l'email de confirmation à envoyer au client
+    emailPromises.push(resend.emails.send(confirmationEmail));
     // Promise.allSettled attend que toutes les promesses soient terminées (succès ou échec)
     const results = await Promise.allSettled(emailPromises);
 

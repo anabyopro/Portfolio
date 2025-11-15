@@ -44,10 +44,10 @@ exports.handler = async function(event) {
             // Construire l'objet JSON pour le devis
             const configUpdate = {
                 client: {
-                    nom_complet: requestData.nom_client,
-                    representant: requestData.nom_client, // Par défaut, on met le même nom
-                    fonction: "A compléter",
-                    adresse: "A compléter",
+                    nom_complet: requestData.nom_client, // Nom du laboratoire
+                    representant: requestData.representant, // Nom du contact
+                    fonction: requestData.fonction,
+                    adresse: requestData.adresse,
                     email: requestData.email_client
                 },
                 devis: {

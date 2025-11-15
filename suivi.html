@@ -139,8 +139,21 @@
         });
 
         function displayStatus(data) {
-          const statuses = ["Reçue", "En cours", "Terminée"];
-          const currentStatusIndex = statuses.indexOf(data.statut);
+          // On définit le pipeline complet avec des noms clairs pour le client
+          const statusMap = {
+            Reçue: { label: "Demande reçue", order: 0 },
+            Acceptée: { label: "En attente de devis", order: 1 },
+            "En cours": { label: "Traitement en cours", order: 2 },
+            Terminée: { label: "Mission terminée", order: 3 },
+          };
+
+          const currentStatusInfo = statusMap[data.statut] || {
+            label: data.statut,
+            order: -1,
+          };
+          const timelineSteps = Object.values(statusMap).sort(
+            (a, b) => a.order - b.order
+          );
           const date = new Date(data.date_creation).toLocaleDateString(
             "fr-FR",
             { day: "numeric", month: "long", year: "numeric" }
@@ -152,9 +165,9 @@
                     <div class="space-y-4">
                 `;
 
-          statuses.forEach((status, index) => {
-            const isActive = index <= currentStatusIndex;
-            const isCurrent = index === currentStatusIndex;
+          timelineSteps.forEach((step) => {
+            const isActive = step.order <= currentStatusInfo.order;
+            const isCurrent = step.order === currentStatusInfo.order;
             const color = isActive ? "bg-green-500" : "bg-gray-600";
             const textColor = isCurrent
               ? "text-white font-bold"
@@ -163,7 +176,7 @@
             timelineHtml += `
                         <div class="flex items-center">
                             <div class="status-dot ${color}"></div>
-                            <p class="ml-4 text-lg ${textColor}">${status}</p>
+                            <p class="ml-4 text-lg ${textColor}">${step.label}</p>
                         </div>
                     `;
           });
