@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - AnaByo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      /* Style pour les boutons d'action */
+      .action-btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: background-color 0.2s;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      .btn-start {
+        background-color: #2563eb;
+      } /* blue-600 */
+      .btn-start:hover {
+        background-color: #1d4ed8;
+      } /* blue-700 */
+      .btn-complete {
+        background-color: #16a34a;
+      } /* green-600 */
+      .btn-complete:hover {
+        background-color: #15803d;
+      } /* green-700 */
+      .btn-reject {
+        background-color: #dc2626;
+      } /* red-600 */
+      .btn-reject:hover {
+        background-color: #b91c1c;
+      } /* red-700 */
+
+      /* Style pour les statuts */
+      .status-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: 9999px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .status-recue {
+        background-color: #e0e7ff;
+        color: #3730a3;
+      } /* indigo-100, indigo-800 */
+      .status-en-cours {
+        background-color: #dbeafe;
+        color: #1e40af;
+      } /* blue-100, blue-800 */
+      .status-terminee {
+        background-color: #dcfce7;
+        color: #166534;
+      } /* green-100, green-800 */
+      .status-refusee {
+        background-color: #fee2e2;
+        color: #991b1b;
+      } /* red-100, red-800 */
+    </style>
+  </head>
+  <body class="bg-gray-100 text-gray-800">
+    <div
+      id="auth-overlay"
+      class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50"
+    >
+      <div class="bg-white p-8 rounded-lg shadow-xl text-center">
+        <h2 class="text-2xl font-bold mb-4">Accès Administrateur</h2>
+        <p class="mb-6 text-gray-600">
+          Veuillez entrer le mot de passe pour continuer.
+        </p>
+        <input
+          type="password"
+          id="password-input"
+          class="py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm mb-4"
+          placeholder="Mot de passe"
+        />
+        <button
+          id="password-submit"
+          class="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700"
+        >
+          Valider
+        </button>
+        <p id="auth-error" class="text-red-500 text-sm mt-2 hidden">
+          Mot de passe incorrect.
+        </p>
+      </div>
+    </div>
+
+    <main id="admin-panel" class="container mx-auto p-4 sm:p-8 hidden">
+      <header class="flex justify-between items-center mb-8">
+        <h1 class="text-4xl font-extrabold text-gray-900">Tableau de bord</h1>
+        <button
+          id="refresh-btn"
+          class="bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300"
+        >
+          Rafraîchir
+        </button>
+      </header>
+
+      <div class="bg-white rounded-xl shadow-lg overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Date
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Client
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Type
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Statut
+              </th>
+              <th
+                class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody
+            id="requests-table-body"
+            class="bg-white divide-y divide-gray-200"
+          >
+            <!-- Les lignes de demandes seront injectées ici par JavaScript -->
+            <tr>
+              <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                Chargement des demandes...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const authOverlay = document.getElementById("auth-overlay");
+        const adminPanel = document.getElementById("admin-panel");
+        const passwordInput = document.getElementById("password-input");
+        const passwordSubmit = document.getElementById("password-submit");
+        const authError = document.getElementById("auth-error");
+        const tableBody = document.getElementById('requests-table-body');
+        const refreshBtn = document.getElementById('refresh-btn');
+
+        const statusClasses = {
+            'Reçue': 'status-recue',
+            'En cours': 'status-en-cours',
+            'Terminée': 'status-terminee',
+            'Refusée': 'status-refusee',
+        };
+
+        async function fetchAndDisplayRequests() {
+            tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-gray-500">Chargement des demandes...</td></tr>`;
+            try {
+                const password = passwordInput.value;
+                const response = await fetch('/.netlify/functions/get-requests', {
+                    headers: {
+                        'x-admin-password': password
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) { // Non autorisé
+                        throw new Error('Mot de passe incorrect.');
+                    }
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+                const requests = await response.json();
+
+                tableBody.innerHTML = ''; // Vider le tableau
+
+                if (requests.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-gray-500">Aucune demande pour le moment.</td></tr>`;
+                    return;
+                }
+
+                requests.forEach(req => {
+                    const date = new Date(req.date_creation).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                    const statusClass = statusClasses[req.statut] || 'bg-gray-200 text-gray-800';
+
+                    const row = document.createElement('tr');
+                    row.dataset.id = req.id; // On stocke l'ID de la demande sur la ligne du tableau
+
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${date}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">${req.nom_client}</div>
+                            <div class="text-sm text-gray-500">${req.email_client}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${req.type_demande}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="status-badge ${statusClass}">${req.statut}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium space-x-2">
+                            ${req.statut === 'Reçue' ? `<button data-action="En cours" class="action-btn btn-start">Démarrer</button>` : ''}
+                            ${req.statut === 'En cours' ? `<button data-action="Terminée" class="action-btn btn-complete">Terminer</button>` : ''}
+                            ${req.statut !== 'Terminée' && req.statut !== 'Refusée' ? `<button data-action="Refusée" class="action-btn btn-reject">Refuser</button>` : ''}
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error("Erreur:", error.message);
+                // Si l'erreur vient du mot de passe, on ré-affiche le formulaire de connexion
+                if (error.message.includes('Mot de passe incorrect')) {
+                    authOverlay.classList.remove('hidden');
+                    adminPanel.classList.add('hidden');
+                    authError.innerText = "Mot de passe incorrect.";
+                    authError.classList.remove('hidden');
+                    passwordInput.classList.add('border-red-500');
+                } else {
+                    tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-red-500">Erreur lors du chargement des données.</td></tr>`;
+                }
+            }
+        }
+
+        function handleLogin() {
+            authOverlay.classList.add('hidden');
+            adminPanel.classList.remove('hidden');
+            fetchAndDisplayRequests();
+        }
+
+        passwordSubmit.addEventListener('click', handleLogin);
+        passwordInput.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                handleLogin();
+            }
+        });
+        passwordInput.addEventListener('input', () => {
+            authError.classList.add('hidden');
+            passwordInput.classList.remove('border-red-500');
+        });
+
+        refreshBtn.addEventListener('click', fetchAndDisplayRequests);
+
+        // Gérer les clics sur les boutons d'action (pour la prochaine étape)
+        tableBody.addEventListener('click', async (event) => {
+            const target = event.target;
+            if (target.classList.contains('action-btn')) {
+                const row = target.closest('tr');
+                const id = row.dataset.id;
+                const newStatus = target.dataset.action;
+
+                target.disabled = true; // Désactiver le bouton pour éviter les double-clics
+                target.textContent = '...';
+
+                try {
+                    const response = await fetch('/.netlify/functions/update-request', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-admin-password': passwordInput.value
+                        },
+                        body: JSON.stringify({ id, newStatus })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('La mise à jour a échoué.');
+                    }
+
+                    // Si la mise à jour a réussi, on rafraîchit tout le tableau
+                    await fetchAndDisplayRequests();
+
+                } catch (error) {
+                    console.error("Erreur de mise à jour:", error);
+                    alert("Une erreur est survenue. Veuillez rafraîchir la page.");
+                    target.disabled = false; // Réactiver le bouton en cas d'erreur
+                }
+            }
+        });
+
+        // Mettre le focus sur le champ de mot de passe au chargement
+        passwordInput.focus();
+      });
+    </script>
+  </body>
+</html>
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
