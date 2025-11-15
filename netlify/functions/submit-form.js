@@ -1,5 +1,7 @@
 // Fichier : netlify/functions/submit-form.js
 
+const { createClient } = require('@supabase/supabase-js');
+const crypto = require('crypto');
 // On importe la librairie Resend pour envoyer les emails
 const { Resend } = require('resend');
 
@@ -23,11 +25,41 @@ exports.handler = async function (event, context) {
   const params = new URLSearchParams(event.body);
   const formData = Object.fromEntries(params.entries());
 
-  const { "full-name": fullName, email, message, laboratory, "Traitement Urgent": urgent } = formData;
+  const { "full-name": fullName, email, message, laboratory, "Traitement Urgent": urgent, subject: formSubject } = formData;
   const subject = formData.subject || 'Nouvelle demande depuis le site';
 
   try {
     console.log('Form data received:', formData);
+
+    // --- ÉTAPE 1: Enregistrer la demande dans Supabase ---
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY; // On utilise la clé service pour écrire
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Générer un identifiant de suivi unique
+    const tracking_id = `ANA-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
+
+    const { error: supabaseError } = await supabase
+      .from('demandes_clients')
+      .insert({
+        tracking_id: tracking_id,
+        nom_client: fullName,
+        email_client: email,
+        message: message,
+        type_demande: formSubject.includes('essai') ? 'Essai gratuit' : 'Devis',
+        // Le statut 'Reçue' est la valeur par défaut dans la DB, pas besoin de le spécifier
+      });
+
+    if (supabaseError) {
+      console.error('Supabase insert error:', supabaseError);
+      // On continue même en cas d'erreur pour que le client reçoive quand même un email,
+      // mais on logue l'erreur pour que vous puissiez la corriger.
+    } else {
+      console.log(`Request ${tracking_id} saved to Supabase.`);
+    }
+
+
+    // --- ÉTAPE 2: Envoyer les emails de notification ---
 
     // On prépare les deux emails à envoyer
     const notificationEmail = {
@@ -41,7 +73,7 @@ exports.handler = async function (event, context) {
       from: 'AnaByo <onboarding@resend.dev>', // TODO: Remplacer une fois le domaine vérifié
       to: [email],
       subject: 'Confirmation de votre demande chez AnaByo',
-      html: `<p>Bonjour ${fullName},</p><p>Merci de nous avoir contactés !</p><p>Nous avons bien reçu votre demande et nous vous répondrons sous 24 heures ouvrées.</p><p>À très bientôt,<br>L'équipe AnaByo</p>`,
+      html: `<p>Bonjour ${fullName},</p><p>Merci de nous avoir contactés !</p><p>Nous avons bien reçu votre demande et nous vous répondrons sous 24 heures ouvrées.</p><p>Votre numéro de suivi est le : <strong>${tracking_id}</strong>. Vous pourrez bientôt l'utiliser pour suivre l'avancement de votre demande.</p><p>À très bientôt,<br>L'équipe AnaByo</p>`,
     };
 
     // On envoie les deux emails en parallèle pour plus d'efficacité
