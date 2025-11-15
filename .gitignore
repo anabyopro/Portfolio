@@ -1,0 +1,5 @@
+# Dossier des dépendances Node.js
+node_modules/
+
+# Fichier des variables d'environnement locales
+.env
