@@ -1,7 +1,9 @@
 // Fichier : scripts/add-test-request.js
 
+const path = require('path');
 // Charge les variables du fichier .env
-require('dotenv').config({ path: '../.env' }); 
+// On construit un chemin absolu vers le fichier .env qui est à la racine du projet site_web
+require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') }); 
 const { createClient } = require('@supabase/supabase-js');
 const crypto = require('crypto');
 

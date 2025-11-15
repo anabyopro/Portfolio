@@ -25,7 +25,7 @@ exports.handler = async function (event, context) {
   const params = new URLSearchParams(event.body);
   const formData = Object.fromEntries(params.entries());
 
-  const { "full-name": fullName, email, message, laboratory, "Traitement Urgent": urgent, subject: formSubject } = formData;
+  const { "full-name": fullName, email, message, laboratory, "Traitement Urgent": urgent, subject: formSubject, treatment_details } = formData;
   const subject = formData.subject || 'Nouvelle demande depuis le site';
 
   try {
@@ -47,6 +47,8 @@ exports.handler = async function (event, context) {
         email_client: email,
         message: message,
         type_demande: formSubject.includes('essai') ? 'Essai gratuit' : 'Devis',
+        treatment_details: treatment_details ? JSON.parse(treatment_details) : null,
+        is_urgent: urgent && urgent.startsWith('Oui'), // Sera true si la case est cochée
         // Le statut 'Reçue' est la valeur par défaut dans la DB, pas besoin de le spécifier
       });
 
@@ -66,14 +68,32 @@ exports.handler = async function (event, context) {
       from: 'AnaByo <onboarding@resend.dev>', // TODO: Remplacer une fois le domaine vérifié
       to: ['anabyopro@gmail.com'],
       subject: `[NOTIFICATION] ${subject}`,
-      html: `<h1>${subject}</h1><p><strong>Nom :</strong> ${fullName}</p><p><strong>Email :</strong> ${email}</p><p><strong>Laboratoire :</strong> ${laboratory || 'Non spécifié'}</p><p><strong>Urgent :</strong> ${urgent || 'Non'}</p><hr><p><strong>Message :</strong></p><p>${message.replace(/\n/g, '<br>')}</p>`,
+      html: `
+        <h1>${subject}</h1>
+        <p><strong>Nom :</strong> ${fullName}</p>
+        <p><strong>Email :</strong> ${email}</p>
+        <p><strong>Laboratoire :</strong> ${laboratory || 'Non spécifié'}</p>
+        <p><strong>Urgent :</strong> ${urgent || 'Non'}</p>
+        <hr>
+        <h3>Détails des traitements demandés :</h3>
+        <ul>
+          ${treatment_details && JSON.parse(treatment_details).length > 0
+            ? JSON.parse(treatment_details).map(t => `<li>&bull; <strong>${t.type}:</strong> ${t.count} fichier(s)</li>`).join('')
+            : '<li>Aucun détail spécifié.</li>'
+          }
+        </ul>
+        <hr>
+        <h3>Message :</h3>
+        <p>${message.replace(/\n/g, '<br>')}</p>
+      `,
     };
 
     const confirmationEmail = {
       from: 'AnaByo <onboarding@resend.dev>', // TODO: Remplacer une fois le domaine vérifié
       to: [email],
       subject: 'Confirmation de votre demande chez AnaByo',
-      html: `<p>Bonjour ${fullName},</p><p>Merci de nous avoir contactés !</p><p>Nous avons bien reçu votre demande et nous vous répondrons sous 24 heures ouvrées.</p><p>Votre numéro de suivi est le : <strong>${tracking_id}</strong>. Vous pourrez bientôt l'utiliser pour suivre l'avancement de votre demande.</p><p>À très bientôt,<br>L'équipe AnaByo</p>`,
+      html: `<p>Bonjour ${fullName},</p><p>Merci de nous avoir contactés !</p><p>Nous avons bien reçu votre demande et nous vous répondrons sous 24 heures ouvrées.</p><p>Votre numéro de suivi est le : <strong>${tracking_id}</strong>.</p><p>Vous pouvez suivre l'avancement de votre demande à tout moment en cliquant sur le lien ci-dessous et en y indiquant votre numéro de suivi:</p><p><a href="${process.env.URL}/suivi.html" style="font-weight: bold;">Suivre ma demande</a></p><p>À très bientôt,<br>L'équipe AnaByo</p>`,
+
     };
 
     // On envoie les deux emails en parallèle pour plus d'efficacité

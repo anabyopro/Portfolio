@@ -577,6 +577,32 @@
                           <textarea id="message" name="message" rows="4" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50"></textarea>
                         </div>
                       </div>
+                      <!-- Section dynamique pour les types de traitement -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700">Détail des traitements</label>
+                        <div id="treatments-container" class="mt-2 space-y-3">
+                          <!-- Les lignes de traitement seront ajoutées ici par JS -->
+                        </div>
+                        <button type="button" id="add-treatment-btn" class="mt-3 text-sm font-medium text-indigo-600 hover:text-indigo-800">+ Ajouter un type de traitement</button>
+                        <!-- Champ caché pour stocker les données des traitements en JSON -->
+                        <input type="hidden" name="treatment_details" id="treatment_details_hidden">
+                      </div>
+                      <template id="treatment-row-template">
+                        <div class="treatment-row flex items-center gap-3 p-3 bg-gray-100 rounded-md">
+                          <div class="flex-grow">
+                            <select name="treatment_type" class="py-2 px-3 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md">
+                              <option>Nettoyage de données</option>
+                              <option>Fusion de fichiers</option>
+                              <option>Conversion de format (wide to long)</option>
+                              <option>Analyse statistique simple</option>
+                              <option>Autre (à préciser dans le message)</option>
+                            </select>
+                          </div>
+                          <input type="number" name="file_count" class="py-2 px-3 w-28 shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" placeholder="Nb fichiers" min="1">
+                          <button type="button" class="remove-treatment-btn text-red-500 hover:text-red-700 p-1 rounded-full bg-red-100 hover:bg-red-200">&times;</button>
+                        </div>
+                      </template>
+
                       <div id="urgent-request-container" class="relative flex items-start">
                           <div class="flex items-center h-5">
                               <!-- Ce premier input est pour la donnée que vous recevrez. Il est caché. -->
@@ -656,6 +682,44 @@
 
     <script>
       // --- Script pour le header dynamique ---
+      document.addEventListener('DOMContentLoaded', function() {
+        // ... (le reste de votre script existant)
+
+        // --- Logique pour le formulaire de traitement dynamique ---
+        const treatmentsContainer = document.getElementById('treatments-container');
+        const addTreatmentBtn = document.getElementById('add-treatment-btn');
+        const template = document.getElementById('treatment-row-template');
+        const form = document.querySelector('form[action="/.netlify/functions/submit-form"]');
+        const hiddenInput = document.getElementById('treatment_details_hidden');
+
+        const addTreatmentRow = () => {
+            const clone = template.content.cloneNode(true);
+            treatmentsContainer.appendChild(clone);
+        };
+
+        addTreatmentBtn.addEventListener('click', addTreatmentRow);
+
+        treatmentsContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-treatment-btn')) {
+                e.target.closest('.treatment-row').remove();
+            }
+        });
+
+        form.addEventListener('submit', () => {
+            const treatments = [];
+            document.querySelectorAll('.treatment-row').forEach(row => {
+                const type = row.querySelector('select[name="treatment_type"]').value;
+                const count = row.querySelector('input[name="file_count"]').value;
+                if (type && count) {
+                    treatments.push({ type, count: parseInt(count, 10) });
+                }
+            });
+            hiddenInput.value = JSON.stringify(treatments);
+        });
+
+        // Ajouter une première ligne par défaut
+        addTreatmentRow();
+      });
       document.addEventListener('scroll', function() {
         const header = document.getElementById('main-header');
         const logoText = document.getElementById('logo-text');
