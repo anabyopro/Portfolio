@@ -47,7 +47,7 @@ exports.handler = async function (event, context) {
         email_client: email,
         message: message,
         type_demande: formSubject.includes('essai') ? 'Essai gratuit' : 'Devis',
-        treatment_details: treatment_details ? JSON.parse(treatment_details) : null,
+        treatment_details: (treatment_details && treatment_details !== '[]') ? JSON.parse(treatment_details) : null,
         is_urgent: urgent && urgent.startsWith('Oui'), // Sera true si la case est cochée
         // Le statut 'Reçue' est la valeur par défaut dans la DB, pas besoin de le spécifier
       });
@@ -77,8 +77,8 @@ exports.handler = async function (event, context) {
         <hr>
         <h3>Détails des traitements demandés :</h3>
         <ul>
-          ${treatment_details && JSON.parse(treatment_details).length > 0
-            ? JSON.parse(treatment_details).map(t => `<li>&bull; <strong>${t.type}:</strong> ${t.count} fichier(s)</li>`).join('')
+          ${(treatment_details && treatment_details !== '[]' && JSON.parse(treatment_details).length > 0)
+            ? JSON.parse(treatment_details).map(t => `<li>&bull; <strong>${t.type} :</strong> ${t.count} fichier(s)</li>`).join('')
             : '<li>Aucun détail spécifié.</li>'
           }
         </ul>
