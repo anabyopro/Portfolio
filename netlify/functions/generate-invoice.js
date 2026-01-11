@@ -108,7 +108,7 @@ exports.handler = async function(event) {
         // 8. Envoyer l'email de notification au client
         const clientEmail = mission.clients_identite.email;
         const clientName = mission.clients_identite.representant || mission.clients_identite.nom_complet;
-        const portalUrl = `${process.env.URL}/espace-client.html`;
+        const portalUrl = `https://anabyo.com/espace-client.html`;
 
         await resend.emails.send({
             from: 'AnaByo <contact@anabyo.com>',

@@ -118,7 +118,7 @@ exports.handler = async function (event, context) {
       from: 'AnaByo <contact@anabyo.com>',
       to: [email],
       subject: 'Confirmation de votre demande chez AnaByo',
-      html: `<p>Bonjour ${fullName},</p><p>Merci de nous avoir contactés !</p><p>Nous avons bien reçu votre demande et nous vous répondrons sous 24 heures ouvrées.</p><p>Votre numéro de suivi est le : <strong>${tracking_id}</strong>.</p><p>Vous pouvez suivre l'avancement de votre demande et consulter l'historique de vos dossiers à tout moment en vous connectant à votre espace client :</p><p><a href="${process.env.URL}/espace-client.html" style="font-weight: bold;">Accéder à mon Espace Client</a></p><p>À très bientôt,<br>L'équipe AnaByo</p>`,
+      html: `<p>Bonjour ${fullName},</p><p>Merci de nous avoir contactés !</p><p>Nous avons bien reçu votre demande et nous vous répondrons sous 24 heures ouvrées.</p><p>Votre numéro de suivi est le : <strong>${tracking_id}</strong>.</p><p>Vous pouvez suivre l'avancement de votre demande et consulter l'historique de vos dossiers à tout moment en vous connectant à votre espace client :</p><p><a href="https://anabyo.com/espace-client.html" style="font-weight: bold;">Accéder à mon Espace Client</a></p><p>À très bientôt,<br>L'équipe AnaByo</p>`,
 
     };
 

@@ -165,7 +165,7 @@ exports.handler = async function(event) {
                        <p>Bonne nouvelle, votre demande a été acceptée !</p>
                        <p>Pour démarrer, merci de déposer vos fichiers en toute sécurité via ce lien : <a href="${bluefilesLink}">Déposer mes fichiers</a>.</p>
                        <p>Une fois les fichiers reçus, nous vous enverrons le devis correspondant.</p>
-                       <p>Vous pouvez suivre l'avancement de votre dossier à tout moment depuis votre <a href="${process.env.URL}/espace-client.html" style="font-weight: bold;">Espace Client</a>.</p>
+                       <p>Vous pouvez suivre l'avancement de votre dossier à tout moment depuis votre <a href="https://anabyo.com/espace-client.html" style="font-weight: bold;">Espace Client</a>.</p>
                        <p>Cordialement,<br>L'équipe AnaByo</p>`
             });
         }
@@ -177,7 +177,7 @@ exports.handler = async function(event) {
         // D. TERMINÉE
         if (newStatus === 'Terminée') {
             // On génère le lien unique pour la demande d'avis
-            const feedbackLink = `${process.env.URL}/feedback.html?mission=${finalData.tracking_id}`;
+            const feedbackLink = `https://anabyo.com/feedback.html?mission=${finalData.tracking_id}`;
 
             const subject = `Clôture de notre collaboration - Dossier ${finalData.tracking_id}`;
             const htmlBody = `
