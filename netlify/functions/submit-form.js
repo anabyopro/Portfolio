@@ -112,69 +112,69 @@ exports.handler = async function (event, context) {
       console.log(`Request ${tracking_id} saved to Supabase.`);
     }
 
+// --- ÉTAPE 2: Envoyer les emails de notification ---
 
-    // --- ÉTAPE 2: Envoyer les emails de notification ---
+    // On nettoie le sujet pour éviter les erreurs de headers
+    const cleanSubject = (subject || 'Nouvelle demande').replace(/[\n\r]/g, " ").trim();
 
-    // On prépare les deux emails à envoyer
+    // 1. Préparation du mail de NOTIFICATION (pour vous)
     const notificationEmail = {
       from: 'AnaByo <contact@anabyo.com>',
-      to: ['bourachott@gmail.com'],
-      subject: `[NOTIFICATION] ${subject}`,
+      to: 'contact@anabyo.com', // Pas de crochets []
+      subject: `[NOTIFICATION] ${cleanSubject}`,
       html: `
-        <h1>${subject}</h1>
+        <h1>${cleanSubject}</h1>
         <p><strong>Nom :</strong> ${fullName}</p>
         <p><strong>Laboratoire :</strong> ${laboratory || 'Non spécifié'}</p>
         <p><strong>Email :</strong> ${email}</p>
-        <p><strong>Fonction :</strong> ${fonction || 'Non spécifié'}</p>
         <p><strong>Téléphone :</strong> ${telephone || 'Non spécifié'}</p>
         <p><strong>Urgent :</strong> ${urgent ? 'OUI' : 'Non'}</p>
         <hr>
         <h3>Message :</h3>
-        <p>${message.replace(/\n/g, '<br>')}</p>
+        <p>${message ? message.replace(/\n/g, '<br>') : 'Pas de message'}</p>
       `,
     };
 
+    // 2. Préparation du mail de CONFIRMATION (pour le client)
     const confirmationEmail = {
       from: 'AnaByo <contact@anabyo.com>',
-      to: [email],
+      to: email, // Pas de crochets []
       subject: 'Confirmation de votre demande chez AnaByo',
-      html: `<p>Bonjour ${fullName},</p><p>Merci de nous avoir contactés !</p><p>Nous avons bien reçu votre demande et nous vous répondrons sous 24 heures ouvrées.</p><p>Votre numéro de suivi est le : <strong>${tracking_id}</strong>.</p><p>Vous pouvez suivre l'avancement de votre demande et consulter l'historique de vos dossiers à tout moment en vous connectant à votre espace client :</p><p><a href="https://anabyo.com/espace-client.html" style="font-weight: bold;">Accéder à mon Espace Client</a></p><p>À très bientôt,<br>L'équipe AnaByo</p>`,
-
+      html: `
+        <p>Bonjour ${fullName},</p>
+        <p>Merci de nous avoir contactés ! Nous avons bien reçu votre demande.</p>
+        <p>Votre numéro de suivi est le : <strong>${tracking_id}</strong>.</p>
+        <p><a href="https://anabyo.com/espace-client.html">Accéder à mon Espace Client</a></p>
+        <p>À très bientôt,<br>L'équipe AnaByo</p>
+      `,
     };
 
-    // On envoie les deux emails en parallèle pour plus d'efficacité
-    const emailPromises = [
-      resend.emails.send(notificationEmail)
-    ];
+    try {
+      // On envoie les mails l'un après l'autre pour être sûr que les deux partent
+      console.log('Tentative envoi notification...');
+      const notifRes = await resend.emails.send(notificationEmail);
+      console.log('Notification envoyée:', notifRes);
 
-    // On ajoute l'email de confirmation à envoyer au client
-    emailPromises.push(resend.emails.send(confirmationEmail));
-    // Promise.allSettled attend que toutes les promesses soient terminées (succès ou échec)
-    const results = await Promise.allSettled(emailPromises);
+      console.log('Tentative envoi confirmation client...');
+      const clientRes = await resend.emails.send(confirmationEmail);
+      console.log('Confirmation envoyée:', clientRes);
 
-    // On vérifie le résultat de chaque envoi
-    results.forEach((result, index) => {
-      const emailType = index === 0 ? 'Notification' : 'Confirmation';
-      if (result.status === 'fulfilled') {
-        console.log({ level: 'info', message: `Resend ${emailType} email success`, data: result.value });
-      } else {
-        console.error({ level: 'error', message: `Resend ${emailType} email failed`, error: result.reason });
-      }
-    });
+    } catch (emailError) {
+      // On log l'erreur mais on ne bloque pas la réponse du formulaire
+      console.error('Erreur lors de l\'envoi des emails:', emailError);
+    }
 
-    // 3. Réponse JSON succès (le front-end gère la redirection)
+    // 3. Réponse JSON succès
     return {
       statusCode: 200,
       body: JSON.stringify({ message: 'Demande envoyée avec succès', tracking_id }),
     };
 
   } catch (error) {
-    // En cas d'erreur, on affiche l'erreur dans les logs de Netlify
-    // et on retourne une erreur
-    console.error({ error });
+    console.error("Erreur handler:", error);
     return {
       statusCode: 500,
-      body: `Oops, une erreur est survenue: ${error.message}.`,
+      body: JSON.stringify({ error: "Erreur serveur: " + error.message })
     };
   }
 };
