@@ -118,7 +118,7 @@ exports.handler = async function (event, context) {
     // On prépare les deux emails à envoyer
     const notificationEmail = {
       from: 'AnaByo <contact@anabyo.com>',
-      to: ['contact@anabyo.com'],
+      to: ['bourachott@gmail.com'],
       subject: `[NOTIFICATION] ${subject}`,
       html: `
         <h1>${subject}</h1>
