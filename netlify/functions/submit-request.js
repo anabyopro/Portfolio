@@ -1,5 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
-const { Resend } = require('resend'); // IMPORTANT
+const { Resend } = require('resend');
 
 exports.handler = async function(event) {
     if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
@@ -31,7 +31,6 @@ exports.handler = async function(event) {
             if (err) throw err;
             client = newClient;
         } else {
-            // Si le client existe déjà, on met à jour ses infos avec celles du formulaire actuel
             await supabase
                 .from('clients_identite')
                 .update({
@@ -49,10 +48,10 @@ exports.handler = async function(event) {
             .from('demandes_clients')
             .insert({
                 tracking_id: trackingId,
-                type_demande: data.type_projet, // Doit correspondre au name="type_projet" du HTML
+                type_demande: data.type_projet || 'Non spécifié',
                 message: data.message,
                 is_urgent: data.urgent === true,
-                created_at: new Date().toISOString(), // On garantit un format de date standard
+                created_at: new Date().toISOString(),
                 statut: 'Reçue',
                 client_id: client.id
             })
@@ -60,38 +59,60 @@ exports.handler = async function(event) {
 
         if (errMission) throw errMission;
 
-        // 3. Log
+        // 3. Log d'événement
         await supabase.from('mission_events').insert({
             request_id: mission.id,
             event_type: 'Création',
             description: 'Demande reçue via le formulaire web.'
         });
 
-        // 4. ENVOI EMAIL CONFIRMATION (Le retour !)
-        console.log("📧 Tentative d'envoi email à :", data.email);
+        // 4. ENVOI DES EMAILS (Double envoi)
+        
+        // --- Mail 1 : NOTIFICATION POUR VOUS (Admin) ---
+        console.log("📧 Tentative d'envoi NOTIFICATION à : contact@anabyo.com");
         try {
             await resend.emails.send({
                 from: 'AnaByo <contact@anabyo.com>',
-                to: [data.email],
+                to: 'contact@anabyo.com',
+                subject: `[ALERTE] Nouveau dossier ${trackingId} - ${data.type_projet}`,
+                html: `
+                    <h2>Nouvelle demande de projet</h2>
+                    <p><strong>Client :</strong> ${data.nom} (${data.contact})</p>
+                    <p><strong>Email :</strong> ${data.email}</p>
+                    <p><strong>Urgent :</strong> ${data.urgent ? 'OUI' : 'Non'}</p>
+                    <p><strong>Message :</strong></p>
+                    <p>${data.message.replace(/\n/g, '<br>')}</p>
+                `
+            });
+            console.log("✅ Notification Admin envoyée.");
+        } catch (e) {
+            console.error("❌ Erreur Notification Admin :", e.message);
+        }
+
+        // --- Mail 2 : CONFIRMATION POUR LE CLIENT ---
+        console.log("📧 Tentative d'envoi CONFIRMATION à :", data.email);
+        try {
+            await resend.emails.send({
+                from: 'AnaByo <contact@anabyo.com>',
+                to: data.email,
                 subject: `Confirmation de réception - Dossier ${trackingId}`,
                 html: `
                     <p>Bonjour ${data.contact || data.nom},</p>
-                    <p>Nous accusons réception de votre demande de projet <strong>${data.type_projet}</strong>.</p>
+                    <p>Nous accusons réception de votre demande <strong>${data.type_projet}</strong>.</p>
                     <p>Votre numéro de dossier est : <strong>${trackingId}</strong></p>
-                    <p>Nous allons étudier vos éléments et revenir vers vous sous 24h ouvrées.</p>
+                    <p>Nous revenons vers vous sous 24h ouvrées.</p>
                     <p>Cordialement,<br>L'équipe AnaByo</p>
                 `
             });
-            console.log("✅ Email envoyé avec succès.");
-        } catch (emailError) {
-            console.error("❌ Erreur envoi email :", emailError);
-            // On ne bloque pas le succès de la demande si le mail échoue (ex: quota dépassé)
+            console.log("✅ Confirmation Client envoyée.");
+        } catch (e) {
+            console.error("❌ Erreur Confirmation Client :", e.message);
         }
 
         return { statusCode: 200, body: JSON.stringify({ message: "Succès", tracking_id: trackingId }) };
 
     } catch (error) {
         console.error("ERREUR SERVEUR:", error);
-        return { statusCode: 500, body: JSON.stringify({ error: "Erreur serveur lors de l'enregistrement." }) };
+        return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
     }
 };
