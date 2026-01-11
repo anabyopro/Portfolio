@@ -53,7 +53,13 @@ exports.handler = async function(event) {
                 is_urgent: data.urgent === true,
                 created_at: new Date().toISOString(),
                 statut: 'Reçue',
-                client_id: client.id
+                client_id: client.id,
+                // AJOUT : On sauvegarde les infos directement dans la demande (Snapshot)
+                nom_client: data.nom,
+                contact: data.contact,
+                fonction: data.fonction,
+                adresse: data.adresse,
+                telephone: data.telephone
             })
             .select().single();
 
