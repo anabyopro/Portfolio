@@ -22,11 +22,23 @@ exports.handler = async function (event, context) {
   const resend = new Resend(process.env.RESEND_API_KEY);
 
   // On parse les données du formulaire envoyées
-  const params = new URLSearchParams(event.body);
-  const formData = Object.fromEntries(params.entries());
+  let formData;
+  try {
+      // On essaie de parser du JSON (cas du nouveau formulaire)
+      formData = JSON.parse(event.body);
+  } catch (e) {
+      // Fallback pour les anciens formulaires classiques
+      const params = new URLSearchParams(event.body);
+      formData = Object.fromEntries(params.entries());
+  }
 
-  const { "full-name": fullName, email, message, laboratory, "Traitement Urgent": urgent, subject: formSubject, fonction, adresse } = formData;
-  const subject = formData.subject || 'Nouvelle demande depuis le site';
+  // Mapping des champs envoyés par index.html (JSON) vers les variables du script
+  const { nom, contact, email, message, fonction, adresse, telephone, urgent, type_projet } = formData;
+  
+  // Variables normalisées
+  const fullName = contact || nom || 'Client';
+  const laboratory = nom || 'Non spécifié';
+  const subject = type_projet || 'Nouvelle demande';
 
   try {
     console.log('Form data received:', formData);
@@ -47,7 +59,8 @@ exports.handler = async function (event, context) {
                 nom_complet: laboratory, // Le nom du labo est le nom du client
                 representant: fullName, // Le nom du contact est le représentant
                 fonction: fonction,
-                adresse: adresse
+                adresse: adresse,
+                telephone: telephone
             })
             .select('id').single();
         
@@ -64,11 +77,17 @@ exports.handler = async function (event, context) {
       .insert({
         tracking_id: tracking_id,
         message: message,
-        type_demande: formSubject.includes('essai') ? 'Essai gratuit' : 'Devis',
-        is_urgent: urgent && urgent.startsWith('Oui'), // Sera true si la case est cochée
+        type_demande: subject,
+        is_urgent: Boolean(urgent), // Conversion explicite en booléen
         created_at: new Date().toISOString(), // On garantit un format de date standard
         statut: 'Reçue',
-        client_id: client.id // On lie la demande à l'identité du client
+        client_id: client.id, // On lie la demande à l'identité du client
+        // On sauvegarde aussi les infos snapshot dans la demande
+        nom_client: laboratory,
+        contact: fullName,
+        fonction: fonction,
+        adresse: adresse,
+        telephone: telephone
       })
       .select() // On demande à Supabase de retourner la ligne créée
       .single(); // On s'attend à un seul résultat
@@ -85,7 +104,7 @@ exports.handler = async function (event, context) {
         description: `La demande a été créée par le client via le formulaire.`,
         metadata: {
           source: 'formulaire-contact',
-          subject: formSubject
+          subject: subject
         }
       });
       console.log(`Event 'Création' logged for request ${newRequest.id}`);
@@ -107,7 +126,8 @@ exports.handler = async function (event, context) {
         <p><strong>Laboratoire :</strong> ${laboratory || 'Non spécifié'}</p>
         <p><strong>Email :</strong> ${email}</p>
         <p><strong>Fonction :</strong> ${fonction || 'Non spécifié'}</p>
-        <p><strong>Urgent :</strong> ${urgent || 'Non'}</p>
+        <p><strong>Téléphone :</strong> ${telephone || 'Non spécifié'}</p>
+        <p><strong>Urgent :</strong> ${urgent ? 'OUI' : 'Non'}</p>
         <hr>
         <h3>Message :</h3>
         <p>${message.replace(/\n/g, '<br>')}</p>
@@ -142,14 +162,10 @@ exports.handler = async function (event, context) {
       }
     });
 
-    console.log('Redirecting to /remerciement.html');
-    // 3. Redirection vers une page de remerciement après succès
-    // Assurez-vous d'avoir une page "remerciement.html" sur votre site
+    // 3. Réponse JSON succès (le front-end gère la redirection)
     return {
-      statusCode: 302,
-      headers: {
-        Location: '/remerciement.html', // Vous pouvez créer cette page
-      },
+      statusCode: 200,
+      body: JSON.stringify({ message: 'Demande envoyée avec succès', tracking_id }),
     };
 
   } catch (error) {
