@@ -3,42 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Documents - AnaByo</title>
+    <title>Témoignages Clients - AnaByo</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <style>
-      body {
-        font-family: "Inter", sans-serif;
-      }
       /* Styles pour l'effet de balayage lumineux continu */
       .text-shine {
-        background-size: 250% auto; /* Dégradé plus large pour un balayage plus doux */
+        background-size: 250% auto;
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
         text-fill-color: transparent;
-        animation: shine 4s linear infinite; /* Animation plus lente et continue */
+        animation: shine 4s linear infinite;
       }
 
-      /* Définition de l'animation */
       @keyframes shine {
         0% {
-          background-position: 200% center; /* Commence à droite */
+          background-position: 200% center;
         }
         100% {
-          background-position: -200% center; /* Termine à gauche */
+          background-position: -200% center;
         }
       }
 
-      /* Dégradé pour le logo principal (bleu ciel) */
       .text-shine-sky-400 {
-        color: #38bdf8; /* Couleur de secours */
-        /* Dégradé : bleu, puis un point blanc brillant, puis bleu à nouveau */
+        color: #38bdf8;
         background-image: linear-gradient(
           to right,
           #38bdf8 20%,
@@ -46,21 +38,22 @@
           #38bdf8 80%
         );
       }
-
-      /* Dégradé pour le logo de la page "À Propos" (bleu foncé) */
-      .text-shine-sky-700 {
-        color: #0369a1; /* Couleur de secours */
-        background-image: linear-gradient(
-          to right,
-          #0369a1 20%,
-          #ffffff 50%,
-          #0369a1 80%
-        );
+    </style>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .testimonial-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .testimonial-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
       }
     </style>
   </head>
-  <body class="bg-white text-gray-800">
-    <!-- Barre de Navigation -->
+  <body class="bg-gray-50 flex flex-col min-h-screen">
     <header
       id="main-header"
       class="bg-gray-900 text-white sticky top-0 left-0 right-0 z-50 transition-all duration-300 shadow-lg"
@@ -239,90 +232,42 @@
       </div>
     </header>
 
-    <main>
-      <!-- Section Documents -->
-      <section id="documents" class="py-16 sm:py-24">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center">
-            <h2
-              class="text-base font-semibold text-indigo-600 tracking-wide uppercase"
-            >
-              Ressources
-            </h2>
-            <h1 class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900">
-              Documents de Référence
-            </h1>
-            <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
-              Pour une collaboration transparente, consultez les documents
-              juridiques et les exemples qui cadrent les prestations.
-            </p>
-          </div>
-          <div
-            class="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          >
-            <!-- Document 1: CGV -->
-            <a
-              href="./documents/CGV_AnaByo.pdf"
-              target="_blank"
-              class="block bg-gray-50 p-8 rounded-lg border border-gray-200 hover:shadow-lg hover:border-indigo-500 transition-all"
-            >
-              <h3 class="text-xl font-semibold text-gray-900">
-                Conditions Générales de Vente (CGV)
-              </h3>
-              <p class="mt-3 text-gray-600">
-                Détaille les modalités de nos prestations : commande, paiement,
-                responsabilités et garanties.
-              </p>
-              <p class="mt-4 font-medium text-indigo-600">Consulter le PDF →</p>
-            </a>
-            <!-- Document 2: NDA -->
-            <a
-              href="./documents/nda_generes/NDA_AnaByo_CLIENT_MODELE.pdf"
-              target="_blank"
-              class="block bg-gray-50 p-8 rounded-lg border border-gray-200 hover:shadow-lg hover:border-indigo-500 transition-all"
-            >
-              <h3 class="text-xl font-semibold text-gray-900">
-                Modèle d'Accord de Confidentialité (NDA)
-              </h3>
-              <p class="mt-3 text-gray-600">
-                Notre engagement formel pour la protection de vos données
-                sensibles : sécurité, non-divulgation et destruction.
-              </p>
-              <p class="mt-4 font-medium text-indigo-600">Consulter le PDF →</p>
-            </a>
-            <!-- Document 3: Exemples de Tâches -->
-            <a
-              href="./exemples_taches.pdf"
-              target="_blank"
-              class="block bg-gray-50 p-8 rounded-lg border border-gray-200 hover:shadow-lg hover:border-indigo-500 transition-all"
-            >
-              <h3 class="text-xl font-semibold text-gray-900">
-                Exemples de Tâches
-              </h3>
-              <p class="mt-3 text-gray-600">
-                Découvrez des cas concrets pour comprendre comment est définie
-                une "tâche" et comment notre tarification est appliquée.
-              </p>
-              <p class="mt-4 font-medium text-indigo-600">Consulter le PDF →</p>
-            </a>
-          </div>
+    <main class="bg-gray-50 flex-grow">
+      <div class="container mx-auto px-4 py-12 md:py-20 h-full">
+        <header class="text-center mb-12">
+          <h1 class="text-4xl md:text-5xl font-bold text-indigo-700">
+            L'avis de nos clients
+          </h1>
+          <p class="text-lg text-gray-600 mt-4 max-w-3xl mx-auto">
+            Découvrez les retours d'expérience des professionnels qui nous ont
+            fait confiance pour leurs analyses de données.
+          </p>
+        </header>
+
+        <div
+          id="testimonials-container"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
+          <!-- Les témoignages seront injectés ici par le script -->
         </div>
-      </section>
+
+        <div id="loading-indicator" class="text-center py-12">
+          <p class="text-gray-500">Chargement des témoignages...</p>
+        </div>
+      </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-400 py-10 border-t border-gray-800">
+    <footer
+      class="bg-gray-900 text-gray-400 py-10 border-t border-gray-800 mt-auto"
+    >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
-          <!-- Copyright (gauche) -->
           <div class="text-center md:text-left text-sm">
             <p class="text-sm font-medium text-gray-300">
               &copy; 2025 Bourachot Tom - AnaByo
             </p>
             <p class="mt-1 text-xs text-gray-500">Tous droits réservés.</p>
           </div>
-
-          <!-- Navigation (centre) -->
           <nav class="flex justify-center gap-x-4 text-sm">
             <a
               href="./index.html#confidentialite"
@@ -345,8 +290,6 @@
               >Espace Client</a
             >
           </nav>
-
-          <!-- Contact & Social (droite) -->
           <div class="flex justify-center md:justify-end items-center gap-6">
             <a
               href="mailto:contact@anabyo.com"
@@ -377,13 +320,88 @@
         </div>
       </div>
     </footer>
+
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // --- Script pour le menu déroulant ---
+      document.addEventListener("DOMContentLoaded", () => {
+        const container = document.getElementById("testimonials-container");
+        const loadingIndicator = document.getElementById("loading-indicator");
+
+        // Fonction pour générer les étoiles
+        function renderStars(rating) {
+          let starsHtml = "";
+          for (let i = 1; i <= 5; i++) {
+            const color = i <= rating ? "text-amber-400" : "text-gray-300";
+            starsHtml += `<span class="${color}">★</span>`;
+          }
+          return `<div class="flex">${starsHtml}</div>`;
+        }
+
+        // Fonction pour créer une carte de témoignage
+        function createTestimonialCard(testimonial) {
+          const card = document.createElement("div");
+          card.className =
+            "testimonial-card bg-white p-8 rounded-xl shadow-md border border-gray-100 flex flex-col";
+
+          const formattedDate = new Date(
+            testimonial.created_at
+          ).toLocaleDateString("fr-FR", {
+            year: "numeric",
+            month: "long",
+          });
+
+          card.innerHTML = `
+                    <div class="flex-grow">
+                        ${renderStars(testimonial.rating)}
+                        <p class="text-gray-600 mt-4 italic">"${
+                          testimonial.comment
+                        }"</p>
+                    </div>
+                    <footer class="mt-6 pt-4 border-t border-gray-200">
+                        <p class="text-sm text-gray-500">Avis laissé en ${formattedDate}</p>
+                        <p class="text-sm font-semibold text-indigo-600 mt-1">Client vérifié</p>
+                    </footer>
+                `;
+          return card;
+        }
+
+        // Fonction principale pour charger les données
+        async function loadTestimonials() {
+          try {
+            const response = await fetch("/.netlify/functions/get-feedback");
+            if (!response.ok) {
+              throw new Error("Erreur lors de la récupération des données.");
+            }
+            const testimonials = await response.json();
+
+            loadingIndicator.classList.add("hidden");
+
+            if (testimonials.length === 0) {
+              container.innerHTML =
+                '<p class="text-center text-gray-500 col-span-full">Aucun témoignage publié pour le moment.</p>';
+              return;
+            }
+
+            testimonials.forEach((testimonial) => {
+              // On affiche seulement les avis avec un commentaire
+              if (testimonial.comment && testimonial.comment.trim() !== "") {
+                const card = createTestimonialCard(testimonial);
+                container.appendChild(card);
+              }
+            });
+          } catch (error) {
+            console.error("Erreur:", error);
+            loadingIndicator.classList.add("hidden");
+            container.innerHTML =
+              '<p class="text-center text-red-500 col-span-full">Impossible de charger les témoignages. Veuillez réessayer plus tard.</p>';
+          }
+        }
+
+        loadTestimonials();
+
+        // Menus (Dropdown & Mobile)
         const dropdownContainer = document.getElementById("dropdown-container");
         const dropdownMenu = document.getElementById("dropdown-menu");
         let timeoutId;
-
         if (dropdownContainer && dropdownMenu) {
           const showDropdown = () => {
             clearTimeout(timeoutId);
@@ -395,79 +413,18 @@
               200
             );
           };
-
           dropdownContainer.addEventListener("mouseenter", showDropdown);
           dropdownContainer.addEventListener("mouseleave", hideDropdown);
         }
-
-        // --- Script pour le menu mobile ---
         const mobileMenuButton = document.getElementById("mobile-menu-button");
         const mobileMenu = document.getElementById("mobile-menu");
         const hamburgerIcon = document.getElementById("hamburger-icon");
         const closeIcon = document.getElementById("close-icon");
-
         if (mobileMenuButton && mobileMenu) {
           mobileMenuButton.addEventListener("click", () => {
             mobileMenu.classList.toggle("hidden");
             hamburgerIcon.classList.toggle("hidden");
             closeIcon.classList.toggle("hidden");
-          });
-        }
-
-        // Gérer la copie de l'e-mail avec notification au curseur
-        const copyEmailLink = document.getElementById("copy-email-link");
-        if (copyEmailLink) {
-          copyEmailLink.addEventListener("click", function (event) {
-            event.preventDefault(); // Empêche l'ouverture du client mail
-            const email = this.innerText;
-
-            navigator.clipboard.writeText(email).then(() => {
-              // Créer l'élément de notification
-              const notification = document.createElement("div");
-              notification.textContent = "Copié !";
-              notification.innerHTML = `
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6-3a1 1 0 011 1v4a1 1 0 01-1 1H6a1 1 0 01-1-1V7a1 1 0 011-1h3"></path></svg>
-                <span>Copié !</span>
-              `;
-
-              // Appliquer les styles
-              Object.assign(notification.style, {
-                position: "absolute",
-                left: `${event.pageX + 15}px`,
-                top: `${event.pageY}px`,
-                background: "#2d3748", // Gris foncé
-                position: "fixed",
-                left: "50%",
-                top: "20px",
-                transform: "translateX(-50%)",
-                background: "#1f2937", // bg-gray-800
-                color: "white",
-                padding: "4px 8px",
-                borderRadius: "4px",
-                fontSize: "12px",
-                padding: "12px 20px",
-                borderRadius: "8px",
-                fontSize: "14px",
-                zIndex: "1000",
-                transition: "opacity 0.5s ease-out",
-                display: "flex",
-                alignItems: "center",
-                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                transition: "transform 0.3s ease-out, opacity 0.3s ease-out",
-              });
-
-              document.body.appendChild(notification);
-
-              // Faire disparaître et supprimer l'élément
-              setTimeout(() => {
-                notification.style.opacity = "0";
-                notification.style.transform =
-                  "translateX(-50%) translateY(-20px)";
-                setTimeout(() => {
-                  document.body.removeChild(notification);
-                }, 500);
-              }, 1500);
-            });
           });
         }
       });

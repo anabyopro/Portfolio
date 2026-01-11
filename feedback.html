@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Donnez votre avis - AnaByo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      /* Système de notation par étoiles */
+      .star-rating {
+        display: flex;
+        flex-direction: row-reverse; /* Permet le hover correct */
+        justify-content: center;
+        gap: 4px;
+      }
+      .star-rating input[type="radio"] {
+        display: none;
+      }
+      .star-rating label {
+        font-size: 2.5rem;
+        color: #d1d5db; /* gris-300 */
+        cursor: pointer;
+        transition: color 0.2s;
+      }
+      /* Quand une étoile est cochée, toutes les étoiles précédentes (~) s'allument */
+      .star-rating input[type="radio"]:checked ~ label,
+        /* Quand on survole une étoile, elle et les précédentes s'allument */
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+        color: #f59e0b; /* ambre-500 */
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <div
+      id="feedback-container"
+      class="bg-white p-8 md:p-12 rounded-xl shadow-lg max-w-2xl w-full"
+    >
+      <header class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-indigo-700">
+          Votre avis nous intéresse
+        </h1>
+        <p class="text-gray-600 mt-2">
+          Partagez votre expérience pour nous aider à nous améliorer.
+        </p>
+      </header>
+
+      <form id="feedback-form">
+        <!-- Champ caché pour l'ID de la mission, récupéré depuis l'URL -->
+        <input type="hidden" id="mission-id" name="missionId" />
+
+        <!-- Notation par étoiles -->
+        <div class="mb-8">
+          <label
+            class="block text-center text-lg font-medium text-gray-700 mb-3"
+            >Quelle note donneriez-vous à notre collaboration ?</label
+          >
+          <div class="star-rating">
+            <input
+              type="radio"
+              id="star5"
+              name="rating"
+              value="5"
+              required
+            /><label for="star5" title="5 étoiles">★</label>
+            <input type="radio" id="star4" name="rating" value="4" /><label
+              for="star4"
+              title="4 étoiles"
+              >★</label
+            >
+            <input type="radio" id="star3" name="rating" value="3" /><label
+              for="star3"
+              title="3 étoiles"
+              >★</label
+            >
+            <input type="radio" id="star2" name="rating" value="2" /><label
+              for="star2"
+              title="2 étoiles"
+              >★</label
+            >
+            <input type="radio" id="star1" name="rating" value="1" /><label
+              for="star1"
+              title="1 étoile"
+              >★</label
+            >
+          </div>
+        </div>
+
+        <!-- Champ Commentaire -->
+        <div class="mb-6">
+          <label
+            for="comment"
+            class="block text-lg font-medium text-gray-700 mb-2"
+            >Votre commentaire :</label
+          >
+          <textarea
+            id="comment"
+            name="comment"
+            rows="5"
+            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+            placeholder="Parlez-nous de votre expérience, des points forts ou des axes d'amélioration..."
+          ></textarea>
+        </div>
+
+        <!-- Consentement -->
+        <div class="mb-8">
+          <label class="flex items-center">
+            <input
+              type="checkbox"
+              id="consent"
+              name="consent"
+              class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+            />
+            <span class="ml-3 text-gray-600"
+              >J'accepte que mon avis (commentaire et note) soit publié de
+              manière anonyme sur le site anabyo.fr.</span
+            >
+          </label>
+        </div>
+
+        <!-- Bouton d'envoi -->
+        <button
+          type="submit"
+          id="submit-btn"
+          class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition"
+        >
+          Envoyer mon avis
+        </button>
+      </form>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("feedback-form");
+        const container = document.getElementById("feedback-container");
+
+        // 1. Récupérer l'ID de la mission depuis l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const missionId = urlParams.get("mission");
+
+        if (missionId) {
+          document.getElementById("mission-id").value = missionId;
+        } else {
+          // S'il n'y a pas d'ID, on affiche une erreur et on cache le formulaire
+          container.innerHTML =
+            '<h1 class="text-2xl font-bold text-red-600 text-center">Erreur : Identifiant de mission manquant.</h1><p class="text-center mt-2">Veuillez utiliser le lien qui vous a été envoyé par e-mail.</p>';
+          return;
+        }
+
+        // 2. Gérer la soumission du formulaire
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const submitBtn = document.getElementById("submit-btn");
+          submitBtn.disabled = true;
+          submitBtn.innerText = "Envoi en cours...";
+
+          const formData = new FormData(form);
+          const data = Object.fromEntries(formData.entries());
+          data.consent = document.getElementById("consent").checked; // Gérer la checkbox
+
+          try {
+            const response = await fetch(
+              "/.netlify/functions/submit-feedback",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+              }
+            );
+
+            if (!response.ok)
+              throw new Error("La réponse du serveur n'est pas valide.");
+
+            // Afficher un message de succès
+            container.innerHTML =
+              '<h1 class="text-3xl font-bold text-green-600 text-center">Merci !</h1><p class="text-center text-gray-700 mt-4">Votre avis a bien été enregistré. Votre retour est précieux et nous aide à nous améliorer chaque jour.</p>';
+          } catch (error) {
+            console.error("Erreur lors de l'envoi de l'avis:", error);
+            container.innerHTML =
+              '<h1 class="text-2xl font-bold text-red-600 text-center">Une erreur est survenue</h1><p class="text-center mt-2">Nous n\'avons pas pu enregistrer votre avis. Veuillez réessayer plus tard ou nous contacter directement.</p>';
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

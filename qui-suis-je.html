@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Qui suis-je ? - AnaByo</title>
+    <title>Qui sommes-nous ? - AnaByo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -63,11 +63,10 @@
     <!-- Barre de Navigation -->
     <header
       id="main-header"
-      class="bg-black shadow-lg text-white sticky top-0 z-50 transition-all duration-300"
+      class="bg-gray-900 text-white sticky top-0 left-0 right-0 z-50 transition-all duration-300 shadow-lg"
     >
       <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-20">
-          <!-- Logo / Titre -->
           <div class="flex-shrink-0 flex items-center">
             <a href="./index.html">
               <img
@@ -84,7 +83,6 @@
               ><span class="text-lime-400">Byo</span></a
             >
           </div>
-          <!-- Menu Desktop -->
           <div class="hidden md:flex md:items-center md:space-x-8">
             <a
               href="./index.html#confidentialite"
@@ -99,7 +97,11 @@
             <a href="./index.html#tarifs" class="font-medium hover:text-sky-300"
               >Tarifs</a
             >
-            <!-- Menu Déroulant -->
+            <a
+              href="./espace-client.html"
+              class="font-medium hover:text-sky-300"
+              >Espace Client</a
+            >
             <div class="relative" id="dropdown-container">
               <button
                 id="dropdown-button"
@@ -124,39 +126,39 @@
               >
                 <a
                   href="./qui-suis-je.html"
-                  class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600 bg-gray-100"
-                >
-                  Qui suis-je ?
-                </a>
-                <a
-                  href="./a-propos.html#documents"
                   class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600"
+                  >Qui sommes-nous ?</a
                 >
-                  Documents
-                </a>
+                <a
+                  href="./documents.html"
+                  class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600"
+                  >Documents</a
+                >
                 <a
                   href="./mentions-legales.html"
                   class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600"
+                  >Mentions Légales</a
                 >
-                  Mentions Légales
-                </a>
+                <a
+                  href="./temoignages.html"
+                  class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600"
+                  >Témoignages</a
+                >
               </div>
             </div>
             <a
               href="./index.html#contact-devis"
               class="px-5 py-2 bg-sky-600 text-white rounded-lg font-medium hover:bg-sky-700 transition-colors"
+              id="cta-header-devis"
+              >Demander un devis</a
             >
-              Demander un devis
-            </a>
           </div>
-          <!-- Menu mobile (simple) -->
           <div class="md:hidden flex items-center">
             <button
               id="mobile-menu-button"
               class="inline-flex items-center justify-center p-2 rounded-md hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
             >
               <span class="sr-only">Ouvrir le menu principal</span>
-              <!-- Icône Hamburger -->
               <svg
                 id="hamburger-icon"
                 class="h-6 w-6"
@@ -173,7 +175,6 @@
                   d="M4 6h16M4 12h16m-7 6h7"
                 />
               </svg>
-              <!-- Icône Croix (cachée par défaut) -->
               <svg
                 id="close-icon"
                 class="hidden h-6 w-6"
@@ -194,7 +195,6 @@
           </div>
         </div>
       </nav>
-      <!-- Menu mobile, affiché/caché par JS -->
       <div
         class="hidden md:hidden bg-gray-800/95 backdrop-blur-sm"
         id="mobile-menu"
@@ -216,19 +216,19 @@
             >Tarifs</a
           >
           <a
+            href="./temoignages.html"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
+            >Témoignages</a
+          >
+          <a
+            href="./espace-client.html"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
+            >Espace Client</a
+          >
+          <a
             href="./qui-suis-je.html"
             class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
             >Qui suis-je ?</a
-          >
-          <a
-            href="./a-propos.html#documents"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
-            >Documents</a
-          >
-          <a
-            href="./mentions-legales.html"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
-            >Mentions Légales</a
           >
           <a
             href="./index.html#contact-devis"
@@ -249,13 +249,12 @@
             alt="Portrait de Tom Bourachot"
           />
           <h1 class="mt-8 text-16xl sm:text-5xl font-extrabold text-gray-900">
-            Qui suis-je ?
+            Tom Bourachot
           </h1>
           <p class="mt-6 text-lg text-gray-600 leading-relaxed">
-            Je suis Tom Bourachot, actuellement en Master 2 Bio-informatique à
-            l'Université de Bordeaux. Passionné par la complexité de la biologie
-            et la science des données, ce parcours s'est imposé comme une
-            évidence.
+            Actuellement en Master 2 Bio-informatique à l'Université de
+            Bordeaux, je suis passionné par la complexité de la biologie et la
+            science des données.
             <br />
             Au fil de mes expériences, j'ai réalisé que trop de découvertes
             étaient freinées non pas par l'analyse elle-même, mais par l'étape
@@ -272,55 +271,50 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-gray-400 py-10 border-t border-gray-200">
+    <footer class="bg-gray-900 text-gray-400 py-10 border-t border-gray-800">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div
-          class="flex flex-col-reverse md:flex-row justify-between items-center gap-6 md:gap-0"
-        >
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
           <!-- Copyright (gauche) -->
-          <div class="text-center md:text-left">
+          <div class="text-center md:text-left text-sm">
             <p class="text-sm font-medium text-gray-300">
               &copy; 2025 Bourachot Tom - AnaByo
             </p>
             <p class="mt-1 text-xs text-gray-500">Tous droits réservés.</p>
           </div>
 
-          <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8">
-            <nav class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
-              <a
-                href="./index.html#confidentialite"
-                class="hover:text-white transition-colors duration-200"
-                >Confidentialité</a
-              >
-              <a
-                href="./a-propos.html#documents"
-                class="hover:text-white transition-colors duration-200"
-                >Documents</a
-              >
-              <a
-                href="./mentions-legales.html"
-                class="hover:text-white transition-colors duration-200"
-                >Mentions Légales</a
-              >
-            </nav>
-
-            <div class="hidden md:block h-4 w-px bg-gray-700"></div>
-
-            <div
-              class="text-sm flex flex-col md:flex-row items-center gap-1 md:gap-2"
+          <!-- Navigation (centre) -->
+          <nav class="flex justify-center gap-x-4 text-sm">
+            <a
+              href="#confidentialite"
+              class="hover:text-white transition-colors duration-200"
+              >Confidentialité</a
             >
-              <span class="text-gray-500">Contact hors demande de devis :</span>
-              <a
-                href="mailto:anabyopro@gmail.com"
-                id="copy-email-link"
-                class="text-gray-200 hover:text-indigo-100 transition-colors duration-200 cursor-pointer font-medium"
-              >
-                anabyopro@gmail.com
-              </a>
-            </div>
+            <a
+              href="./documents.html"
+              class="hover:text-white transition-colors duration-200"
+              >Documents</a
+            >
+            <a
+              href="./mentions-legales.html"
+              class="hover:text-white transition-colors duration-200 whitespace-nowrap"
+              >Mentions Légales</a
+            >
+            <a
+              href="./espace-client.html"
+              class="hover:text-white transition-colors duration-200 whitespace-nowrap"
+              >Espace Client</a
+            >
+          </nav>
 
-            <div class="hidden md:block h-4 w-px bg-gray-700"></div>
-
+          <!-- Contact & Social (droite) -->
+          <div class="flex justify-center md:justify-end items-center gap-6">
+            <a
+              href="mailto:contact@anabyo.com"
+              id="copy-email-link"
+              class="text-sm text-gray-300 hover:text-white transition-colors duration-200 cursor-pointer font-medium"
+            >
+              contact@anabyo.com
+            </a>
             <a
               href="https://www.linkedin.com/in/tom-bourachot44/"
               target="_blank"

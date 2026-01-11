@@ -11,8 +11,11 @@
   "workspace": {
     "packageJson": {
       "dependencies": [
+        "npm:@netlify/functions@^5.1.0",
+        "npm:@sparticuz/chromium@141",
         "npm:@supabase/supabase-js@^2.81.1",
         "npm:dotenv@^16.6.1",
+        "npm:puppeteer-core@^24.30.0",
         "npm:resend@^3.2.0",
         "npm:scripts@0.1"
       ]

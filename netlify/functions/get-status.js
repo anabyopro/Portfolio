@@ -21,9 +21,14 @@ exports.handler = async function(event) {
     try {
         const { data, error } = await supabase
             .from('demandes_clients')
-            .select('nom_client, statut, date_creation') // On ne sélectionne que les infos non sensibles
+            // On effectue une jointure pour récupérer le nom du client et on utilise la bonne colonne de date
+            .select(`
+                statut, 
+                created_at,
+                clients_identite ( nom_complet )
+            `)
             .eq('tracking_id', trackingId)
-            .single(); // .single() pour ne récupérer qu'un seul résultat
+            .single();
 
         if (error || !data) {
             // Si .single() ne trouve rien, il renvoie une erreur.
@@ -34,10 +39,18 @@ exports.handler = async function(event) {
             };
         }
 
+        // On "aplatit" les données pour simplifier leur utilisation côté client.
+        const formattedData = {
+            statut: data.statut,
+            // On renomme created_at en date_creation pour la cohérence, et on récupère le nom du client.
+            date_creation: data.created_at,
+            nom_client: data.clients_identite ? data.clients_identite.nom_complet : 'Client'
+        };
+
         return {
             statusCode: 200,
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
+            body: JSON.stringify(formattedData),
         };
     } catch (error) {
         console.error("Erreur d'accès à la base de données:", error);

@@ -13,7 +13,6 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <!-- Ajout de la bibliothèque pour le slider avant/après -->
     <link rel="stylesheet" href="https://unpkg.com/img-comparison-slider@8/dist/styles.css" />
     <script defer src="https://unpkg.com/img-comparison-slider@8/dist/index.js"></script>
 
@@ -23,78 +22,24 @@
       }
       /* Styles pour l'effet de balayage lumineux continu */
       .text-shine {
-        background-size: 250% auto; /* Dégradé plus large pour un balayage plus doux */
+        background-size: 250% auto;
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
         text-fill-color: transparent;
-        animation: shine 4s linear infinite; /* Animation plus lente et continue */
+        animation: shine 4s linear infinite;
       }
 
-      /* Définition de l'animation */
       @keyframes shine {
-        0% {
-          background-position: 200% center; /* Commence à droite */
-        }
-        100% {
-          background-position: -200% center; /* Termine à gauche */
-        }
+        0% { background-position: 200% center; }
+        100% { background-position: -200% center; }
       }
 
-      /* Dégradé pour le logo principal (bleu ciel) */
       .text-shine-sky-400 {
-        color: #38bdf8; /* Couleur de secours */
-        /* Dégradé : bleu, puis un point blanc brillant, puis bleu à nouveau */
+        color: #38bdf8;
         background-image: linear-gradient(to right, #38bdf8 20%, #ffffff 50%, #38bdf8 80%);
       }
 
-      /* Icones SVG simples pour la démo */
-      .icon-lock {
-        width: 48px;
-        height: 48px;
-        stroke-width: 1.5;
-        stroke: currentColor;
-        fill: none;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-      }
-      .icon-check {
-        width: 24px;
-        height: 24px;
-        stroke-width: 2;
-        stroke: currentColor;
-        fill: none;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-      }
-      .icon-file {
-        width: 32px;
-        height: 32px;
-        stroke-width: 1.5;
-        stroke: currentColor;
-        fill: none;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-      }
-      .icon-zap {
-        width: 32px;
-        height: 32px;
-        stroke-width: 1.5;
-        stroke: currentColor;
-        fill: none;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-      }
-      .icon-chart {
-        width: 32px;
-        height: 32px;
-        stroke-width: 1.5;
-        stroke: currentColor;
-        fill: none;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-      }
-      /* Styles pour l'animation d'apparition au défilement */
       .fade-in-section {
         opacity: 0;
         transform: translateY(20px);
@@ -104,215 +49,93 @@
         opacity: 1;
         transform: translateY(0);
       }
-      /* Style pour la cassure en vague */
-      .wave-break {
-        clip-path: polygon(
-          0% 10%,
-          100% 0%,
-          100% 100%,
-          0% 100%
-        );
-      }
-
-      /* Styles pour les tableaux Excel */
-      .excel-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.8rem;
-        line-height: 1.2;
-        color: #333;
-        background-color: #fff;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      }
-      .excel-table th, .excel-table td {
-        border: 1px solid #ccc;
-        padding: 4px 6px;
-        text-align: left;
-      }
-      .excel-table th {
-        background-color: #e9e9e9;
-        font-weight: bold;
-        text-align: center;
-      }
-      .excel-table .row-header {
-        background-color: #f2f2f2;
-        text-align: center;
-        font-weight: bold;
-        color: #666;
-      }
-      .excel-table .cell-dirty {
-        background-color: #fff0f0;
-        color: #c00;
-      }
-      .excel-table .cell-merged {
-        background-color: #e0f2f1;
-        font-style: italic;
-      }
-      .excel-table .cell-long {
-        background-color: #e3f2fd;
-      }
-
-      /* Style pour le dégradé sur "Ana" */
-      .logo-ana {
-        background-image: linear-gradient(to bottom right, white, #38bdf8); /* Dégradé du blanc (haut-gauche) au bleu ciel (bas-droite) */
-        -webkit-background-clip: text; /* Pour Chrome, Safari */
-        background-clip: text;
-        color: transparent; /* Rend le texte transparent pour voir le dégradé */
-        -webkit-text-fill-color: transparent; /* Alternative pour certains navigateurs */
-      }
-
     </style>
   </head>
   <body class="bg-gray-50 text-gray-800">
-    <!-- Barre de Navigation -->
     <header id="main-header" class="bg-transparent text-white fixed top-0 left-0 right-0 z-50 transition-all duration-300">
       <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
         <div class="flex justify-between items-center h-20">
-          <!-- Logo / Titre -->
           <div class="flex-shrink-0 flex items-center"> <a href="./index.html"> <img class="h-16 w-auto" src="./assets/logo_anabyo.png" alt="Logo AnaByo" /> </a> <a href="./index.html" id="logo-text" class="ml-3 text-3xl font-bold transition-colors duration-300"><span class="text-shine text-shine-sky-400">Ana</span><span class="text-lime-400">Byo</span></a> </div>
-          <!-- Menu Desktop -->
           <div class="hidden md:flex md:items-center md:space-x-8">
             <a href="#confidentialite" class="font-medium hover:text-sky-300">Confidentialité</a>
-            <a
-              href="#processus"
-              class="font-medium hover:text-sky-300"
-              >Processus</a
-            >
-            <a
-              href="#tarifs"
-              class="font-medium hover:text-sky-300"
-              >Tarifs</a
-            >
-            <!-- Menu Déroulant -->
+            <a href="#processus" class="font-medium hover:text-sky-300">Processus</a>
+            <a href="#tarifs" class="font-medium hover:text-sky-300">Tarifs</a>
+            <a href="./espace-client.html" class="font-medium hover:text-sky-300">Espace Client</a>
             <div class="relative" id="dropdown-container"> <button id="dropdown-button" class="flex items-center font-medium hover:text-sky-300">
                 <span>À Propos</span>
                 <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
               </button>
               <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 z-50">
-                <a href="./qui-suis-je.html" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600">
-                  Qui sommes-nous ?
-                </a>
-                <a href="./documents.html" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600">
-                  Documents
-                </a>
-                <a href="./mentions-legales.html" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600">
-                  Mentions Légales
-                </a>
+                <a href="./qui-suis-je.html" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600">Qui sommes-nous ?</a>
+                <a href="./documents.html" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600">Documents</a>
+                <a href="./mentions-legales.html" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600">Mentions Légales</a>
+                <a href="./temoignages.html" class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-indigo-600">Témoignages</a>
               </div>
             </div>
-            <a
-              href="#contact-devis"
-              class="px-5 py-2 bg-sky-600 text-white rounded-lg font-medium hover:bg-sky-700 transition-colors"
-              id="cta-header-devis"
-            >
-              Demander un devis
-            </a>
+            <a href="#contact-devis" class="px-5 py-2 bg-sky-600 text-white rounded-lg font-medium hover:bg-sky-700 transition-colors" id="cta-header-devis">Demander un devis</a>
           </div>
-          <!-- Menu mobile (simple) -->
           <div class="md:hidden flex items-center">
             <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
               <span class="sr-only">Ouvrir le menu principal</span>
-              <!-- Icône Hamburger -->
-              <svg id="hamburger-icon" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-              </svg>
-              <!-- Icône Croix (cachée par défaut) -->
-              <svg id="close-icon" class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <svg id="hamburger-icon" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+              <svg id="close-icon" class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
           </div>
         </div>
       </nav>
-      <!-- Menu mobile, affiché/caché par JS -->
       <div class="hidden md:hidden bg-gray-800/95 backdrop-blur-sm" id="mobile-menu">
         <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <a href="#confidentialite" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Confidentialité</a>
           <a href="#processus" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Processus</a>
           <a href="#tarifs" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Tarifs</a>
+          <a href="./temoignages.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Témoignages</a>
+          <a href="./espace-client.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Espace Client</a>
           <a href="./qui-suis-je.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Qui suis-je ?</a>
-          <a href="./documents.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Documents</a>
-          <a href="./mentions-legales.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Mentions Légales</a>
           <a href="#contact-devis" class="block px-3 py-2 rounded-md text-base font-medium text-sky-400 bg-sky-900/50 hover:bg-sky-800/50">Demander un devis</a>
         </div>
       </div>
     </header>
 
-    <!-- Section Principale (Hero) -->
     <main>
-      <!-- Section Hero avec fond vidéo plein écran -->
       <div class="relative bg-gray-900 h-screen flex flex-col overflow-hidden">
-        
-        <video
-          src="./assets/video_anabyo.mp4"
-          autoplay
-          loop
-          muted
-          playsinline
-          class="absolute inset-0 w-full h-full object-cover z-0"
-        ></video>
-        
+        <video src="./assets/video_anabyo.mp4" autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover z-0"></video>
         <div class="absolute inset-0 bg-black/70 z-10"></div>
 
         <section id="hero" class="relative z-20 h-full w-full">
-          
           <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl px-4 text-center">
-            
             <h1 class="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-white tracking-tight leading-tight drop-shadow-lg">
-              Ne passez plus des mois sur 
-              <span class="text-lime-400">Excel</span>.
+              Ne passez plus des mois sur <span class="text-lime-400">Excel</span>.
             </h1>
-            
             <p class="mt-6 max-w-3xl mx-auto text-lg sm:text-2xl md:text-2xl font-medium text-gray-100 drop-shadow-md">
               Faites de la science, nous préparons vos données.
             </p>
-            
           </div>
 
           <div class="absolute bottom-12 sm:bottom-16 left-0 right-0 w-full px-4 text-center">
-            
             <div class="flex flex-col sm:flex-row justify-center items-center gap-5">
-              <a
-                href="#contact-devis"
-                class="inline-flex items-center justify-center px-8 py-4 bg-sky-600 text-white rounded-lg font-bold shadow-lg hover:bg-sky-500 hover:scale-105 transition-all duration-200 text-lg sm:text-xl"
-                id="cta-hero-essai"
-              >
+              <a href="#contact-devis" class="inline-flex items-center justify-center px-8 py-4 bg-sky-600 text-white rounded-lg font-bold shadow-lg hover:bg-sky-500 hover:scale-105 transition-all duration-200 text-lg sm:text-xl" id="cta-hero-essai">
                 Demander une évaluation gratuite
               </a>
-              <a
-                href="#processus"
-                class="inline-flex items-center justify-center px-8 py-4 bg-white/10 text-white rounded-lg font-bold hover:bg-white/20 backdrop-blur-md border border-white/30 transition-all duration-200 text-lg sm:text-xl"
-              >
+              <a href="#processus" class="inline-flex items-center justify-center px-8 py-4 bg-white/10 text-white rounded-lg font-bold hover:bg-white/20 backdrop-blur-md border border-white/30 transition-all duration-200 text-lg sm:text-xl">
                 Découvrir les services
               </a>
             </div>
-
             <p class="mt-6 text-sm sm:text-base font-medium text-gray-300 flex items-center justify-center gap-2 opacity-90">
               <svg class="w-5 h-5 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
               100% satisfait ou remboursé
             </p>
-            
           </div>
-
         </section>
       </div>
 
       <section id="processus" class="relative py-24 fade-in-section overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-b from-gray-100 from-30% to-gray-900 z-0"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-white from-30% to-gray-900 z-0"></div>
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
   
-        <div class="text-center mb-12">
-            <h2
-              class="text-lg font-semibold text-indigo-600 tracking-wide uppercase"
-            >
-              Cas Concrets
-            </h2>
-            <p class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900">
-              Transformez vos données brutes en résultats
-            </p>
-            <p class="mt-2 text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-              Formats incompatibles, nettoyage interminable, fusion manuelle de dizaines de fichiers : c'est du passé.
-            </p>
+          <div class="text-center mb-12">
+            <h2 class="text-lg font-semibold text-indigo-600 tracking-wide uppercase">Cas Concrets</h2>
+            <p class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900">Transformez vos données brutes en résultats</p>
+            <p class="mt-2 text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">Formats incompatibles, nettoyage interminable, fusion manuelle de dizaines de fichiers : c'est du passé.</p>
           </div> 
 
           <div class="flex flex-col items-center justify-center mb-36 text-center"> 
@@ -321,193 +144,121 @@
             </p>
             <div class="relative group">
               <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-sky-400 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-              
               <div class="relative flex flex-col sm:flex-row gap-6 bg-white p-2 rounded-2xl shadow-xl ring-1 ring-gray-900/5"> 
-                
                 <a href="./exemples_taches.html" class="flex flex-col items-center justify-center w-64 h-64 p-6 bg-gray-100 rounded-xl hover:bg-indigo-50 transition-colors duration-300">
                   <div class="h-14 w-14 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 text-indigo-600">
-                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
                   </div>
                   <span class="font-bold text-gray-900 text-lg">Traitements de Données</span>
                   <span class="text-sm text-gray-500 mt-2 text-center">Nettoyage, standardisation, fusion de fichiers Excel...</span>
-                  <span class="mt-4 text-indigo-600 text-sm font-medium flex items-center">
-                    Voir les exemples <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                  </span>
+                  <span class="mt-4 text-indigo-600 text-sm font-medium flex items-center">Voir les exemples <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
                 </a>
- 
                 <div class="flex flex-col items-center justify-center w-64 h-64 p-6 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 opacity-60 cursor-not-allowed">
                   <div class="h-14 w-14 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 text-gray-400">
-                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                   </div>
                   <span class="font-bold text-gray-500 text-lg">Analyses Statistiques</span>
                   <span class="text-xs text-gray-400 uppercase font-bold tracking-wider mt-2 bg-gray-200 px-2 py-1 rounded">Bientôt</span>
                 </div>
-                
               </div>
             </div>
           </div>
 
           <div class="relative flex py-5 items-center mb-16">
-             <div class="flex-grow border-t border-gray-300"></div>
-             <span class="flex-shrink-0 mx-4 text-sky-200 uppercase tracking-widest text-sm font-semibold">Méthodologie</span>
-             <div class="flex-grow border-t border-gray-300"></div>
+              <div class="flex-grow border-t border-gray-300"></div>
+              <span class="flex-shrink-0 mx-4 text-sky-200 uppercase tracking-widest text-sm font-semibold">Méthodologie</span>
+              <div class="flex-grow border-t border-gray-300"></div>
           </div>
 
           <div class="text-center mb-12">
-            <h3 class="text-3xl font-extrabold text-gray-100">
-              Notre vision pour une collaboration saine
-            </h3>
+            <h3 class="text-3xl font-extrabold text-gray-100">Notre vision pour une collaboration saine</h3>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
-            
             <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300 relative overflow-hidden">
               <span class="absolute -right-4 -top-4 text-9xl font-bold text-gray-100 select-none z-0">1</span>
-              
               <div class="relative z-10">
-                <div class="inline-flex items-center justify-center p-3 bg-indigo-100 rounded-xl mb-6">
-                  <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                </div>
+                <div class="inline-flex items-center justify-center p-3 bg-indigo-100 rounded-xl mb-6"><svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg></div>
                 <h4 class="text-xl font-bold text-gray-900 mb-3">Contact & Audit</h4>
-                <p class="text-gray-600 leading-relaxed text-sm">
-                  Vous décrivez votre besoin. Nous analysons un échantillon de vos données et nous vous proposons une <strong>tâche test gratuite</strong> pour prouver la faisabilité.
-                </p>
+                <p class="text-gray-600 leading-relaxed text-sm">Vous décrivez votre besoin. Nous analysons un échantillon de vos données et nous vous proposons une <strong>tâche test gratuite</strong> pour prouver la faisabilité.</p>
               </div>
             </div>
-
             <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300 relative overflow-hidden">
               <span class="absolute -right-4 -top-4 text-9xl font-bold text-gray-100 select-none z-0">2</span>
               <div class="relative z-10">
-                <div class="inline-flex items-center justify-center p-3 bg-sky-100 rounded-xl mb-6">
-                  <svg class="w-8 h-8 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </div>
+                <div class="inline-flex items-center justify-center p-3 bg-sky-100 rounded-xl mb-6"><svg class="w-8 h-8 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
                 <h4 class="text-xl font-bold text-gray-900 mb-3">Validation</h4>
-                <p class="text-gray-600 leading-relaxed text-sm">
-                  Nous vous livrons le résultat du test. Vous validez la qualité et le gain de temps. Si tout est OK, nous vous fournissons un <strong>devis précis</strong>.
-                </p>
+                <p class="text-gray-600 leading-relaxed text-sm">Nous vous livrons le résultat du test. Vous validez la qualité et le gain de temps. Si tout est OK, nous vous fournissons un <strong>devis précis</strong>.</p>
               </div>
             </div>
-
             <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300 relative overflow-hidden">
               <span class="absolute -right-4 -top-4 text-9xl font-bold text-gray-100 select-none z-0">3</span>
               <div class="relative z-10">
-                <div class="inline-flex items-center justify-center p-3 bg-lime-100 rounded-xl mb-6">
-                  <svg class="w-8 h-8 text-lime-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V7a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                </div>
+                <div class="inline-flex items-center justify-center p-3 bg-lime-100 rounded-xl mb-6"><svg class="w-8 h-8 text-lime-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V7a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></div>
                 <h4 class="text-xl font-bold text-gray-900 mb-3">Mission & Facture</h4>
-                <p class="text-gray-600 leading-relaxed text-sm">
-                  Nous traitons l'ensemble de vos données selon le devis. La facturation est émise à la <strong>fin de la prestation</strong> pour votre gestionnaire.
-                </p>
+                <p class="text-gray-600 leading-relaxed text-sm">Nous traitons l'ensemble de vos données selon le devis. La facturation est émise à la <strong>fin de la prestation</strong> pour votre gestionnaire.</p>
               </div>
             </div>
-
           </div>
-      
         </div>
       </section>
 
-      <!-- Section Confidentialité (CRUCIALE) -->
       <section id="confidentialite" class="bg-gray-900 text-white py-16 sm:py-24 fade-in-section">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
           <div class="flex flex-col lg:flex-row items-start gap-12">
-          
             <div class="lg:w-1/3 lg:sticky lg:top-24">
                 <div class="flex items-center mb-6">
-                    <svg class="w-12 h-12 text-sky-400/70 mr-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                    </svg>
-                    <h2 class="text-3xl font-extrabold leading-tight">
-                      Engagement<br>Sécurité &<br>Confidentialité
-                    </h2>
+                    <svg class="w-12 h-12 text-sky-400/70 mr-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+                    <h2 class="text-3xl font-extrabold leading-tight">Engagement<br>Sécurité &<br>Confidentialité</h2>
                 </div>
-                <p class="text-lg text-gray-300 leading-relaxed">
-                  Nous manipulons des données de recherche sensibles, non publiées et précieuses. La confiance absolue est la base de notre collaboration.
-                </p>
+                <p class="text-lg text-gray-300 leading-relaxed">Nous manipulons des données de recherche sensibles, non publiées et précieuses. La confiance absolue est la base de notre collaboration.</p>
             </div>
-
             <div class="lg:w-2/3 bg-gray-800/50 rounded-2xl p-8 md:p-10 border border-gray-700 shadow-inner backdrop-blur-sm">
                 <ul class="space-y-6">
                     <li class="flex items-start">
                         <svg class="w-6 h-6 flex-shrink-0 text-lime-400 mr-4 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        <div>
-                            <strong class="text-white block mb-1">Accord de Non-Divulgation (NDA)</strong>
-                            <span class="text-gray-300">Nous nous engageons par écrit (si vous le souhaitez) à ne jamais divulguer, partager ou réutiliser vos données.</span>
-                        </div>
+                        <div><strong class="text-white block mb-1">Accord de Non-Divulgation (NDA)</strong><span class="text-gray-300">Nous nous engageons par écrit (si vous le souhaitez) à ne jamais divulguer, partager ou réutiliser vos données.</span></div>
                     </li>
                     <li class="flex items-start">
                         <svg class="w-6 h-6 flex-shrink-0 text-lime-400 mr-4 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        <div>
-                            <strong class="text-white block mb-1">Transferts certifiés</strong>
-                            <span class="text-gray-300">Utilisation exclusive de canaux sécurisés et chiffrés (type BlueFiles) pour l'envoi et la réception de vos documents.</span>
-                        </div>
+                        <div><strong class="text-white block mb-1">Transferts certifiés</strong><span class="text-gray-300">Utilisation exclusive de canaux sécurisés et chiffrés (type BlueFiles) pour l'envoi et la réception de vos documents.</span></div>
                     </li>
                     <li class="flex items-start">
                         <svg class="w-6 h-6 flex-shrink-0 text-lime-400 mr-4 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        <div>
-                            <strong class="text-white block mb-1">Stockage chiffré</strong>
-                            <span class="text-gray-300">Toutes les données sont stockées sur des supports chiffrés (Bitlocker). En cas de vol physique, elles restent mathématiquement inaccessibles.</span>
-                        </div>
+                        <div><strong class="text-white block mb-1">Stockage chiffré</strong><span class="text-gray-300">Toutes les données sont stockées sur des supports chiffrés (Bitlocker). En cas de vol physique, elles restent mathématiquement inaccessibles.</span></div>
                     </li>
                     <li class="flex items-start">
                         <svg class="w-6 h-6 flex-shrink-0 text-lime-400 mr-4 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        <div>
-                            <strong class="text-white block mb-1">Politique 'Zéro Trace'</strong>
-                            <span class="text-gray-300">Engagement ferme de suppression définitive de toutes vos données (locales et cloud) sous 30 jours après validation.</span>
-                        </div>
+                        <div><strong class="text-white block mb-1">Architecture Pseudonymisée</strong><span class="text-gray-300">Vos données d'identité sont stockées dans une base "Coffre-fort" isolée physiquement des données de mission. En cas d'analyse technique, vos fichiers sont anonymes.</span></div>
                     </li>
                     <li class="flex items-start">
                         <svg class="w-6 h-6 flex-shrink-0 text-lime-400 mr-4 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        <div>
-                            <strong class="text-white block mb-1">Protection contre l'IA</strong>
-                            <span class="text-gray-300">Vos données ne sont jamais, sous aucun prétexte, utilisées pour entraîner des modèles d'intelligence artificielle.</span>
-                        </div>
+                        <div><strong class="text-white block mb-1">Politique 'Zéro Trace'</strong><span class="text-gray-300">Engagement ferme de suppression définitive de toutes vos données (locales et cloud) sous 30 jours après validation.</span></div>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-6 h-6 flex-shrink-0 text-lime-400 mr-4 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <div><strong class="text-white block mb-1">Protection contre l'IA</strong><span class="text-gray-300">Vos données ne sont jamais, sous aucun prétexte, utilisées pour entraîner des modèles d'intelligence artificielle.</span></div>
                     </li>
                 </ul>
-                <p class="mt-8 pt-6 border-t border-gray-700 text-sm text-gray-400 italic">
-                    Ces protocoles stricts sont conçus pour vous aider à respecter vos propres obligations RGPD lorsque vous sous-traitez vos analyses.
-                </p>
+                <p class="mt-8 pt-6 border-t border-gray-700 text-sm text-gray-400 italic">Ces protocoles stricts sont conçus pour vous aider à respecter vos propres obligations RGPD lorsque vous sous-traitez vos analyses.</p>
             </div>
-
           </div>
         </div>
       </section>
 
-      <!-- Section Tarifs -->
       <section id="tarifs" class="bg-gray-100 pt-16 sm:pt-24 pb-12 fade-in-section">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center">
-            <h2
-              class="text-lg font-semibold text-indigo-600 tracking-wide uppercase"
-            >
-              Tarifs
-            </h2>
-            <p class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900">
-              Transparent et adapté à la recherche
-            </p>
+            <h2 class="text-lg font-semibold text-indigo-600 tracking-wide uppercase">Tarifs</h2>
+            <p class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900">Transparent et adapté à la recherche</p>
           </div>
-          <div
-            class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto"
-          >
-            <!-- Offre 1: Test Gratuit -->
-            <div
-              id="plan-essai"
-              class="bg-white p-8 rounded-lg shadow-lg border-2 border-transparent cursor-pointer transition-all"
-            >
+          <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div id="plan-essai" class="bg-white p-8 rounded-lg shadow-lg border-2 border-transparent cursor-pointer transition-all">
               <h3 class="text-2xl font-semibold text-gray-900">Test Gratuit</h3>
-              <p class="mt-2 text-gray-600">
-                Votre première tâche, sans engagement.
-              </p>
-              <p class="mt-6">
-                <span class="text-5xl font-extrabold text-gray-900">0 €</span>
-              </p>
+              <p class="mt-2 text-gray-600">Votre première tâche, sans engagement.</p>
+              <p class="mt-6"><span class="text-5xl font-extrabold text-gray-900">0 €</span></p>
             </div>
-            <!-- Offre 2: Par Tâche -->
-            <div
-              id="plan-devis"
-              class="bg-white p-8 rounded-lg shadow-lg border-2 border-transparent cursor-pointer transition-all flex flex-col"
-            >
+            <div id="plan-devis" class="bg-white p-8 rounded-lg shadow-lg border-2 border-transparent cursor-pointer transition-all flex flex-col">
               <h3 class="text-2xl font-semibold text-gray-900">Demande de devis</h3>
               <p class="mt-2 text-gray-600">Pour tous vos besoins réguliers.</p>
               <p class="mt-6">
@@ -516,48 +267,51 @@
               </p>
             </div>
           </div>
+          <div class="text-center mt-8">
+            <a href="./exemples_taches.pdf" target="_blank" class="text-base font-medium text-indigo-600 hover:text-indigo-500 transition-colors">
+              Voir des exemples de tâches &rarr;
+            </a>
+          </div>
         </div>
       </section>
 
-      <!-- Section Contact (Dynamique) -->
       <section id="contact-devis" class="bg-gray-100 pt-16 pb-24 fade-in-section">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start" id="demande-de-devis">
             
-            <div class="text-left lg:sticky lg:top-24"> <h2 id="contact-title" class="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight">
-                </h2>
-              <p id="contact-description" class="mt-4 text-lg text-gray-600">
-                </p>
+            <div class="text-left lg:sticky lg:top-24"> 
+              <h2 id="contact-title" class="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight"></h2>
+              <p id="contact-description" class="mt-4 text-lg text-gray-600"></p>
               
               <div class="mt-10 space-y-4">
                 <div class="flex items-center text-gray-700">
-                  <svg class="w-6 h-6 mr-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  <svg class="w-6 h-6 mr-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                   <span>Réponse garantie sous 24h ouvrées.</span>
                 </div>
                 <div class="flex items-center text-gray-700">
-                  <svg class="w-6 h-6 mr-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                  <svg class="w-6 h-6 mr-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                   <span>Vos informations restent strictement confidentielles.</span>
                 </div>
               </div>
             </div>
 
             <div class="bg-white p-8 rounded-xl shadow-xl border border-gray-100">
-              <form action="/.netlify/functions/submit-form" method="POST">
+              <form id="demande-form">
                 <div class="grid grid-cols-1 gap-y-6">
-                      <input id="contact-subject" type="hidden" name="subject" value="Nouvelle demande de devis" />
+                      <input id="contact-subject" type="hidden" name="type_projet" value="Devis" />
 
                       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <div>
+                        <div id="field-laboratory">
                           <label for="laboratory" class="block text-sm font-medium text-gray-700">Nom du laboratoire / Institution</label>
                           <div class="mt-1">
-                            <input type="text" name="laboratory" id="laboratory" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50" />
+                            <input type="text" name="nom" id="laboratory" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50" />
                           </div>
                         </div>
                         <div>
                           <label for="full-name" class="block text-sm font-medium text-gray-700">Nom du représentant / contact</label>
                           <div class="mt-1">
-                            <input type="text" name="full-name" id="full-name" autocomplete="name" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50" /> </div>
+                            <input type="text" name="contact" id="full-name" autocomplete="name" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50" /> </div>
                         </div>
                       </div>
                       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -567,17 +321,25 @@
                             <input id="email" name="email" type="email" autocomplete="email" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50" />
                           </div>
                         </div>
-                        <div>
+                        <div id="field-fonction">
                           <label for="fonction" class="block text-sm font-medium text-gray-700">Fonction du représentant</label>
                           <div class="mt-1">
                             <input type="text" name="fonction" id="fonction" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50" />
                           </div>
                         </div>
                       </div>
-                      <div>
+                      
+                      <div id="field-telephone">
+                        <label for="telephone" class="block text-sm font-medium text-gray-700">Téléphone</label>
+                        <div class="mt-1">
+                            <input type="tel" name="telephone" id="telephone" class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50" />
+                        </div>
+                      </div>
+
+                      <div id="field-adresse">
                         <label for="adresse" class="block text-sm font-medium text-gray-700">Adresse de facturation</label>
                         <div class="mt-1">
-                          <textarea id="adresse" name="adresse" rows="3" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50"></textarea></div>
+                          <textarea id="adresse" name="adresse" rows="2" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50"></textarea></div>
                       </div>
                       <div>
                         <label for="message" id="contact-message-label" class="block text-sm font-medium text-gray-700">Décrivez votre besoin</label>
@@ -588,10 +350,7 @@
 
                       <div id="urgent-request-container" class="relative flex items-start pt-6">
                           <div class="flex items-center h-5">
-                              <!-- Ce premier input est pour la donnée que vous recevrez. Il est caché. -->
-                              <input type="hidden" name="Traitement Urgent" value="Non">
-                              <!-- La case à cocher visible par l'utilisateur -->
-                              <input id="urgent-checkbox" name="Traitement Urgent" type="checkbox" value="Oui (+50%)" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                              <input id="urgent-checkbox" name="urgent" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
                           </div>
                           <div class="ml-3 text-sm">
                               <label for="urgent-checkbox" class="font-medium text-gray-700">Traitement urgent
@@ -614,51 +373,37 @@
         </div>
       </section>
 
-    <!-- Footer -->
     <footer class="bg-gray-900 text-gray-400 py-10 border-t border-gray-800">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <div class="flex flex-col-reverse md:flex-row justify-between items-center gap-6 md:gap-0">
-          
-          <div class="text-center md:text-left">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+          <!-- Copyright (gauche) -->
+          <div class="text-center md:text-left text-sm">
             <p class="text-sm font-medium text-gray-300">
                 &copy; 2025 Bourachot Tom - AnaByo
             </p>
-            <p class="mt-1 text-xs text-gray-500">
-                Tous droits réservés.
-            </p>
+            <p class="mt-1 text-xs text-gray-500">Tous droits réservés.</p>
           </div>
 
-          <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8">
-            
-            <nav class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
-              <a href="#confidentialite" class="hover:text-white transition-colors duration-200">Confidentialité</a>
-              <a href="./documents.html" class="hover:text-white transition-colors duration-200">Documents</a>
-              <a href="./mentions-legales.html" class="hover:text-white transition-colors duration-200">Mentions Légales</a>
-            </nav>
+          <!-- Navigation (centre) -->
+          <nav class="flex justify-center gap-x-4 text-sm">
+            <a href="#confidentialite" class="hover:text-white transition-colors duration-200">Confidentialité</a>
+            <a href="./documents.html" class="hover:text-white transition-colors duration-200">Documents</a>
+            <a href="./mentions-legales.html" class="hover:text-white transition-colors duration-200 whitespace-nowrap">Mentions Légales</a>
+            <a href="./espace-client.html" class="hover:text-white transition-colors duration-200 whitespace-nowrap">Espace Client</a>
+          </nav>
 
-            <div class="hidden md:block h-4 w-px bg-gray-700"></div>
-
-            <div class="text-sm flex flex-col md:flex-row items-center gap-1 md:gap-2">
-              <span class="text-gray-500">Contact hors demande de devis :</span>
-              <a href="mailto:anabyopro@gmail.com" 
-                id="copy-email-link"
-                class="text-gray-200 hover:text-indigo-100 transition-colors duration-200 cursor-pointer font-medium">
-                anabyopro@gmail.com
-              </a>
-            </div>
-
-            <div class="hidden md:block h-4 w-px bg-gray-700"></div>
-
+          <!-- Contact & Social (droite) -->
+          <div class="flex justify-center md:justify-end items-center gap-6">
+            <a href="mailto:contact@anabyo.com" id="copy-email-link" class="text-sm text-gray-300 hover:text-white transition-colors duration-200 cursor-pointer font-medium">
+              contact@anabyo.com
+            </a>
             <a href="https://www.linkedin.com/in/tom-bourachot44/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors duration-200">
               <span class="sr-only">LinkedIn</span>
               <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
               </svg>
             </a>
-
           </div>
-
         </div>
       </div>
     </footer>
@@ -705,7 +450,7 @@
             messageLabel:
               'Décrivez la tâche pour l\'essai gratuit',
             buttonText: "Lancer notre essai gratuit",
-            subject: "Nouvelle demande d'essai gratuit",
+            subject: "Essai Gratuit",
           },
           devis: {
             title: "Recevez notre devis personnalisé", 
@@ -713,17 +458,17 @@
             messageLabel:
               'Décrivez votre besoin',
             buttonText: "Obtenir mon devis",
-            subject: "Nouvelle demande de devis",
+            subject: "Devis",
           },
         };
 
         function updateForm(plan) {
           contactTitle.textContent = content[plan].title;
-          contactDescription.innerHTML = content[plan].description; // Utiliser innerHTML pour interpréter le lien <a>
+          contactDescription.innerHTML = content[plan].description; 
           contactMessageLabel.textContent = content[plan].messageLabel;
           contactSubmitButton.textContent = content[plan].buttonText;
-          contactSubject.value = content[plan].subject;
-          document.getElementById('urgent-checkbox').checked = false; // Décocher la case par défaut
+          contactSubject.value = content[plan].subject; // Met à jour le type de projet
+          document.getElementById('urgent-checkbox').checked = false; 
 
           // Affiche ou masque l'option urgente
           if (plan === 'devis') {
@@ -733,18 +478,6 @@
           }
         }
 
-        // Mettre à jour le sujet de l'email si la case "urgent" est cochée
-        const urgentCheckbox = document.getElementById('urgent-checkbox');
-        if (urgentCheckbox) {
-            urgentCheckbox.addEventListener('change', function() {
-                const originalSubject = content[planDevis.classList.contains('border-indigo-600') ? 'devis' : 'essai'].subject;
-                if (this.checked) {
-                    contactSubject.value = `[URGENT] ${originalSubject}`;
-                } else {
-                    contactSubject.value = originalSubject;
-                }
-            });
-        }
         function selectPlan(planElement, planType) {
           // Reset both plans
           planEssai.classList.remove(...selectedClasses);
@@ -762,18 +495,58 @@
         planEssai.addEventListener("click", () => selectPlan(planEssai, "essai"));
         planDevis.addEventListener("click", () => selectPlan(planDevis, "devis"));
 
-        // Gérer le défilement fluide pour tous les liens d'ancre
+        // --- GESTION DE L'ENVOI DU FORMULAIRE ---
+        const contactForm = document.getElementById('demande-form');
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Empêche le rechargement de la page
+
+            const btn = document.getElementById('contact-submit-button');
+            const originalText = btn.textContent;
+            btn.textContent = "Envoi en cours...";
+            btn.disabled = true;
+
+            const formData = new FormData(contactForm);
+            // Convertir en objet simple
+            const data = Object.fromEntries(formData.entries());
+            // Si le champ "nom" (Laboratoire) est vide (cas Essai Gratuit), on utilise le nom du contact
+            if (!data.nom && data.contact) {
+                data.nom = data.contact;
+            }
+            // Gérer la case à cocher (vrai/faux)
+            data.urgent = contactForm.querySelector('[name="urgent"]').checked;
+
+            try {
+                const response = await fetch('/.netlify/functions/submit-request', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // --- REDIRECTION ICI AU LIEU DE L'ALERTE ---
+                    window.location.href = "remerciement.html"; 
+                } else {
+                    alert("Erreur : " + (result.error || "Une erreur est survenue"));
+                }
+            } catch (error) {
+                console.error("Erreur fetch:", error);
+                alert("Impossible de contacter le serveur.");
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        // Gérer le défilement fluide
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
-                // On ne veut pas interférer avec les boutons déjà gérés
-                if (this.id === 'cta-header-devis' || this.id === 'cta-hero-essai') {
-                    return;
-                }
+                if (this.id === 'cta-header-devis' || this.id === 'cta-hero-essai') return;
                 e.preventDefault();
                 const targetId = this.getAttribute('href');
                 const targetElement = document.querySelector(targetId);
                 if (targetElement) {
-                    const headerOffset = 80; // Hauteur du header
+                    const headerOffset = 80;
                     const elementPosition = targetElement.getBoundingClientRect().top;
                     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
                     window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
@@ -784,10 +557,10 @@
         // Gérer les clics sur les boutons d'appel à l'action
         if (ctaHeaderDevis) {
           ctaHeaderDevis.addEventListener("click", (event) => {
-            event.preventDefault(); // Empêche le saut d'ancre par défaut
+            event.preventDefault();
             selectPlan(planDevis, "devis");
             const targetElement = document.getElementById('demande-de-devis');
-            const headerOffset = 100; // Hauteur du header + marge
+            const headerOffset = 100;
             const elementPosition = targetElement.getBoundingClientRect().top;
             const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
@@ -795,100 +568,64 @@
         }
         if (ctaHeroEssai) {
           ctaHeroEssai.addEventListener("click", (event) => {
-            event.preventDefault(); // Empêche le saut d'ancre par défaut
+            event.preventDefault();
             selectPlan(planEssai, "essai");
             const targetElement = document.getElementById('demande-de-devis');
-            const headerOffset = 100; // Hauteur du header + marge
+            const headerOffset = 100;
             const elementPosition = targetElement.getBoundingClientRect().top;
             const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
           });
         }
 
-        // Gérer la copie de l'e-mail avec notification au curseur
+        // Copie email
         if (copyEmailLink) {
           copyEmailLink.addEventListener("click", function (event) {
-            event.preventDefault(); // Empêche l'ouverture du client mail
+            event.preventDefault();
             const email = this.innerText;
-
             navigator.clipboard.writeText(email).then(() => {
-              // Créer l'élément de notification
               const notification = document.createElement('div');
               notification.textContent = 'Copié !';
-              
-              // Appliquer les styles
               Object.assign(notification.style, {
-                position: 'absolute',
-                left: `${event.pageX + 15}px`,
-                top: `${event.pageY}px`,
-                background: '#2d3748', // Gris foncé
-                color: 'white',
-                padding: '4px 8px',
-                borderRadius: '4px',
-                fontSize: '12px',
-                zIndex: '1000',
-                transition: 'opacity 0.5s ease-out'
+                position: 'absolute', left: `${event.pageX + 15}px`, top: `${event.pageY}px`,
+                background: '#2d3748', color: 'white', padding: '4px 8px', borderRadius: '4px',
+                fontSize: '12px', zIndex: '1000', transition: 'opacity 0.5s ease-out'
               });
-
               document.body.appendChild(notification);
-
-              // Faire disparaître et supprimer l'élément
               setTimeout(() => {
                 notification.style.opacity = '0';
-                setTimeout(() => {
-                  document.body.removeChild(notification);
-                }, 500); // Attendre la fin de la transition
-              }, 1500); // Commencer à disparaître après 1.5s
+                setTimeout(() => document.body.removeChild(notification), 500);
+              }, 1500);
             });
           });
         }
 
-        // Set default selection on page load
+        // Set default selection
         selectPlan(planDevis, "devis");
 
-        // --- Script pour l'animation au défilement ---
+        // Animation fade-in
         const sections = document.querySelectorAll('.fade-in-section');
-
         const observer = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('is-visible');
-            }
+            if (entry.isIntersecting) entry.target.classList.add('is-visible');
           });
-        }, {
-          rootMargin: '0px',
-          threshold: 0.1 // Déclenche l'animation quand 10% de la section est visible
-        });
+        }, { rootMargin: '0px', threshold: 0.1 });
+        sections.forEach(section => observer.observe(section));
 
-        sections.forEach(section => {
-          observer.observe(section);
-        });
-
-        // --- Script pour le menu déroulant ---
-
+        // Menus (Dropdown & Mobile)
         const dropdownContainer = document.getElementById('dropdown-container');
         const dropdownMenu = document.getElementById('dropdown-menu');
         let timeoutId;
-
         if (dropdownContainer && dropdownMenu) {
-          const showDropdown = () => {
-            clearTimeout(timeoutId);
-            dropdownMenu.classList.remove('hidden');
-          };
-          const hideDropdown = () => {
-            timeoutId = setTimeout(() => dropdownMenu.classList.add('hidden'), 200);
-          };
-
+          const showDropdown = () => { clearTimeout(timeoutId); dropdownMenu.classList.remove('hidden'); };
+          const hideDropdown = () => { timeoutId = setTimeout(() => dropdownMenu.classList.add('hidden'), 200); };
           dropdownContainer.addEventListener('mouseenter', showDropdown);
           dropdownContainer.addEventListener('mouseleave', hideDropdown);
         }
-
-        // --- Script pour le menu mobile ---
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
         const hamburgerIcon = document.getElementById('hamburger-icon');
         const closeIcon = document.getElementById('close-icon');
-
         if (mobileMenuButton && mobileMenu) {
           mobileMenuButton.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');

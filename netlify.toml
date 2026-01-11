@@ -1,8 +1,13 @@
 [build]
   functions = "netlify/functions/"
   command = "npm install"
-  publish = "." # Publie le répertoire racine où se trouve index.html
+  publish = "."
 
 [functions]
   node_bundler = "esbuild"
+  directory = "netlify/functions/"
+  # LA LIGNE CI-DESSOUS EST LA PLUS IMPORTANTE :
+  external_node_modules = ["@netlify/functions", "@sparticuz/chromium"]
 
+[functions.send-reminders]
+  schedule = "0 10 * * *"

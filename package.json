@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
+    "@netlify/functions": "^5.1.0",
+    "@sparticuz/chromium": "^141.0.0",
     "@supabase/supabase-js": "^2.81.1",
     "dotenv": "^16.6.1",
+    "puppeteer-core": "^24.30.0",
     "resend": "^3.2.0",
     "scripts": "^0.1.0"
   },

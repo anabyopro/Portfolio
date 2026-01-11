@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Espace Client AnaByo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 flex flex-col min-h-screen">
+    <header class="bg-white shadow-sm">
+      <div
+        class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center"
+      >
+        <h1 class="text-2xl font-bold flex items-center">
+          <span class="text-sky-400">Ana</span>
+          <span class="text-lime-500">Byo</span>
+          <span
+            class="text-gray-400 font-normal text-lg ml-3 border-l-2 border-gray-200 pl-3"
+            >Espace Client</span
+          >
+        </h1>
+        <a
+          href="index.html"
+          class="text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors"
+        >
+          Retour au site &rarr;
+        </a>
+      </div>
+    </header>
+
+    <main class="flex-grow py-12">
+      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div
+          id="login-container"
+          class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-2xl"
+        >
+          <h2 class="text-xl font-semibold text-gray-900 mb-6 text-center">
+            Connexion à votre Espace
+          </h2>
+
+          <div id="step-email">
+            <label
+              for="email-input"
+              class="block text-sm font-medium text-gray-700 mb-2"
+              >Votre adresse e-mail</label
+            >
+            <input
+              type="email"
+              id="email-input"
+              class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+              placeholder="vous@societe.com"
+            />
+            <p class="text-sm text-red-600 mt-2" id="email-error-message"></p>
+            <button
+              onclick="sendCode()"
+              id="btn-send-code"
+              class="w-full mt-6 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 font-medium transition-colors"
+            >
+              Recevoir mon code d'accès
+            </button>
+          </div>
+
+          <div id="step-code" class="hidden">
+            <p class="text-sm text-gray-600 mb-4">
+              Un code a été envoyé à
+              <span id="display-email" class="font-bold"></span>.
+            </p>
+            <label
+              for="code-input"
+              class="block text-sm font-medium text-gray-700 mb-2"
+              >Code à 6 chiffres</label
+            >
+
+            <input
+              type="text"
+              id="code-input"
+              maxlength="6"
+              class="w-full border border-gray-300 rounded-lg px-4 py-2 text-center text-2xl tracking-widest focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              placeholder="000000"
+            />
+
+            <div
+              id="auth-error-message"
+              class="text-sm font-medium text-red-600 mb-4 mt-2 min-h-[20px]"
+            ></div>
+
+            <button
+              onclick="verifyAuth()"
+              id="btn-verify-code"
+              class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 font-medium transition-colors"
+            >
+              Accéder à mes dossiers
+            </button>
+            <button
+              onclick="resetLogin()"
+              class="w-full mt-2 text-sm text-gray-500 hover:text-gray-700"
+            >
+              Changer d'email
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="dashboard-container"
+          class="hidden bg-white p-8 rounded-xl shadow-2xl"
+        >
+          <div class="flex justify-between items-center mb-6 border-b pb-4">
+            <h2 class="text-2xl font-semibold text-gray-900">
+              Bonjour
+              <span id="client-name" class="font-bold text-indigo-600"></span>,
+            </h2>
+            <button
+              onclick="logout()"
+              class="text-sm text-indigo-600 hover:text-indigo-800 font-medium transition-colors"
+            >
+              Déconnexion
+            </button>
+          </div>
+          <p class="text-gray-600 mb-6">
+            Voici l'historique de vos collaborations avec AnaByo.
+          </p>
+
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Date
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Référence
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Type
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Statut
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Documents
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                id="missions-table-body"
+                class="bg-white divide-y divide-gray-200"
+              ></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="bg-white border-t mt-auto">
+      <div
+        class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500"
+      >
+        &copy; 2025 AnaByo. Tous droits réservés.
+      </div>
+    </footer>
+
+    <script>
+      let userEmail = "";
+      let clientMissions = [];
+
+      function getStatusColor(statut) {
+        switch (statut) {
+          case "Terminée":
+            return "bg-green-100 text-green-800";
+          case "Acceptée":
+            return "bg-blue-100 text-blue-800";
+          case "En cours":
+            return "bg-yellow-100 text-yellow-800";
+          case "Devis envoyé":
+            return "bg-indigo-100 text-indigo-800";
+          case "Refusée":
+            return "bg-red-100 text-red-800";
+          default:
+            return "bg-gray-100 text-gray-800";
+        }
+      }
+
+      function resetLogin() {
+        document.getElementById("step-email").classList.remove("hidden");
+        document.getElementById("step-code").classList.add("hidden");
+        document.getElementById("email-input").value = userEmail;
+        document.getElementById("code-input").value = "";
+        document.getElementById("auth-error-message").textContent = "";
+      }
+
+      function logout() {
+        userEmail = "";
+        clientMissions = [];
+        document.getElementById("dashboard-container").classList.add("hidden");
+        document.getElementById("login-container").classList.remove("hidden");
+        resetLogin();
+      }
+
+      async function sendCode() {
+        const email = document.getElementById("email-input").value.trim();
+        const btn = document.getElementById("btn-send-code");
+        const errorElement = document.getElementById("email-error-message");
+
+        if (!email || !email.includes("@")) {
+          errorElement.textContent =
+            "Veuillez entrer une adresse e-mail valide.";
+          return;
+        }
+        errorElement.textContent = "";
+        btn.textContent = "Envoi en cours...";
+        btn.disabled = true;
+
+        try {
+          const response = await fetch("/.netlify/functions/auth-request", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          });
+
+          if (response.ok) {
+            userEmail = email;
+            document.getElementById("display-email").textContent = email;
+            document.getElementById("step-email").classList.add("hidden");
+            document.getElementById("step-code").classList.remove("hidden");
+          } else {
+            const data = await response.json();
+            errorElement.textContent =
+              data.error || "Erreur lors de l'envoi. Vérifiez votre email.";
+          }
+        } catch (e) {
+          errorElement.textContent = "Erreur réseau ou serveur.";
+        } finally {
+          if (
+            !document.getElementById("step-email").classList.contains("hidden")
+          ) {
+            btn.textContent = "Recevoir mon code d'accès";
+            btn.disabled = false;
+          }
+        }
+      }
+
+      async function verifyAuth() {
+        const code = document.getElementById("code-input").value;
+        const btn = document.getElementById("btn-verify-code");
+        const errorElement = document.getElementById("auth-error-message");
+
+        errorElement.textContent = "";
+        btn.textContent = "Vérification...";
+        btn.disabled = true;
+
+        try {
+          const response = await fetch("/.netlify/functions/auth-verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: userEmail, code }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            clientMissions = data.missions || [];
+            document.getElementById("login-container").classList.add("hidden");
+            document
+              .getElementById("dashboard-container")
+              .classList.remove("hidden");
+            document.getElementById("client-name").textContent =
+              data.clientName;
+            renderMissions(clientMissions);
+          } else {
+            if (data.remainingAttempts !== undefined) {
+              const attempts = data.remainingAttempts;
+              let message;
+              if (attempts <= 0) {
+                message =
+                  "Trop de tentatives. Veuillez demander un nouveau code.";
+              } else {
+                message = `Code incorrect. Il vous reste ${attempts} tentative(s).`;
+              }
+              errorElement.textContent = message;
+            } else {
+              errorElement.textContent = data.error || "Erreur inconnue.";
+            }
+            btn.textContent = "Accéder à mes dossiers";
+          }
+        } catch (e) {
+          errorElement.textContent = "Erreur réseau ou serveur.";
+        } finally {
+          if (
+            document
+              .getElementById("dashboard-container")
+              .classList.contains("hidden")
+          ) {
+            btn.disabled = false;
+          }
+        }
+      }
+
+      function viewDocument(trackingId, docType) {
+        if (!userEmail) {
+          alert("Session expirée. Veuillez vous reconnecter.");
+          logout();
+          return;
+        }
+
+        if (docType === "facture") {
+          const mission = clientMissions.find(
+            (m) => m.tracking_id === trackingId
+          );
+          if (mission && mission.facture_url) {
+            window.open(mission.facture_url, "_blank");
+          } else {
+            alert("La facture n'est pas encore disponible pour ce dossier.");
+          }
+          return;
+        }
+
+        if (docType === "journal") {
+          const reportUrl = `/.netlify/functions/client-report?trackingId=${trackingId}&email=${encodeURIComponent(
+            userEmail
+          )}`;
+          window.open(reportUrl, "_blank");
+        }
+      }
+
+      function renderMissions(missions) {
+        const tableBody = document.getElementById("missions-table-body");
+        tableBody.innerHTML = "";
+
+        if (missions.length === 0) {
+          tableBody.innerHTML =
+            '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Aucun dossier trouvé.</td></tr>';
+          return;
+        }
+
+        missions.forEach((mission) => {
+          const date = new Date(mission.created_at).toLocaleDateString("fr-FR");
+          const statutClass = getStatusColor(mission.statut);
+
+          // --- BOUTONS SANS LOGO ---
+          // Journal : Texte seul
+          let actionsHtml = `<a href="javascript:void(0);" onclick="viewDocument('${mission.tracking_id}', 'journal')" class="text-indigo-600 hover:text-indigo-900 font-medium">Journal</a>`;
+
+          // Facture : Texte seul (Vert si dispo, Gris sinon)
+          if (mission.facture_url) {
+            actionsHtml += `
+                <span class="text-gray-300 mx-2">|</span>
+                <a href="javascript:void(0);" onclick="viewDocument('${mission.tracking_id}', 'facture')" class="text-green-600 hover:text-green-800 font-medium">Facture</a>
+            `;
+          } else {
+            actionsHtml += `<span class="text-gray-300 mx-2">|</span> <span class="text-gray-400 text-sm cursor-not-allowed" title="Pas encore disponible">Facture</span>`;
+          }
+          // -------------------------
+
+          const row = tableBody.insertRow();
+          row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-mono">${mission.tracking_id}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${mission.type_demande}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statutClass}">
+                    ${mission.statut}
+                </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-left text-sm">
+                ${actionsHtml}
+            </td>
+        `;
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("email-input").value = "";
+      });
+    </script>
+  </body>
+</html>

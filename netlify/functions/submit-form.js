@@ -36,29 +36,59 @@ exports.handler = async function (event, context) {
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY; // On utilise la clé service pour écrire
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    // 1. Gestion de l'identité client (comme dans submit-request.js)
+    let { data: client } = await supabase.from('clients_identite').select('id').eq('email', email).single();
+
+    if (!client) {
+        const { data: newClient, error: clientError } = await supabase
+            .from('clients_identite')
+            .insert({
+                email: email,
+                nom_complet: laboratory, // Le nom du labo est le nom du client
+                representant: fullName, // Le nom du contact est le représentant
+                fonction: fonction,
+                adresse: adresse
+            })
+            .select('id').single();
+        
+        if (clientError) throw clientError;
+        client = newClient;
+    }
+
     // Générer un identifiant de suivi unique
     const tracking_id = `ANA-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
 
-    const { error: supabaseError } = await supabase
+    // 2. Création de la mission avec la bonne structure
+    const { data: newRequest, error: supabaseError } = await supabase
       .from('demandes_clients')
       .insert({
         tracking_id: tracking_id,
-        nom_client: laboratory, // Le nom du client est maintenant le laboratoire
-        representant: fullName, // Le nom du contact est le représentant
-        email_client: email,
         message: message,
-        fonction: fonction,
-        adresse: adresse,
         type_demande: formSubject.includes('essai') ? 'Essai gratuit' : 'Devis',
-        treatment_details: null, // Ce champ n'est plus utilisé
         is_urgent: urgent && urgent.startsWith('Oui'), // Sera true si la case est cochée
-        // Le statut 'Reçue' est la valeur par défaut dans la DB, pas besoin de le spécifier
-      });
+        created_at: new Date().toISOString(), // On garantit un format de date standard
+        statut: 'Reçue',
+        client_id: client.id // On lie la demande à l'identité du client
+      })
+      .select() // On demande à Supabase de retourner la ligne créée
+      .single(); // On s'attend à un seul résultat
 
     if (supabaseError) {
       console.error('Supabase insert error:', supabaseError);
       // Si l'écriture dans la base de données échoue, on arrête tout.
       throw new Error(`Erreur lors de l'enregistrement dans la base de données : ${supabaseError.message}`);
+    } else if (newRequest) {
+      // Log l'événement de création dans la nouvelle table mission_events
+      await supabase.from('mission_events').insert({
+        request_id: newRequest.id,
+        event_type: 'Création',
+        description: `La demande a été créée par le client via le formulaire.`,
+        metadata: {
+          source: 'formulaire-contact',
+          subject: formSubject
+        }
+      });
+      console.log(`Event 'Création' logged for request ${newRequest.id}`);
     } else {
       console.log(`Request ${tracking_id} saved to Supabase.`);
     }
@@ -68,7 +98,7 @@ exports.handler = async function (event, context) {
 
     // On prépare les deux emails à envoyer
     const notificationEmail = {
-      from: 'AnaByo <onboarding@resend.dev>', // TODO: Remplacer une fois le domaine vérifié
+      from: 'AnaByo <contact@anabyo.com>',
       to: ['anabyopro@gmail.com'],
       subject: `[NOTIFICATION] ${subject}`,
       html: `
@@ -85,10 +115,10 @@ exports.handler = async function (event, context) {
     };
 
     const confirmationEmail = {
-      from: 'AnaByo <onboarding@resend.dev>', // TODO: Remplacer une fois le domaine vérifié
+      from: 'AnaByo <contact@anabyo.com>',
       to: [email],
       subject: 'Confirmation de votre demande chez AnaByo',
-      html: `<p>Bonjour ${fullName},</p><p>Merci de nous avoir contactés !</p><p>Nous avons bien reçu votre demande et nous vous répondrons sous 24 heures ouvrées.</p><p>Votre numéro de suivi est le : <strong>${tracking_id}</strong>.</p><p>Vous pouvez suivre l'avancement de votre demande à tout moment en cliquant sur le lien ci-dessous et en y indiquant votre numéro de suivi:</p><p><a href="${process.env.URL}/suivi.html" style="font-weight: bold;">Suivre ma demande</a></p><p>À très bientôt,<br>L'équipe AnaByo</p>`,
+      html: `<p>Bonjour ${fullName},</p><p>Merci de nous avoir contactés !</p><p>Nous avons bien reçu votre demande et nous vous répondrons sous 24 heures ouvrées.</p><p>Votre numéro de suivi est le : <strong>${tracking_id}</strong>.</p><p>Vous pouvez suivre l'avancement de votre demande et consulter l'historique de vos dossiers à tout moment en vous connectant à votre espace client :</p><p><a href="${process.env.URL}/espace-client.html" style="font-weight: bold;">Accéder à mon Espace Client</a></p><p>À très bientôt,<br>L'équipe AnaByo</p>`,
 
     };
 
