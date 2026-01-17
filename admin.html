@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
@@ -100,13 +100,15 @@
   <div
     id="message-modal"
     class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden"
-    onclick="if(event.target === this) this.classList.add('hidden')"
+    onclick="if (event.target === this) this.classList.add('hidden');"
   >
     <div class="bg-white p-8 rounded-lg shadow-xl max-w-2xl w-full">
       <div id="modal-header" class="flex justify-between items-center mb-4">
         <h2 class="text-2xl font-bold">Détails</h2>
         <button
-          onclick="document.getElementById('message-modal').classList.add('hidden')"
+          onclick="
+            document.getElementById('message-modal').classList.add('hidden')
+          "
           class="text-3xl"
         >
           &times;
@@ -127,7 +129,9 @@
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-bold text-indigo-700">Nouvelle Demande</h2>
         <button
-          onclick="document.getElementById('create-modal').classList.add('hidden')"
+          onclick="
+            document.getElementById('create-modal').classList.add('hidden')
+          "
           class="text-3xl"
         >
           &times;
@@ -209,7 +213,9 @@
       <div class="flex justify-between items-center mb-6">
         <h2 id="invoice-modal-title" class="text-2xl font-bold">Édition</h2>
         <button
-          onclick="document.getElementById('invoice-modal').classList.add('hidden')"
+          onclick="
+            document.getElementById('invoice-modal').classList.add('hidden')
+          "
           class="text-3xl"
         >
           &times;
@@ -304,7 +310,9 @@
         <h1 class="text-4xl font-bold">Tableau de bord</h1>
         <div class="space-x-2">
           <button
-            onclick="document.getElementById('create-modal').classList.remove('hidden')"
+            onclick="
+              document.getElementById('create-modal').classList.remove('hidden')
+            "
             class="bg-indigo-600 text-white px-4 py-2 rounded"
           >
             + Demande
@@ -586,7 +594,7 @@
                 .map(
                   (r) => `
                         <tr class="border-b"><td class="p-2">${r.numero_facture}</td><td class="p-2 text-gray-600">${r.client_nom}</td><td class="p-2 text-right font-bold text-green-600">+${r.montant_ht} €</td></tr>
-                    `
+                    `,
                 )
                 .join("");
             }
@@ -671,7 +679,7 @@
             terminee: "Terminée",
           };
           const filtered = allRequests.filter(
-            (r) => r.statut === statusMap[currentTab]
+            (r) => r.statut === statusMap[currentTab],
           );
           const tbody = document.getElementById("requests-table-body");
           tbody.innerHTML = "";
@@ -684,7 +692,7 @@
 
           filtered.forEach((req) => {
             const date = new Date(req.date_creation).toLocaleDateString(
-              "fr-FR"
+              "fr-FR",
             );
             const typeProjet = (
               req.type_projet ||
@@ -759,9 +767,9 @@
                     <td class="px-6 py-4"><span class="status-badge bg-gray-100">${
                       req.statut
                     }</span>${getRetardBadge(
-              req.date_mise_a_jour,
-              req.statut
-            )}</td>
+                      req.date_mise_a_jour,
+                      req.statut,
+                    )}</td>
                     <td class="px-6 py-4 text-center space-y-2">${actionsHtml}</td>
                     <td class="px-6 py-4 text-center"><button class="export-pdf-btn text-gray-400 hover:text-blue-600" data-id="${
                       req.id
@@ -879,7 +887,7 @@
                 method: "POST",
                 headers: { "x-admin-password": passwordInput.value },
                 body: JSON.stringify(data),
-              }
+              },
             );
 
             if (res.ok) {
@@ -940,9 +948,8 @@
             "px-6 py-2 bg-cyan-600 text-white rounded hover:bg-cyan-700 font-bold";
           btn.innerText = "Générer Facture";
 
-          document.getElementById(
-            "invoice-mission-info"
-          ).innerText = `Dossier : ${trackingId}`;
+          document.getElementById("invoice-mission-info").innerText =
+            `Dossier : ${trackingId}`;
 
           // Pré-remplissage automatique avec le message du client
           const req = allRequests.find((r) => r.id === missionId);
@@ -997,7 +1004,7 @@
           tr.innerHTML = `<td class="p-1"><input class="w-full border rounded p-1 desc-input" value="${desc}"></td><td class="p-1"><input type="number" class="w-full border rounded p-1 text-center qty-input" value="${qty}"></td><td class="p-1"><input type="number" class="w-full border rounded p-1 text-right price-input" value="${price}"></td><td class="p-1 text-center"><button onclick="this.closest('tr').remove(); updateTotal();" class="text-red-500">&times;</button></td>`;
           document.getElementById("invoice-lines").appendChild(tr);
           tr.querySelectorAll("input").forEach((i) =>
-            i.addEventListener("input", updateTotal)
+            i.addEventListener("input", updateTotal),
           );
           updateTotal();
         }
@@ -1009,7 +1016,7 @@
               (r) =>
                 (total +=
                   (parseFloat(r.querySelector(".qty-input").value) || 0) *
-                  (parseFloat(r.querySelector(".price-input").value) || 0))
+                  (parseFloat(r.querySelector(".price-input").value) || 0)),
             );
           document.getElementById("invoice-total").innerText = total.toFixed(2);
         }
@@ -1026,9 +1033,9 @@
                 description: r.querySelector(".desc-input").value,
                 quantite: parseFloat(r.querySelector(".qty-input").value),
                 prix_unitaire: parseFloat(
-                  r.querySelector(".price-input").value
+                  r.querySelector(".price-input").value,
                 ),
-              })
+              }),
             );
 
             const endpoint = "/.netlify/functions/generate-invoice";
@@ -1089,9 +1096,16 @@
           if (t.dataset.action) {
             const id = row.dataset.id;
             const status = t.dataset.action;
-            if (status === "Refusée" && !confirm("Sûr ?")) return;
 
             let body = { id, newStatus: status };
+            if (status === "Refusée") {
+              const reason = prompt(
+                "Veuillez saisir le motif du refus (sera inclus dans l'email) :",
+                "Malheureusement, nous ne pouvons pas donner suite à votre demande car...",
+              );
+              if (reason === null) return; // Annulation si l'utilisateur clique sur Annuler
+              body.rejectionReason = reason;
+            }
             if (status === "Acceptée") {
               const link = row.querySelector(".bluefiles-link-input").value;
               if (!link) return alert("Lien manquant");
@@ -1118,8 +1132,8 @@
             try {
               const res = await fetch(
                 `/.netlify/functions/generate-pdf-report?id=${id}&password=${encodeURIComponent(
-                  passwordInput.value
-                )}`
+                  passwordInput.value,
+                )}`,
               );
               if (!res.ok) throw new Error();
               const blob = await res.blob();
@@ -1142,12 +1156,12 @@
             document
               .querySelectorAll(".tab-btn")
               .forEach((btn) =>
-                btn.classList.replace("text-indigo-600", "text-gray-500")
+                btn.classList.replace("text-indigo-600", "text-gray-500"),
               );
             document
               .querySelectorAll(".tab-btn")
               .forEach((btn) =>
-                btn.classList.remove("border-b-2", "border-indigo-500")
+                btn.classList.remove("border-b-2", "border-indigo-500"),
               );
 
             // Gestion spéciale pour le bouton Trésorerie (couleur verte)
@@ -1155,19 +1169,19 @@
               e.target.classList.add(
                 "text-green-600",
                 "border-b-2",
-                "border-green-500"
+                "border-green-500",
               );
             } else {
               e.target.classList.add(
                 "text-indigo-600",
                 "border-b-2",
-                "border-indigo-500"
+                "border-indigo-500",
               );
             }
             e.target.classList.remove("text-gray-500");
             currentTab = e.target.dataset.tab;
             renderTable();
-          })
+          }),
         );
 
         document

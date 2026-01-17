@@ -15,7 +15,7 @@ exports.handler = async function(event) {
     const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
     try {
-        const { id, newStatus, bluefilesLink } = JSON.parse(event.body);
+        const { id, newStatus, bluefilesLink, rejectionReason } = JSON.parse(event.body);
         if (!id || !newStatus) return { statusCode: 400, body: JSON.stringify({ error: "Données manquantes." }) };
 
         // --- FONCTION UTILITAIRE POUR RÉCUPÉRER LES INFOS COMPLÈTES ---
@@ -95,18 +95,44 @@ exports.handler = async function(event) {
         // --- CAS SPÉCIAL : REFUS / SUPPRESSION ---
         if (newStatus === 'Refusée' || newStatus === 'Devis refusé') {
             const requestData = await fetchFullRequest(id);
-            
-            if (newStatus === 'Refusée') {
-                const resend = new Resend(process.env.RESEND_API_KEY);
+                
+                // On prépare le motif (s'il existe) avec gestion des retours à la ligne
+                const motifHtml = rejectionReason 
+                    ? `<div style="margin: 20px 0; padding: 15px; border-left: 4px solid #e11d48; background-color: #fff1f2; color: #9f1239;">
+                        <strong>Précisions sur le refus :</strong><br>
+                        <em>${rejectionReason.replace(/\n/g, '<br>')}</em>
+                    </div>`
+                    : `<p>Votre demande ne pourra malheureusement pas être traitée par nos services actuellement.</p>`;
+
                 await resend.emails.send({
                     from: 'AnaByo <contact@anabyo.com>',
                     to: [requestData.email_client],
                     subject: 'Concernant votre demande chez AnaByo',
-                    html: `<p>Bonjour ${requestData.nom_client},</p><p>Votre demande ne pourra malheureusement pas être traitée.</p><p>Cordialement,<br>L'équipe AnaByo</p>`
+                    html: `
+                        <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
+                            <p>Bonjour ${requestData.nom_client || 'Madame, Monsieur'},</p>
+                            
+                            <p>Nous avons bien étudié votre demande mais nous ne pourrons pas y donner suite.</p>
+                            
+                            ${motifHtml}
+                            
+                            <p>Nous vous remercions de l'intérêt porté à nos services. 
+                            Si vous pensez qu'il s'agit d'une erreur de notre part ou si vous souhaitez apporter des précisions complémentaires, 
+                            n'hésitez pas à redéposer une nouvelle demande via notre formulaire.</p>
+                            
+                            <p>Cordialement,<br>
+                            <strong>L'équipe AnaByo</strong></p>
+                        </div>
+                    `
                 });
-            }
 
-            await supabase.from('mission_events').insert({ request_id: id, event_type: 'Refus', description: `Demande passée en '${newStatus}' et supprimée.` });
+            // Log et suppression
+            await supabase.from('mission_events').insert({ 
+                request_id: id, 
+                event_type: 'Refus', 
+                description: rejectionReason ? `Refusée : ${rejectionReason}` : "Demande refusée sans motif précis." 
+            });
+            
             await supabase.from('demandes_clients').delete().eq('id', id);
             return { statusCode: 200, body: JSON.stringify({ message: "Demande refusée et supprimée." }) };
         }
