@@ -11,7 +11,7 @@ exports.handler = async function(event) {
         return { statusCode: 401, body: JSON.stringify({ error: "Accès non autorisé." }) };
     }
 
-    // 2. Initialisation des clients (Une seule fois ici pour tout le script)
+    // 2. Initialisation des Clients (Une seule fois ici pour tout le script)
     const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
     const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -19,20 +19,11 @@ exports.handler = async function(event) {
         const { id, newStatus, bluefilesLink, rejectionReason } = JSON.parse(event.body);
         if (!id || !newStatus) return { statusCode: 400, body: JSON.stringify({ error: "Données manquantes." }) };
 
-        // --- FONCTION UTILITAIRE : RÉCUPÉRER INFOS CLIENT + DEMANDE ---
+        // --- FONCTION UTILITAIRE : RÉCUPÉRER LES INFOS ---
         const fetchFullRequest = async (requestId) => {
             const { data, error } = await supabase
                 .from('demandes_clients')
-                .select(`
-                    *,
-                    clients_identite (
-                        email,
-                        nom_complet,
-                        representant,
-                        fonction,
-                        adresse
-                    )
-                `)
+                .select('*, clients_identite(*)')
                 .eq('id', requestId)
                 .single();
             
@@ -57,12 +48,10 @@ exports.handler = async function(event) {
             
             if (currentData.statut === 'Devis envoyé') {
                 subject = "Rappel : Votre devis est en attente";
-                htmlContent = `<p>Je me permets de vous relancer concernant le devis envoyé récemment. Avez-vous des questions ou des points à clarifier ?</p>`;
+                htmlContent = `<p>Je me permets de vous relancer concernant le devis envoyé récemment. Avez-vous des questions ?</p>`;
             } else if (currentData.statut === 'Facture envoyée') {
-                subject = "Rappel : Facture en attente de règlement";
-                htmlContent = `<p>Sauf erreur de notre part, le règlement de la facture pour ce dossier n'est pas encore parvenu. Merci de vérifier vos échéances.</p>`;
-            } else {
-                htmlContent = `<p>Nous revenons vers vous pour faire le point sur votre dossier en cours.</p>`;
+                subject = "Rappel : Facture en attente";
+                htmlContent = `<p>Sauf erreur, le règlement de la facture pour ce dossier n'est pas encore parvenu. Merci de vérifier.</p>`;
             }
 
             await resend.emails.send({
@@ -75,54 +64,54 @@ exports.handler = async function(event) {
             await supabase.from('mission_events').insert({ 
                 request_id: id, 
                 event_type: 'Relance Manuelle', 
-                description: "Relance envoyée par l'administrateur." 
+                description: "Relance manuelle envoyée." 
             });
             
             return { statusCode: 200, body: JSON.stringify({ message: "Relance envoyée !" }) };
         }
 
-        // --- CAS 2 : GÉNÉRATION CONFIG JSON ---
+        // --- CAS 2 : GÉNÉRATION JSON ---
         if (newStatus === 'json') {
             const requestData = await fetchFullRequest(id);
-            const configUpdate = {
-                client: {
-                    nom_complet: requestData.nom_client,
-                    representant: requestData.representant,
-                    fonction: requestData.fonction,
-                    adresse: requestData.adresse,
-                    email: requestData.email_client
-                },
-                devis: { taches: [], notes: "Validité 30 jours.", _priority: requestData.is_urgent ? "1" : "0" }
+            return { 
+                statusCode: 200, 
+                body: JSON.stringify({
+                    client: {
+                        nom_complet: requestData.nom_client,
+                        representant: requestData.representant,
+                        fonction: requestData.fonction,
+                        adresse: requestData.adresse,
+                        email: requestData.email_client
+                    },
+                    devis: { taches: [], notes: "Validité 30 jours.", _priority: requestData.is_urgent ? "1" : "0" }
+                }) 
             };
-            return { statusCode: 200, body: JSON.stringify(configUpdate) };
         }
 
-        // --- CAS 3 : REFUS / SUPPRESSION (Avec message personnalisé) ---
+        // --- CAS 3 : REFUS / SUPPRESSION ---
         if (newStatus === 'Refusée' || newStatus === 'Devis refusé') {
             const requestData = await fetchFullRequest(id);
             
-            if (newStatus === 'Refusée') {
-                const motifHtml = rejectionReason 
-                    ? `<div style="margin: 20px 0; padding: 15px; border-left: 4px solid #e11d48; background-color: #fff1f2; color: #9f1239; font-style: italic;">
-                        <strong>Précisions sur le refus :</strong><br>
-                        "${rejectionReason.replace(/\n/g, '<br>')}"
-                    </div>`
-                    : `<p>Votre demande ne pourra malheureusement pas être traitée par nos services actuellement.</p>`;
+            const motifHtml = rejectionReason 
+                ? `<div style="margin: 20px 0; padding: 15px; border-left: 4px solid #e11d48; background-color: #fff1f2; color: #9f1239;">
+                    <strong>Précisions sur le refus :</strong><br>
+                    <em>${rejectionReason.replace(/\n/g, '<br>')}</em>
+                   </div>`
+                : `<p>Votre demande ne pourra malheureusement pas être traitée par nos services actuellement.</p>`;
 
-                await resend.emails.send({
-                    from: 'AnaByo <contact@anabyo.com>',
-                    to: [requestData.email_client],
-                    subject: 'Concernant votre demande chez AnaByo',
-                    html: `
-                        <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
-                            <p>Bonjour ${requestData.nom_client || 'Madame, Monsieur'},</p>
-                            <p>Nous avons bien étudié votre demande mais nous ne pourrons pas y donner suite.</p>
-                            ${motifHtml}
-                            <p>Nous vous remercions de l'intérêt porté à nos services. Si vous pensez qu'il s'agit d'une erreur ou si vous souhaitez apporter des précisions, n'hésitez pas à redéposer une demande.</p>
-                            <p>Cordialement,<br><strong>L'équipe AnaByo</strong></p>
-                        </div>`
-                });
-            }
+            await resend.emails.send({
+                from: 'AnaByo <contact@anabyo.com>',
+                to: [requestData.email_client],
+                subject: 'Concernant votre demande chez AnaByo',
+                html: `
+                    <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
+                        <p>Bonjour ${requestData.nom_client || 'Madame, Monsieur'},</p>
+                        <p>Nous avons bien étudié votre demande mais nous ne pourrons pas y donner suite.</p>
+                        ${motifHtml}
+                        <p>Nous vous remercions de l'intérêt porté à nos services. Si vous pensez qu'il s'agit d'une erreur, n'hésitez pas à redéposer une demande.</p>
+                        <p>Cordialement,<br><strong>L'équipe AnaByo</strong></p>
+                    </div>`
+            });
 
             await supabase.from('mission_events').insert({ 
                 request_id: id, 
@@ -131,21 +120,19 @@ exports.handler = async function(event) {
             });
             
             await supabase.from('demandes_clients').delete().eq('id', id);
-            return { statusCode: 200, body: JSON.stringify({ message: "Dossier clôturé." }) };
+            return { statusCode: 200, body: JSON.stringify({ message: "Demande clôturée." }) };
         }
 
         // --- CAS 4 : MISE À JOUR DE STATUT STANDARD ---
         const oldRequest = await fetchFullRequest(id);
 
-        const updatePayload = { 
-            statut: newStatus,
-            date_mise_a_jour: new Date().toISOString()
-        };
-        if (bluefilesLink) updatePayload.bluefiles_link = bluefilesLink;
-
         const { data: updatedRaw, error: upErr } = await supabase
             .from('demandes_clients')
-            .update(updatePayload)
+            .update({ 
+                statut: newStatus,
+                date_mise_a_jour: new Date().toISOString(),
+                bluefiles_link: bluefilesLink || oldRequest.bluefiles_link
+            })
             .eq('id', id)
             .select('*, clients_identite(*)')
             .single();
@@ -158,44 +145,34 @@ exports.handler = async function(event) {
             nom_client: updatedRaw.clients_identite?.nom_complet
         };
 
-        // --- LOG ET ENVOIS AUTOMATIQUES ---
-        if (oldRequest.statut !== newStatus) {
-            await supabase.from('mission_events').insert({
-                request_id: id,
-                event_type: 'Changement de statut',
-                description: `Passage de '${oldRequest.statut}' à '${newStatus}'.`
-            });
-        }
-
-        // A. Email Acceptée
+        // --- ENVOIS AUTOMATIQUES SELON LE NOUVEAU STATUT ---
         if (newStatus === 'Acceptée') {
             await resend.emails.send({
                 from: 'AnaByo <contact@anabyo.com>',
                 to: [finalData.email_client],
                 subject: 'Votre demande a été acceptée !',
                 html: `<p>Bonjour ${finalData.nom_client},</p>
-                       <p>Votre demande est acceptée. Merci de déposer vos fichiers ici : <a href="${bluefilesLink}">${bluefilesLink}</a></p>
-                       <p>Retrouvez votre suivi sur l' <a href="https://anabyo.com/espace-client.html">Espace Client</a>.</p>`
+                       <p>Bonne nouvelle, votre demande est acceptée. Déposez vos fichiers ici : <a href="${bluefilesLink}">Lien Bluefiles</a></p>
+                       <p>Suivez votre dossier sur l' <a href="https://anabyo.com/espace-client.html">Espace Client</a>.</p>`
             });
         }
 
-        // B. Email Terminée
         if (newStatus === 'Terminée') {
             const feedbackLink = `https://anabyo.com/feedback.html?mission=${finalData.tracking_id}`;
             await resend.emails.send({
                 from: 'AnaByo <contact@anabyo.com>',
                 to: [finalData.email_client],
-                subject: `Clôture de mission - ${finalData.tracking_id}`,
+                subject: `Clôture de collaboration - ${finalData.tracking_id}`,
                 html: `<p>Bonjour ${finalData.nom_client},</p>
                        <p>La mission est terminée. Merci de votre confiance.</p>
-                       <p><a href="${feedbackLink}" style="font-weight:bold;">Donner mon avis sur la prestation</a></p>`
+                       <p><a href="${feedbackLink}">Donner mon avis sur la prestation</a></p>`
             });
         }
 
         return { statusCode: 200, body: JSON.stringify(finalData) };
 
     } catch (error) {
-        console.error("ERREUR SERVEUR:", error.message);
+        console.error("Erreur:", error.message);
         return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
     }
 };
