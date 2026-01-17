@@ -1,6 +1,6 @@
 const { createClient } = require('@supabase/supabase-js');
 const { Resend } = require('resend');
-const { schedule } = require('@netlify/functions');
+//const { schedule } = require('@netlify/functions');
 
 const handler = async function(event, context) {
     const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
