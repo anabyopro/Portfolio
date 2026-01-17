@@ -151,7 +151,7 @@ module.exports.getInvoiceTemplate = function(data) {
 
         <div class="legal-info">
             Conditions de paiement : 30 jours nets date de facture. Aucun escompte pour paiement anticipé.<br>
-            En cas de retard, une pénalité de 3 fois le taux d'intérêt légal et une indemnité forfaitaire de 40€ pour frais de recouvrement seront exigibles.<br>
+            En cas de retard, une pénalité de 3 fois le taux d'intérêt légal et une indemnité forfaitaire de 140€ pour frais de recouvrement seront exigibles.<br>
             <br>
             AnaByo - Tom Bourachot - SIRET : 934 342 511 00016 - Siège social : 21 rue de la république, 33400 Talence
         </div>
