@@ -1,19 +1,17 @@
 const { createClient } = require('@supabase/supabase-js');
 const { Resend } = require('resend');
-//const { schedule } = require('@netlify/functions');
+// const { schedule } = require('@netlify/functions'); // À décommenter pour le mode auto
 
 const handler = async function(event, context) {
     const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
     const resend = new Resend(process.env.RESEND_API_KEY);
     
-    // On normalise la date d'aujourd'hui à minuit pour un calcul de jours précis
     const now = new Date();
     now.setHours(0, 0, 0, 0);
 
     console.log(`⏰ CRON [${now.toLocaleDateString()}] : Vérification des relances...`);
 
     try {
-        // 1. Récupérer les dossiers en attente avec les infos clients
         const { data: dossiersRaw, error } = await supabase
             .from('demandes_clients')
             .select(`
@@ -26,9 +24,13 @@ const handler = async function(event, context) {
             .in('statut', ['Devis envoyé', 'Facture envoyée']);
 
         if (error) throw error;
+        
         if (!dossiersRaw || dossiersRaw.length === 0) {
             console.log("Ménage terminé : aucun dossier à relancer aujourd'hui.");
-            return { statusCode: 200 };
+            return { 
+                statusCode: 200, 
+                body: JSON.stringify({ status: "success", message: "Aucun dossier à traiter." }) 
+            };
         }
 
         const dossiers = dossiersRaw.map(d => ({
@@ -37,21 +39,17 @@ const handler = async function(event, context) {
             nom_client: d.clients_identite?.nom_complet
         }));
 
-        // 2. Traitement de chaque dossier
         for (const dossier of dossiers) {
             try {
                 if (!dossier.email_client) continue;
 
-                // On normalise la date de mise à jour du dossier à minuit
                 const dateMaj = new Date(dossier.date_mise_a_jour);
                 dateMaj.setHours(0, 0, 0, 0);
-                
-                // Calcul des jours écoulés (différence nette)
                 const joursEcoules = Math.round((now - dateMaj) / (1000 * 60 * 60 * 24)); 
 
                 console.log(`📂 Dossier ${dossier.tracking_id} : ${joursEcoules} jours d'inactivité (Statut: ${dossier.statut})`);
 
-                // --- LOGIQUE RELANCES DEVIS ---
+                // --- LOGIQUE RELANCES DEVIS (TES TEXTES COMPLETS) ---
                 if (dossier.statut === 'Devis envoyé') {
                     if (joursEcoules >= 3 && joursEcoules < 7) {
                         await traiterRelance(supabase, resend, dossier, 'Relance Devis J+3', 
@@ -73,7 +71,7 @@ const handler = async function(event, context) {
                     }
                 }
 
-                // --- LOGIQUE RELANCES FACTURES ---
+                // --- LOGIQUE RELANCES FACTURES (TES TEXTES COMPLETS) ---
                 if (dossier.statut === 'Facture envoyée') {
                     if (joursEcoules >= 23 && joursEcoules < 30) {
                         await traiterRelance(supabase, resend, dossier, 'Relance Facture J-7', 
@@ -94,30 +92,30 @@ const handler = async function(event, context) {
                     }
                 }
             } catch (dossierError) {
-                // Si un dossier plante, on log et on passe au suivant sans arrêter le script
                 console.error(`❌ Erreur sur le dossier ${dossier.tracking_id}:`, dossierError.message);
             }
         }
 
-        return { statusCode: 200 };
+        return { 
+            statusCode: 200, 
+            body: JSON.stringify({ status: "success", message: "Scan des relances terminé." }) 
+        };
 
     } catch (err) {
         console.error("💥 Erreur critique CRON:", err);
-        return { statusCode: 500 };
+        return { 
+            statusCode: 500, 
+            body: JSON.stringify({ status: "error", error: err.message }) 
+        };
     }
 };
 
 async function traiterRelance(supabase, resend, dossier, type, sujet, htmlContent) {
-    // 1. Vérifier si cette relance spécifique a déjà été envoyée (Anti-doublon)
     const { data: existe } = await supabase.from('mission_events')
-        .select('id')
-        .eq('request_id', dossier.id)
-        .eq('event_type', type)
-        .maybeSingle();
+        .select('id').eq('request_id', dossier.id).eq('event_type', type).maybeSingle();
 
     if (existe) return; 
 
-    // 2. Envoi de l'email
     await resend.emails.send({
         from: 'AnaByo <contact@anabyo.com>',
         to: dossier.email_client,
@@ -131,22 +129,15 @@ async function traiterRelance(supabase, resend, dossier, type, sujet, htmlConten
                 <p>Cordialement,<br><strong>L'équipe AnaByo</strong></p>
                 <hr style="border: none; border-top: 1px solid #eee; margin-top: 20px;">
                 <small style="color: #999;">Ceci est un message automatique de suivi.</small>
-            </div>
-        `
+            </div>`
     });
 
-    // 3. Tracer l'envoi dans la base de données
     await supabase.from('mission_events').insert({ 
         request_id: dossier.id, 
         event_type: type, 
-        description: `Relance automatique ${type} envoyée à ${dossier.email_client}.` 
+        description: `Relance automatique ${type} envoyée.` 
     });
-
-    console.log(`✅ Email envoyé : ${type} pour le dossier ${dossier.tracking_id}`);
+    console.log(`✅ Email envoyé : ${type} pour ${dossier.tracking_id}`);
 }
 
-// Commentez la ligne du schedule
-// module.exports.handler = schedule('0 9 * * *', handler);
-
-// Et remplacez-la par un export classique
 module.exports.handler = handler;
