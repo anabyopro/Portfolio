@@ -45,7 +45,15 @@ exports.handler = async function(event) {
         const sequence = (count || 0) + 1;
         const numeroFacture = `FAC-${annee}-${String(sequence).padStart(3, '0')}`;
 
-        // 3. Calculs
+// 3. Calculs et Dates
+        const dateEmission = new Date();
+        const dateEcheance = new Date();
+        dateEcheance.setDate(dateEmission.getDate() + 30); // Calcul de l'échéance à J+30
+
+        // On prépare les formats "texte" pour l'affichage
+        const dateEmissionStr = dateEmission.toLocaleDateString('fr-FR');
+        const dateEcheanceStr = dateEcheance.toLocaleDateString('fr-FR');
+
         let totalHT = 0;
         const lignesFacture = articles.map(item => {
             const total = item.quantite * item.prix_unitaire;
@@ -55,19 +63,24 @@ exports.handler = async function(event) {
 
         if (mission.is_urgent) {
             const majoration = totalHT * 0.50;
-            lignesFacture.push({ description: 'Majoration Urgence (+50%)', quantite: 1, prix_unitaire: majoration, total: majoration });
+            lignesFacture.push({ 
+                description: 'Majoration Urgence (+50%)', 
+                quantite: 1, 
+                prix_unitaire: majoration, 
+                total: majoration 
+            });
             totalHT += majoration;
         }
 
         // 4. HTML (Appel du Template externe)
         const htmlContent = getInvoiceTemplate({
             numero: numeroFacture,
-            date: new Date().toLocaleDateString('fr-FR'),
+            date: dateEmissionStr,
+            dateEcheance: dateEcheanceStr,
             client: mission.clients_identite,
             lignes: lignesFacture,
             totalHT: totalHT,
             ref_devis: mission.tracking_id,
-            // Vos infos bancaires sont maintenant directement dans le template invoice.js
         });
 
         // 5. PDF

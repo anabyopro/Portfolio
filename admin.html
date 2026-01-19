@@ -165,6 +165,12 @@
             placeholder="Fonction"
             class="border p-2 rounded"
           />
+          <input
+            type="text"
+            name="siren"
+            placeholder="SIREN"
+            class="border p-2 rounded"
+          />
         </div>
         <input
           type="text"
@@ -829,6 +835,7 @@
           };
 
           const nom = findProp(["nom_client", "nom_complet", "nom", "company"]);
+          const siren = findProp(["siren", "siret"]) || "";
           const contact = findProp(["contact", "representant", "fullname"]);
           const fonction = findProp(["fonction", "job", "role"]);
           const telephone = req.telephone || "";
@@ -842,11 +849,11 @@
             req.message || "Prestation Bio-informatique"
           ).replace(/\r?\n/g, "\\n");
 
-          const terminalText = `${nom}\n${contact}\n${fonction}\n${telephone}\n${adresse}\n${email}\n${description}`;
+          const terminalText = `${nom}\n${siren}\n${contact}\n${fonction}\n${telephone}\n${adresse}\n${email}\n${description}`;
 
           document.getElementById("modal-content").innerHTML = `
             <div class="flex flex-col gap-2">
-                <div class="text-xs text-gray-500 mb-1">Format: Nom | Contact | Fonction | Téléphone | Adresse (\\n) | Email | Description</div>
+                <div class="text-xs text-gray-500 mb-1">Format: Nom | SIREN | Contact | Fonction | Téléphone | Adresse (\\n) | Email | Description</div>
                 <textarea id="copy-target" class="w-full h-64 text-sm bg-gray-50 p-3 rounded border font-mono focus:ring-2 focus:ring-indigo-500 outline-none resize-none">${terminalText}</textarea>
                 <div class="flex gap-2">
                     <button id="save-btn" onclick="saveConfigInfo('${id}')" class="flex-1 bg-indigo-600 text-white py-2 rounded font-bold text-xs hover:bg-indigo-700 transition-colors">Enregistrer</button>
@@ -872,12 +879,13 @@
           const data = {
             id: id,
             nom: lines[0] || "",
-            contact: lines[1] || "",
-            fonction: lines[2] || "",
-            telephone: lines[3] || "",
-            adresse: (lines[4] || "").replace(/\\n/g, "\n"),
-            email: lines[5] || "",
-            message: (lines.slice(6).join("\n") || "").replace(/\\n/g, "\n"),
+            siren: lines[1] || "",
+            contact: lines[2] || "",
+            fonction: lines[3] || "",
+            telephone: lines[4] || "",
+            adresse: (lines[5] || "").replace(/\\n/g, "\n"),
+            email: lines[6] || "",
+            message: (lines.slice(7).join("\n") || "").replace(/\\n/g, "\n"),
           };
 
           try {

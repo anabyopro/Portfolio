@@ -81,7 +81,9 @@ exports.handler = async function(event) {
                         representant: requestData.representant,
                         fonction: requestData.fonction,
                         adresse: requestData.adresse,
-                        email: requestData.email_client
+                        email: requestData.email_client,
+                        siren: requestData.siren || "Non renseigné",
+                        tva_intracom: requestData.tva_intracom || ""
                     },
                     devis: { taches: [], notes: "Validité 30 jours.", _priority: requestData.is_urgent ? "1" : "0" }
                 }) 
