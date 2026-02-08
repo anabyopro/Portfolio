@@ -15,18 +15,38 @@ exports.handler = async function(event) {
 
         // 1. Gestion Identité (Coffre-fort)
         // On cherche si le client existe déjà via son email
-        let { data: client } = await supabase.from('clients_identite').select('id').eq('email', data.email).single();
-
+        let { data: client } = await supabase.from('clients_identite').select('*').eq('email', data.email).single();
         const clientPayload = {
             email: data.email,
-            nom_complet: data.nom,       // Le nom du Laboratoire/Société
-            representant: data.contact,  // Le nom de la personne
+            nom_complet: data.nom,
+            representant: data.contact,
             fonction: data.fonction,
-            adresse: data.adresse,       // L'adresse (auto-remplie ou manuelle)
+            adresse: data.adresse,
             telephone: data.telephone,
-            siren: data.siren            // LE SIREN (issu du champ caché)
         };
+        
+        if (data.siren) clientPayload.siren = data.siren;
 
+        // Si la TVA est fournie manuellement, on l'utilise. Sinon, on tente le calcul via SIREN.
+        if (data.tva) {
+            clientPayload.tva_intracom = data.tva;
+        } else if (data.siren) {
+            const s = data.siren.replace(/\s/g, '');
+            if (s.length === 9) {
+                const key = (12 + 3 * (parseInt(s) % 97)) % 97;
+                clientPayload.tva_intracom = `FR${key}${s}`;
+            }
+        }
+
+        if (client) {
+            // Si le client existe, on met à jour les infos de contact 
+            // mais le SIREN reste celui de la base si le champ formulaire est vide
+            await supabase.from('clients_identite').update(clientPayload).eq('id', client.id);
+        } else {
+            // Si c'est un nouveau client, on crée tout
+            const { data: newClient } = await supabase.from('clients_identite').insert([clientPayload]).select().single();
+            client = newClient;
+        }
         if (!client) {
             // Nouveau client : on l'insère
             const { data: newClient, error: err } = await supabase
@@ -52,19 +72,20 @@ exports.handler = async function(event) {
             .insert({
                 tracking_id: trackingId,
                 type_demande: data.type_projet || 'Non spécifié',
-                description: data.message, // Changé 'message' en 'description' selon structure habituelle
+                message: data.message,
                 is_urgent: data.urgent === true,
                 date_mise_a_jour: new Date().toISOString(), // Utilisation de date_mise_a_jour pour ton CRON
-                statut: 'En attente',
+                statut: 'Reçue',
                 client_id: client.id,
                 
                 // Snapshot des infos pour la future facture
                 nom_client: data.nom,
-                siren: data.siren,
                 contact: data.contact,
                 fonction: data.fonction,
                 adresse: data.adresse,
-                telephone: data.telephone
+                telephone: data.telephone,
+                siren: clientPayload.siren,
+                tva_intracom: clientPayload.tva_intracom
             })
             .select().single();
 
@@ -89,6 +110,7 @@ exports.handler = async function(event) {
                     <h2>Nouvelle demande de projet</h2>
                     <p><strong>Structure :</strong> ${data.nom}</p>
                     <p><strong>SIREN :</strong> ${data.siren || 'Non renseigné'}</p>
+                    <p><strong>TVA :</strong> ${data.tva || 'Non renseigné'}</p>
                     <p><strong>Contact :</strong> ${data.contact}</p>
                     <p><strong>Email :</strong> ${data.email}</p>
                     <p><strong>Urgent :</strong> ${data.urgent ? 'OUI' : 'Non'}</p>
@@ -105,12 +127,22 @@ exports.handler = async function(event) {
                 to: data.email,
                 subject: `Confirmation de réception - Dossier ${trackingId}`,
                 html: `
+                    <div style="font-family: sans-serif; color: #333; line-height: 1.6;">
                     <p>Bonjour ${data.contact || data.nom},</p>
-                    <p>Nous avons bien reçu votre demande concernant : <strong>${data.type_projet}</strong>.</p>
-                    <p>Votre numéro de dossier est le : <strong>${trackingId}</strong></p>
-                    <p>Nous analysons votre demande et reviendrons vers vous sous 24h ouvrées.</p>
-                    <br>
-                    <p>Cordialement,<br>L'équipe AnaByo</p>
+                    
+                    <p>C'est confirmé : nous avons bien reçu votre demande pour votre projet de <b>${data.type_projet}</b>. Merci de nous avoir sollicités !</p>
+                    
+                    <p>Notre équipe examine vos éléments avec attention. Vous recevrez une réponse de notre part <b>sous 24h ouvrées</b> pour la suite des opérations.</p>
+                    
+                    <div style="background-color: #f9f9f9; padding: 15px; border-left: 4px solid #000; margin: 20px 0;">
+                        <strong>Référence de dossier :</strong> ${trackingId}<br>
+                        Vous pouvez suivre l'avancement de votre demande en temps réel sur votre 
+                        <a href="https://anabyo.com/espace-client.html" style="color: #000; font-weight: bold;">Espace Client</a>.
+                    </div>
+                    
+                    <p>À très bientôt,</p>
+                    <p>L'équipe AnaByo</p>
+                </div>
                 `
             });
         } catch (e) { console.error("❌ Erreur Mail Client :", e.message); }

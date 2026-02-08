@@ -362,6 +362,17 @@
             month: "long",
           });
 
+          // Affichage dynamique selon l'anonymat
+          let authorName = "Client vérifié";
+          if (testimonial.is_anonymous) {
+              authorName = "Client Anonyme";
+          } else {
+              // Affiche "Personne - Labo" ou juste "Personne" si le labo n'est pas renseigné
+              const person = testimonial.contact || testimonial.representant || "Client";
+              const lab = testimonial.nom_client || testimonial.company || "";
+              authorName = lab ? `${person} - ${lab}` : person;
+          }
+
           card.innerHTML = `
                     <div class="flex-grow">
                         ${renderStars(testimonial.rating)}
@@ -371,7 +382,7 @@
                     </div>
                     <footer class="mt-6 pt-4 border-t border-gray-200">
                         <p class="text-sm text-gray-500">Avis laissé en ${formattedDate}</p>
-                        <p class="text-sm font-semibold text-indigo-600 mt-1">Client vérifié</p>
+                        <p class="text-sm font-semibold text-indigo-600 mt-1">${authorName}</p>
                     </footer>
                 `;
           return card;

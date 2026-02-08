@@ -27,13 +27,16 @@ module.exports.getInvoiceTemplate = function(data) {
                 margin: 0 auto; 
                 font-size: 13px; 
                 line-height: 1.5; 
+                min-height: 100vh;
+                position: relative;
+                box-sizing: border-box;
             }
             
             /* En-tête */
             .header-table { width: 100%; margin-bottom: 50px; border-spacing: 0; }
             
             .logo { font-size: 32px; font-weight: 800; margin-bottom: 5px; letter-spacing: -1px; }
-            .logo .ana { color: #38bdf8; }
+            .logo .ana { color: #000000; }
             .logo .byo { color: #a3e635; }
 
             .seller-info { font-size: 12px; color: #475569; margin-top: 10px; line-height: 1.4; }
@@ -87,6 +90,10 @@ module.exports.getInvoiceTemplate = function(data) {
                 border-top: 1px solid #e2e8f0;
                 padding-top: 20px;
                 line-height: 1.6;
+                position: absolute;
+                bottom: 40px;
+                left: 40px;
+                right: 40px;
             }
             .legal-section { margin-bottom: 4px; }
         </style>
@@ -119,6 +126,7 @@ module.exports.getInvoiceTemplate = function(data) {
             <div class="client-address">
                 ${client.adresse || ''}
                 ${client.siren ? `<br>SIREN : ${client.siren}` : ''}
+                ${client.tva_intracom ? `<br>TVA : ${client.tva_intracom}` : ''}
             </div>
         </div>
 
@@ -137,7 +145,7 @@ module.exports.getInvoiceTemplate = function(data) {
         <div class="totals-container">
             <div class="totals-box">
                 <div class="total-row">Total HT : ${totalHT.toFixed(2)} €</div>
-                <div class="total-final">Net à payer : ${totalHT.toFixed(2)} €</div>
+                <div class="total-final">Total TTC : ${totalHT.toFixed(2)} €</div>
                 <div class="tva-notice">TVA non applicable, art. 293 B du CGI</div>
             </div>
         </div>
@@ -145,6 +153,7 @@ module.exports.getInvoiceTemplate = function(data) {
         <div class="payment-info">
             <span class="payment-title">Conditions de règlement</span>
             Date d'échéance : <strong>${dateEcheance || 'À réception'}</strong><br>
+            Escompte pour paiement anticipé : Néant<br>
             Mode de règlement : Virement bancaire<br>
             <span class="iban-box">
                 IBAN : FR76 1451 8292 6709 0152 0374 030<br>
@@ -157,7 +166,7 @@ module.exports.getInvoiceTemplate = function(data) {
                 <strong>Pénalités de retard :</strong> En cas de retard de paiement, un taux égal au taux d'intérêt appliqué par la BCE à son opération de refinancement la plus récente majoré de 10 points de pourcentage sera appliqué.
             </div>
             <div class="legal-section">
-                <strong>Indemnité forfaitaire :</strong> En cas de retard de paiement, une indemnité forfaitaire de 140 € pour frais de recouvrement sera due (Art. L. 441-10 du Code de commerce).
+                <strong>Indemnité forfaitaire :</strong> En cas de retard de paiement, une indemnité forfaitaire de 40 € pour frais de recouvrement sera due (Art. L. 441-10 du Code de commerce).
             </div>
             <div class="legal-section" style="margin-top: 10px; text-align: center;">
                 BOURACHOT Tom EI - SIRET : 99998298600013 - Siège social : 41 rue Charles Floquet, 33400 Talence

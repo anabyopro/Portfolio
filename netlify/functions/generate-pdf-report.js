@@ -186,7 +186,7 @@ function generateHtml(request) {
         <head>
             <meta charset="UTF-8">
             <style>
-                body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #333; line-height: 1.4; padding: 0; max-width: 100%; margin: 0; font-size: 13px; }
+                body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #333; line-height: 1.4; padding: 0 0 50px 0; max-width: 100%; margin: 0; font-size: 13px; }
                 
                 /* En-tête */
                 .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f172a; padding-bottom: 10px; margin-bottom: 20px; }
@@ -219,12 +219,12 @@ function generateHtml(request) {
                 .event-desc strong { color: #0369a1; font-weight: 600; }
 
                 /* Footer */
-                .footer { margin-top: 30px; padding-top: 15px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 9px; color: #94a3b8; }
+                .footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 15px 0; border-top: 1px solid #e2e8f0; text-align: center; font-size: 9px; color: #94a3b8; background: white; }
             </style>
         </head>
         <body>
             <div class="header">
-                <div class="logo">AnaByo</div>
+                <div class="logo">Ana<span style="color:#65a30d">Byo</span></div>
                 <div class="doc-title">
                     <h1>Journal de Projet</h1>
                     <p>Réf: ${request.tracking_id}</p>
@@ -255,8 +255,7 @@ function generateHtml(request) {
             ${stagesHtml || '<div style="text-align:center; padding:20px; color:#94a3b8;">Aucun événement enregistré.</div>'}
 
             <div class="footer">
-                <p>AnaByo - Analyse BioInformatique | Données confidentielles et pseudonymisées.</p>
-                <p>Ce document retrace l'historique immuable des actions réalisées sur votre dossier.</p>
+                <p>AnaByo - Ce document retrace l'historique des actions réalisées sur votre dossier.</p>
             </div>
         </body>
         </html>

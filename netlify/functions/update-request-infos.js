@@ -3,7 +3,7 @@ const { createClient } = require('@supabase/supabase-js');
 // Configuration de la connexion Supabase
 const supabaseUrl = process.env.SUPABASE_URL;
 // CORRECTION : On utilise SUPABASE_KEY en secours si SUPABASE_SERVICE_ROLE_KEY est absent
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_KEY;
 
 // On passe une chaîne vide par défaut pour éviter le crash immédiat au démarrage si aucune clé n'est trouvée
 const supabase = createClient(supabaseUrl, supabaseKey || 'fallback-key');
@@ -33,26 +33,55 @@ exports.handler = async (event, context) => {
     const data = JSON.parse(event.body);
     
     // Extraction des champs (y compris ceux ajoutés récemment)
-    const { id, nom, email, contact, fonction, adresse, telephone, type_projet, message, urgent } = data;
+    const { id, nom, email, contact, fonction, adresse, telephone, type_projet, message, urgent, tva, siren } = data;
 
     if (!id) {
       return { statusCode: 400, body: JSON.stringify({ error: 'ID manquant' }) };
     }
 
-    // 4. Mise à jour dans la base de données
-    const { error } = await supabase
+    // 3b. Récupérer le client_id pour mettre à jour la fiche client (et donc la facture)
+    const { data: mission } = await supabase
       .from('demandes_clients')
-      .update({
+      .select('client_id')
+      .eq('id', id)
+      .single();
+
+    if (mission && mission.client_id) {
+      const { data: updateData, error: updateError } = await supabase.from('clients_identite').update({
+        nom_complet: nom,
+        email: email,
+        representant: contact,
+        fonction: fonction,
+        adresse: adresse,
+        telephone: telephone,
+        tva_intracom: tva,
+        siren: siren
+      }).eq('id', mission.client_id)
+      .select(); // Le .select() permet de voir ce qui a été modifié
+      console.log("Nombre de lignes modifiées :", updateData?.length);
+      if (updateError) console.error("Détail erreur Supabase :", updateError);
+    }
+
+    // Construction dynamique pour ne pas écraser les champs non envoyés (ex: type_projet lors de l'édition rapide)
+    const updatePayload = {
         nom_client: nom,
         email: email,
         contact: contact,
         fonction: fonction,
         adresse: adresse,
         telephone: telephone,
-        type_projet: type_projet,
         message: message,
-        is_urgent: urgent
-      })
+        siren: siren,
+        tva_intracom: tva
+    };
+
+    if (type_projet !== undefined) updatePayload.type_demande = type_projet;
+    if (urgent !== undefined) updatePayload.is_urgent = urgent;
+
+    // 4. Mise à jour dans la base de données
+    const { error } = await supabase
+      .from('demandes_clients')
+      .update(updatePayload)
       .eq('id', id);
 
     if (error) throw error;

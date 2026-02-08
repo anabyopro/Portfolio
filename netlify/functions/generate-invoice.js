@@ -109,6 +109,13 @@ exports.handler = async function(event) {
             date_mise_a_jour: new Date().toISOString()
         }).eq('id', missionId);
 
+        // Ajout de l'événement dans le journal pour qu'il apparaisse dans le rapport PDF
+        await supabase.from('mission_events').insert({
+            request_id: missionId,
+            event_type: 'Changement de statut',
+            description: 'Statut passé à : Facture envoyée'
+        });
+
         await supabase.from('finance_recettes').insert({
             numero_facture: numeroFacture,
             client_nom: mission.clients_identite.nom_complet,
@@ -128,13 +135,31 @@ exports.handler = async function(event) {
             to: [clientEmail],
             subject: `Votre facture N° ${numeroFacture} est disponible`,
             html: `
-                <p>Bonjour ${clientName},</p>
-                <p>Nous vous informons que la facture <strong>${numeroFacture}</strong>, relative à la mission <strong>${mission.tracking_id}</strong>, est maintenant disponible.</p>
-                <p>Vous pouvez la consulter et la télécharger à tout moment depuis votre espace client sécurisé.</p>
-                <p><a href="${portalUrl}" style="font-weight: bold;">Accéder à mon Espace Client</a></p>
-                <p>Nous restons à votre disposition pour toute question.</p>
-                <p>Cordialement,<br>L'équipe AnaByo</p>
-            `
+                <div style="font-family: sans-serif; color: #333; line-height: 1.6;">
+                    <p>Bonjour ${clientName},</p>
+                    
+                    <p>J'espère que vous allez bien.</p>
+                    
+                    <p>Vous trouverez en pièce jointe la facture <b>${numeroFacture}</b> concernant notre intervention sur la mission <b>${mission.tracking_id}</b>.</p>
+                    
+                    <p>Pour faciliter votre gestion, ce document est également archivé et reste accessible à tout moment depuis votre espace sécurisé :</p>
+                    
+                    <p style="margin: 20px 0;">
+                        <a href="${portalUrl}" style="color: #0253e0; font-weight: bold; text-decoration: underline;">
+                            👉 Accéder à mon Espace Client
+                        </a>
+                    </p>
+                    
+                    <p>Nous restons bien entendu à votre entière disposition si vous avez la moindre question concernant ce document.</p>
+                    
+                    <p>Bien cordialement,<br>
+                    L'équipe AnaByo</p>
+                </div>
+            `,
+            attachments: [{
+                filename: `${numeroFacture}.pdf`,
+                content: Buffer.from(pdfBuffer)
+            }]
         });
 
         return { statusCode: 200, body: JSON.stringify({ message: "Facture générée !", numero: numeroFacture }) };

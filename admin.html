@@ -382,6 +382,14 @@
             >0</span
           >
         </button>
+        <button data-tab="refusee" class="tab-btn py-2 text-gray-500">
+          Refusées
+          <span
+            id="count-refusee"
+            class="ml-2 bg-gray-200 text-gray-700 text-xs font-bold px-2 py-0.5 rounded-full hidden"
+            >0</span
+          >
+        </button>
         <!-- NOUVEL ONGLET TRÉSORERIE -->
         <button
           data-tab="tresorerie"
@@ -481,6 +489,7 @@
               <table class="w-full text-sm text-left">
                 <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
                   <tr>
+                    <th class="p-2">Date</th>
                     <th class="p-2">N°</th>
                     <th class="p-2">Client</th>
                     <th class="p-2 text-right">Montant</th>
@@ -565,8 +574,10 @@
         // --- LOGIQUE PRINCIPALE ---
         async function fetchRequests() {
           try {
-            const res = await fetch("/.netlify/functions/get-requests", {
+            // Ajout d'un timestamp (?t=...) pour forcer le navigateur à ne pas utiliser le cache
+            const res = await fetch("/.netlify/functions/get-requests?t=" + Date.now(), {
               headers: { "x-admin-password": passwordInput.value },
+              cache: "no-store"
             });
             if (res.ok) {
               allRequests = await res.json();
@@ -599,7 +610,7 @@
               tbody.innerHTML = data.recettes
                 .map(
                   (r) => `
-                        <tr class="border-b"><td class="p-2">${r.numero_facture}</td><td class="p-2 text-gray-600">${r.client_nom}</td><td class="p-2 text-right font-bold text-green-600">+${r.montant_ht} €</td></tr>
+                        <tr class="border-b"><td class="p-2 text-gray-500 text-xs">${r.date_paiement_fmt || '-'}</td><td class="p-2">${r.numero_facture}</td><td class="p-2 text-gray-600">${r.client_nom}</td><td class="p-2 text-right font-bold text-green-600">+${r.montant_ht} €</td></tr>
                     `,
                 )
                 .join("");
@@ -639,6 +650,7 @@
             "en-cours": 0,
             paiement: 0,
             terminee: 0,
+            refusee: 0,
           };
           const statusMap = {
             Reçue: "recue",
@@ -647,6 +659,8 @@
             "En cours": "en-cours",
             "Facture envoyée": "paiement",
             Terminée: "terminee",
+            "Refusée": "refusee",
+            "Devis refusé": "refusee"
           };
 
           allRequests.forEach((r) => {
@@ -683,10 +697,15 @@
             "suivi-devis": "Devis envoyé",
             paiement: "Facture envoyée",
             terminee: "Terminée",
+            refusee: ["Refusée", "Devis refusé"] // Gestion tableau pour multiples statuts
           };
-          const filtered = allRequests.filter(
-            (r) => r.statut === statusMap[currentTab],
-          );
+          
+          const targetStatus = statusMap[currentTab];
+          const filtered = allRequests.filter((r) => {
+              if (Array.isArray(targetStatus)) return targetStatus.includes(r.statut);
+              return r.statut === targetStatus;
+          });
+
           const tbody = document.getElementById("requests-table-body");
           tbody.innerHTML = "";
 
@@ -748,6 +767,11 @@
                 ? `<button onclick="openInvoice('${req.id}')" class="action-btn bg-cyan-600 hover:bg-cyan-700 text-center text-xs py-1">Voir Facture</button>`
                 : "";
               actionsHtml = `<div class="flex flex-col gap-2">${downloadBtn}<button data-action="Terminée" class="action-btn btn-complete">Paiement Reçu</button><button data-action="Relance" class="action-btn bg-gray-500 hover:bg-gray-600">⚡ Relancer</button></div>`;
+            } else if (req.statut === "Refusée" || req.statut === "Devis refusé") {
+              actionsHtml = `<div class="flex flex-col gap-2">
+                  <button data-action="Reçue" class="action-btn bg-gray-500 hover:bg-gray-600 text-xs w-full">Rétablir (En cours)</button>
+                  <button data-action="Suppression" class="action-btn bg-red-800 hover:bg-red-900 text-xs w-full">Suppression définitive</button>
+              </div>`;
             }
 
             const row = document.createElement("tr");
@@ -836,6 +860,7 @@
 
           const nom = findProp(["nom_client", "nom_complet", "nom", "company"]);
           const siren = findProp(["siren", "siret"]) || "";
+          const tva = findProp(["tva", "tva_intracom", "vat"]) || "";
           const contact = findProp(["contact", "representant", "fullname"]);
           const fonction = findProp(["fonction", "job", "role"]);
           const telephone = req.telephone || "";
@@ -849,11 +874,11 @@
             req.message || "Prestation Bio-informatique"
           ).replace(/\r?\n/g, "\\n");
 
-          const terminalText = `${nom}\n${siren}\n${contact}\n${fonction}\n${telephone}\n${adresse}\n${email}\n${description}`;
+          const terminalText = `${nom}\n${siren}\n${tva}\n${contact}\n${fonction}\n${telephone}\n${adresse}\n${email}\n${description}`;
 
           document.getElementById("modal-content").innerHTML = `
             <div class="flex flex-col gap-2">
-                <div class="text-xs text-gray-500 mb-1">Format: Nom | SIREN | Contact | Fonction | Téléphone | Adresse (\\n) | Email | Description</div>
+                <div class="text-xs text-gray-500 mb-1">Format: Nom | SIREN | TVA | Contact | Fonction | Téléphone | Adresse (\\n) | Email | Description</div>
                 <textarea id="copy-target" class="w-full h-64 text-sm bg-gray-50 p-3 rounded border font-mono focus:ring-2 focus:ring-indigo-500 outline-none resize-none">${terminalText}</textarea>
                 <div class="flex gap-2">
                     <button id="save-btn" onclick="saveConfigInfo('${id}')" class="flex-1 bg-indigo-600 text-white py-2 rounded font-bold text-xs hover:bg-indigo-700 transition-colors">Enregistrer</button>
@@ -880,12 +905,13 @@
             id: id,
             nom: lines[0] || "",
             siren: lines[1] || "",
-            contact: lines[2] || "",
-            fonction: lines[3] || "",
-            telephone: lines[4] || "",
-            adresse: (lines[5] || "").replace(/\\n/g, "\n"),
-            email: lines[6] || "",
-            message: (lines.slice(7).join("\n") || "").replace(/\\n/g, "\n"),
+            tva: lines[2] || "",
+            contact: lines[3] || "",
+            fonction: lines[4] || "",
+            telephone: lines[5] || "",
+            adresse: (lines[6] || "").replace(/\\n/g, "\n"),
+            email: lines[7] || "",
+            message: (lines.slice(8).join("\n") || "").replace(/\\n/g, "\n"),
           };
 
           try {
@@ -904,8 +930,42 @@
               btn.classList.remove("bg-indigo-600", "hover:bg-indigo-700");
               btn.classList.add("bg-green-600", "hover:bg-green-700");
 
-              // On ne ferme plus la modale, mais on rafraîchit les données en arrière-plan
-              await fetchRequests();
+              // --- MISE À JOUR LOCALE (OPTIMISTE) ---
+              const idx = allRequests.findIndex(r => r.id === id);
+              if (idx !== -1) {
+                  // Mise à jour des champs directs utilisés par renderTable
+                  allRequests[idx].nom_client = data.nom;
+                  allRequests[idx].siren = data.siren;
+                  allRequests[idx].tva = data.tva;
+                  allRequests[idx].tva_intracom = data.tva; // Ajout pour cohérence
+                  allRequests[idx].representant = data.contact;
+                  allRequests[idx].contact = data.contact; // Ajout CRUCIAL car findProp lit 'contact' en priorité
+                  allRequests[idx].fonction = data.fonction;
+                  allRequests[idx].telephone = data.telephone;
+                  allRequests[idx].adresse = data.adresse;
+                  allRequests[idx].email = data.email;
+                  allRequests[idx].message = data.message;
+
+                  // Mise à jour de l'objet imbriqué pour la cohérence avec showConfigInfo
+                  if (allRequests[idx].clients_identite) {
+                      allRequests[idx].clients_identite.nom_complet = data.nom;
+                      allRequests[idx].clients_identite.siren = data.siren;
+                      allRequests[idx].clients_identite.tva_intracom = data.tva;
+                      allRequests[idx].clients_identite.representant = data.contact;
+                      allRequests[idx].clients_identite.fonction = data.fonction;
+                      allRequests[idx].clients_identite.telephone = data.telephone;
+                      allRequests[idx].clients_identite.adresse = data.adresse;
+                      allRequests[idx].clients_identite.email = data.email;
+                  }
+                  
+                  // IMPORTANT : Forcer la mise à jour visuelle du tableau
+                  renderTable(); 
+              }
+
+              // On rafraîchit les données depuis le serveur pour confirmer la synchro
+              setTimeout(async () => {
+                  await fetchRequests();
+              }, 500);
 
               // Rétablissement du bouton après 2 secondes
               setTimeout(() => {
@@ -1063,17 +1123,6 @@
                 throw new Error(errorText || "Erreur lors de la génération.");
               }
 
-              // --- TÉLÉCHARGEMENT AUTOMATIQUE ---
-              const blob = await res.blob();
-              const url = window.URL.createObjectURL(blob);
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = `Facture_${currentInvoiceMissionId}.pdf`;
-              document.body.appendChild(a);
-              a.click();
-              a.remove();
-              window.URL.revokeObjectURL(url);
-
               // Mise à jour automatique du statut après génération réussie
               await fetch("/.netlify/functions/update-request", {
                 method: "POST",
@@ -1118,6 +1167,9 @@
               const link = row.querySelector(".bluefiles-link-input").value;
               if (!link) return alert("Lien manquant");
               body.bluefilesLink = link;
+            }
+            if (status === "Suppression") {
+                if (!confirm("Êtes-vous sûr de vouloir supprimer DÉFINITIVEMENT ce dossier ? Cette action est irréversible.")) return;
             }
 
             try {

@@ -2,29 +2,50 @@
 const { createClient } = require('@supabase/supabase-js');
 
 exports.handler = async function(event, context) {
-    // Ce endpoint est public, pas besoin d'authentification admin.
     if (event.httpMethod !== 'GET') {
         return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
-    // On utilise la clé publique (anon key) car c'est une lecture de données publiques.
-    const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+    // On utilise la clé SERVICE pour pouvoir faire la jointure avec 'demandes_clients'
+    // (qui est souvent protégée) afin de récupérer le nom du client.
+    const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
     try {
         const { data, error } = await supabase
             .from('client_feedback')
-            .select('rating, comment, created_at')
+            .select(`
+                rating, 
+                comment, 
+                created_at, 
+                is_anonymous,
+                demandes_clients (
+                    nom_client,
+                    contact
+                )
+            `)
             .eq('is_published', true) // On ne récupère que les avis publiés
             .order('created_at', { ascending: false }); // Les plus récents en premier
 
-        if (error) {
-            throw error;
-        }
+        if (error) throw error;
+
+        // On formate les données pour le frontend
+        const formattedData = data.map(item => {
+            // Si l'avis est anonyme, on ne renvoie PAS les infos personnelles (Sécurité)
+            if (item.is_anonymous) {
+                return { ...item, nom_client: null, contact: null };
+            }
+            // Sinon, on "aplatit" l'objet pour que le HTML puisse lire 'item.nom_client' directement
+            return {
+                ...item,
+                nom_client: item.demandes_clients?.nom_client,
+                contact: item.demandes_clients?.contact
+            };
+        });
 
         return {
             statusCode: 200,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            body: JSON.stringify(formattedData)
         };
 
     } catch (error) {

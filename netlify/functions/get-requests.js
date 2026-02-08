@@ -16,16 +16,16 @@ exports.handler = async function(event) {
         const { data: missions, error } = await supabase
             .from('demandes_clients')
             .select(`
-                *,
-                created_at,
-                date_mise_a_jour,
+                id, tracking_id, created_at, date_mise_a_jour, statut, client_id,
+                nom_client, email, contact, fonction, adresse, telephone, siren, tva_intracom,
+                type_demande, message, is_urgent, facture_url, bluefiles_link,
                 clients_identite (
-                    nom_complet,
-                    email,
-                    representant,
-                    fonction,
-                    adresse,
-                    telephone
+                    nom_complet, email, representant, fonction, adresse, telephone, siren, tva_intracom
+                ),
+                finance_recettes (
+                    montant_ht,
+                    date_paiement,
+                    statut_paiement
                 )
             `)
             .order('created_at', { ascending: false });
@@ -41,17 +41,28 @@ exports.handler = async function(event) {
                 dateObj.setHours(dateObj.getHours() + 2); // Correction UTC vers France
             }
             
+            // Récupération des infos financières (si facture générée)
+            const finance = m.finance_recettes && m.finance_recettes.length > 0 ? m.finance_recettes[0] : {};
+            
             return {
                 ...m, 
                 date_creation: dateObj.toISOString(), // Mappé pour le frontend
                 
-                // On remonte TOUTES les infos clients (nécessaire pour facturation/contact)
-                nom_client: m.clients_identite?.nom_complet || 'Client Inconnu',
-                email_client: m.clients_identite?.email || '',
-                representant: m.clients_identite?.representant || '',
-                fonction: m.clients_identite?.fonction || '',
-                adresse: m.clients_identite?.adresse || '',
-                telephone: m.clients_identite?.telephone || ''
+                // CORRECTION : On utilise EN PRIORITÉ les infos du dossier (m.*), 
+                // et seulement si elles sont vides, on prend celles de la fiche client.
+                nom_client: m.nom_client || m.clients_identite?.nom_complet || 'Client Inconnu',
+                email_client: m.email || m.clients_identite?.email || '',
+                representant: m.contact || m.clients_identite?.representant || '',
+                fonction: m.fonction || m.clients_identite?.fonction || '',
+                adresse: m.adresse || m.clients_identite?.adresse || '',
+                telephone: m.telephone || m.clients_identite?.telephone || '',
+                siren: m.siren || m.clients_identite?.siren || '',
+                tva: m.tva_intracom || m.clients_identite?.tva_intracom || '',
+                
+                // Infos Finance pour le Livre des Recettes
+                montant: finance.montant_ht || null,
+                date_paiement: finance.date_paiement || null,
+                statut_paiement: finance.statut_paiement || null
             };
         });
 

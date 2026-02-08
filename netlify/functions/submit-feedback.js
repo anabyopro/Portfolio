@@ -36,13 +36,25 @@ exports.handler = async function(event, context) {
             return { statusCode: 404, body: JSON.stringify({ error: 'Mission introuvable.' }) };
         }
 
+        // VERIFICATION DOUBLON : On vérifie si un avis existe déjà pour cette mission
+        const { data: existingFeedback } = await supabase
+            .from('client_feedback')
+            .select('id')
+            .eq('request_id', mission.id)
+            .single();
+
+        if (existingFeedback) {
+            return { statusCode: 400, body: JSON.stringify({ error: 'Vous avez déjà laissé un avis pour cette prestation.' }) };
+        }
+
         // 4. Préparer les données pour l'insertion
         const feedbackData = {
             request_id: mission.id, // Clé étrangère liant l'avis à la mission
             tracking_id: missionId, // Pour référence facile
             rating: parseInt(rating, 10),
             comment: comment || null, // S'assurer que c'est null si vide
-            is_published: consent === true // Le client a donné son accord
+            is_published: true, // L'avis est soumis pour publication
+            is_anonymous: consent === true // Case cochée = Anonyme
         };
 
         // 5. Insérer l'avis dans la table 'client_feedback'

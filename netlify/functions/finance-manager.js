@@ -17,7 +17,7 @@ exports.handler = async function(event) {
             const { data: recettes, error: errR } = await supabase
                 .from('finance_recettes')
                 .select('*')
-                .order('date_emission', { ascending: false });
+                .order('date_paiement', { ascending: false, nullsFirst: false }); // Tri par date de paiement (plus logique pour la tréso)
             
             if (errR) throw errR;
 
@@ -30,14 +30,20 @@ exports.handler = async function(event) {
             if (errD) throw errD;
 
             // 3. Calculs
-            const totalRecettes = recettes.reduce((sum, r) => sum + (r.montant_ht || 0), 0);
+            // On ne compte dans le total QUE ce qui est réellement payé
+            const recettesPayees = recettes.filter(r => r.statut_paiement === 'Payé');
+            const totalRecettes = recettesPayees.reduce((sum, r) => sum + (r.montant_ht || 0), 0);
             const totalDepenses = depenses.reduce((sum, d) => sum + (d.montant_ht || 0), 0);
             const solde = totalRecettes - totalDepenses;
 
             return {
                 statusCode: 200,
                 body: JSON.stringify({
-                    recettes,
+                    recettes: recettes.map(r => ({
+                        ...r,
+                        // Ajout d'un champ formaté si besoin par le front
+                        date_paiement_fmt: r.date_paiement ? new Date(r.date_paiement).toLocaleDateString('fr-FR') : 'En attente'
+                    })),
                     depenses,
                     stats: {
                         totalRecettes,

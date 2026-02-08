@@ -4,8 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
-      Analyse de Données Biologiques - Votre Expert en Bio-informatique
+      AnaByo | Traitement de données & IA
     </title>
+    <meta name="description" content="AnaByo : Traitement de données biologiques et classification assistée par IA pour les entreprises publiques et privées.">
+    <meta name="author" content="Bourachot Tom">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://anabyo.com/"> <meta property="og:title" content="AnaByo | Traitement de données biologiques & IA">
+    <meta property="og:description" content="Traitement de données et classification assistée par Intelligence Artificielle.">
+    <meta property="twitter:title" content="AnaByo | Bio-informatique & IA">
+    <meta property="twitter:description" content="Traitement de données biologiques et classification assistée par IA.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -323,29 +331,41 @@
 
                       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div id="field-laboratory">
-                          <label for="laboratory" class="block text-sm font-medium text-gray-700">Nom du laboratoire / Institution</label>
+                          <label for="laboratory" class="block text-sm font-medium text-gray-700">Nom du laboratoire / Institution <span class="text-red-600">*</span></label>
                           <div class="mt-1 relative">
-                            <input type="text" name="nom" id="laboratory" required autocomplete="off" placeholder="Tapez le nom ou le SIREN..." class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50" />
-                            <ul id="suggestions" class="absolute z-50 w-full bg-white shadow-lg rounded-md mt-1 hidden border border-gray-200 max-h-60 overflow-auto"></ul>
+                            <input type="text" name="nom" id="laboratory" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50" />
                           </div>
-                          <input type="hidden" id="hidden-siren" name="siren">
                         </div>
 
                         <div>
-                          <label for="full-name" class="block text-sm font-medium text-gray-700">Nom du représentant / contact</label>
+                          <label for="full-name" class="block text-sm font-medium text-gray-700">Nom du représentant / contact <span class="text-red-600">*</span></label>
                           <div class="mt-1">
                             <input type="text" name="contact" id="full-name" autocomplete="name" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50" /> </div>
                         </div>
                       </div>
                       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div>
-                          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                          <label for="siren" class="block text-sm font-medium text-gray-700">SIREN <span class="text-red-600">*</span></label>
+                          <div class="mt-1">
+                            <input type="text" name="siren" id="siren" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50" />
+                          </div>
+                        </div>
+                        <div>
+                          <label for="tva" class="block text-sm font-medium text-gray-700">TVA Intracommunautaire <span class="text-red-600">*</span></label>
+                          <div class="mt-1">
+                            <input type="text" name="tva" id="tva" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50" />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                          <label for="email" class="block text-sm font-medium text-gray-700">Email <span class="text-red-600">*</span></label>
                           <div class="mt-1">
                             <input id="email" name="email" type="email" autocomplete="email" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50" />
                           </div>
                         </div>
                         <div id="field-fonction">
-                          <label for="fonction" class="block text-sm font-medium text-gray-700">Fonction du représentant</label>
+                          <label for="fonction" class="block text-sm font-medium text-gray-700">Fonction du représentant <span class="text-red-600">*</span></label>
                           <div class="mt-1">
                             <input type="text" name="fonction" id="fonction" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50" />
                           </div>
@@ -360,12 +380,12 @@
                       </div>
 
                       <div id="field-adresse">
-                        <label for="adresse" class="block text-sm font-medium text-gray-700">Adresse de facturation</label>
+                        <label for="adresse" class="block text-sm font-medium text-gray-700">Adresse de facturation <span class="text-red-600">*</span></label>
                         <div class="mt-1">
                           <textarea id="adresse" name="adresse" rows="2" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50"></textarea></div>
                       </div>
                       <div>
-                        <label for="message" id="contact-message-label" class="block text-sm font-medium text-gray-700">Décrivez votre besoin</label>
+                        <label for="message" id="contact-message-label" class="block text-sm font-medium text-gray-700">Décrivez votre besoin <span class="text-red-600">*</span></label>
                         <div class="mt-1">
                           <textarea id="message" name="message" rows="4" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50"></textarea>
                         </div>
@@ -514,53 +534,6 @@
 
         planEssai.addEventListener("click", () => selectPlan(planEssai, "essai"));
         planDevis.addEventListener("click", () => selectPlan(planDevis, "devis"));
-
-        // --- GESTION DE L'AUTOCOMPLÉTION ENTREPRISE ---
-        const labInput = document.getElementById('laboratory');
-        const suggestionsList = document.getElementById('suggestions');
-        const sirenInput = document.getElementById('hidden-siren');
-        const adresseInput = document.getElementById('adresse');
-
-        labInput.addEventListener('input', async (e) => {
-          const query = e.target.value;
-          if (query.length < 3) {
-            suggestionsList.classList.add('hidden');
-            return;
-          }
-
-          try {
-            const response = await fetch(`https://recherche-entreprises.api.gouv.fr/search?q=${encodeURIComponent(query)}&per_page=5`);
-            const data = await response.json();
-
-            suggestionsList.innerHTML = '';
-            if (data.results && data.results.length > 0) {
-              data.results.forEach(company => {
-                const li = document.createElement('li');
-                li.className = "px-4 py-2 hover:bg-indigo-50 cursor-pointer border-b last:border-0 text-sm text-gray-800";
-                li.innerHTML = `
-                  <div class="font-bold">${company.nom_complet}</div>
-                  <div class="text-gray-500 text-xs">${company.siren} - ${company.siege.libelle_commune}</div>
-                `;
-                li.onclick = () => {
-                  labInput.value = company.nom_complet;
-                  sirenInput.value = company.siren;
-                  const addr = company.siege;
-                  adresseInput.value = `${addr.adresse} ${addr.code_postal} ${addr.libelle_commune}`;
-                  suggestionsList.classList.add('hidden');
-                };
-                suggestionsList.appendChild(li);
-              });
-              suggestionsList.classList.remove('hidden');
-            }
-          } catch (error) {
-            console.error("Erreur API Recherche Entreprises:", error);
-          }
-        });
-
-        // Fermer les suggestions si clic à l'extérieur
-        document.addEventListener('click', (e) => {
-          if (e.target !== labInput) suggestionsList.classList.add('hidden');
-        });
 
         // --- GESTION DE L'ENVOI DU FORMULAIRE ---
         const contactForm = document.getElementById('demande-form');
