@@ -1,76 +1,55 @@
-// Fichier : netlify/functions/submit-feedback.js
 const { createClient } = require('@supabase/supabase-js');
 
-exports.handler = async function(event, context) {
-    // 1. Vérifier la méthode et parser les données
+exports.handler = async function(event) {
     if (event.httpMethod !== 'POST') {
         return { statusCode: 405, body: 'Method Not Allowed' };
-    }
-
-    let data;
-    try {
-        data = JSON.parse(event.body);
-    } catch (error) {
-        return { statusCode: 400, body: JSON.stringify({ error: 'Corps de la requête invalide.' }) };
-    }
-
-    const { missionId, rating, comment, consent } = data;
-
-    // 2. Valider les données essentielles
-    if (!missionId || !rating) {
-        return { statusCode: 400, body: JSON.stringify({ error: 'ID de mission ou note manquante.' }) };
     }
 
     const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
     try {
-        // 3. Trouver la mission correspondante via son tracking_id
-        const { data: mission, error: missionError } = await supabase
-            .from('demandes_clients')
-            .select('id') // On a juste besoin de l'ID interne pour la liaison
-            .eq('tracking_id', missionId)
-            .single();
+        const data = JSON.parse(event.body);
+        const { missionId, rating, comment, consent } = data;
 
-        if (missionError || !mission) {
-            console.error("Erreur ou mission non trouvée pour le tracking_id:", missionId, missionError);
-            return { statusCode: 404, body: JSON.stringify({ error: 'Mission introuvable.' }) };
+        if (!missionId || !rating) {
+            return { statusCode: 400, body: JSON.stringify({ error: "Données manquantes." }) };
         }
 
-        // VERIFICATION DOUBLON : On vérifie si un avis existe déjà pour cette mission
-        const { data: existingFeedback } = await supabase
+        // 1. Vérifier si un avis existe déjà pour cette mission
+        const { data: existing } = await supabase
             .from('client_feedback')
             .select('id')
-            .eq('request_id', mission.id)
+            .eq('request_id', missionId)
             .single();
 
-        if (existingFeedback) {
-            return { statusCode: 400, body: JSON.stringify({ error: 'Vous avez déjà laissé un avis pour cette prestation.' }) };
+        if (existing) {
+            return { 
+                statusCode: 409, 
+                body: JSON.stringify({ error: "Un avis a déjà été enregistré pour cette mission." }) 
+            };
         }
 
-        // 4. Préparer les données pour l'insertion
-        const feedbackData = {
-            request_id: mission.id, // Clé étrangère liant l'avis à la mission
-            tracking_id: missionId, // Pour référence facile
-            rating: parseInt(rating, 10),
-            comment: comment || null, // S'assurer que c'est null si vide
-            is_published: true, // L'avis est soumis pour publication
-            is_anonymous: consent === true // Case cochée = Anonyme
-        };
-
-        // 5. Insérer l'avis dans la table 'client_feedback'
+        // 2. Insertion
         const { error: insertError } = await supabase
             .from('client_feedback')
-            .insert(feedbackData);
+            .insert({
+                request_id: missionId,
+                rating: parseInt(rating),
+                comment: comment,
+                is_anonymous: consent,
+                is_published: false // Modération par défaut
+            });
 
-        if (insertError) {
-            throw insertError;
-        }
+        if (insertError) throw insertError;
 
-        // 6. Succès !
-        return { statusCode: 200, body: JSON.stringify({ message: 'Avis enregistré avec succès.' }) };
+        return { statusCode: 200, body: JSON.stringify({ message: "Avis enregistré." }) };
 
     } catch (error) {
-        console.error("Erreur lors de l'enregistrement de l'avis:", error);
-        return { statusCode: 500, body: JSON.stringify({ error: 'Erreur interne du serveur.' }) };
+        console.error("Erreur submit-feedback:", error);
+        // Gestion du cas où la contrainte unique de la BDD est déclenchée (race condition)
+        if (error.code === '23505') {
+             return { statusCode: 409, body: JSON.stringify({ error: "Un avis a déjà été enregistré." }) };
+        }
+        return { statusCode: 500, body: JSON.stringify({ error: "Erreur serveur." }) };
     }
 };
