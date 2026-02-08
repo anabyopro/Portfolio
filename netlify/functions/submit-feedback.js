@@ -17,10 +17,15 @@ exports.handler = async function(event) {
 
         // 1. Vérifier si un avis existe déjà pour cette mission
         // On utilise select() sans single() pour récupérer un tableau et éviter les erreurs si 0 ou >1 résultats
-        const { data: existing } = await supabase
+        const { data: existing, error: checkError } = await supabase
             .from('client_feedback')
             .select('id')
             .eq('request_id', missionId);
+
+        if (checkError) {
+            console.error("Erreur vérification doublon:", checkError);
+            return { statusCode: 500, body: JSON.stringify({ error: "Erreur technique lors de la vérification." }) };
+        }
 
         if (existing && existing.length > 0) {
             return { 
@@ -50,6 +55,9 @@ exports.handler = async function(event) {
         if (error.code === '23505') {
              return { statusCode: 409, body: JSON.stringify({ error: "Un avis a déjà été enregistré." }) };
         }
-        return { statusCode: 500, body: JSON.stringify({ error: "Erreur serveur." }) };
+        if (error.code === '23503') { // Violation de clé étrangère (missionId n'existe pas dans demandes_clients)
+             return { statusCode: 400, body: JSON.stringify({ error: "Référence de mission inconnue ou invalide." }) };
+        }
+        return { statusCode: 500, body: JSON.stringify({ error: "Erreur serveur: " + error.message }) };
     }
 };
