@@ -55,7 +55,7 @@ exports.handler = async function(event) {
                 rating: parseInt(rating),
                 comment: comment,
                 is_anonymous: consent,
-                is_published: false // Modération par défaut
+                is_published: true // Publication directe (mettre à false pour modération)
             });
 
         if (insertError) throw insertError;
