@@ -16,13 +16,13 @@ exports.handler = async function(event) {
         }
 
         // 1. Vérifier si un avis existe déjà pour cette mission
+        // On utilise select() sans single() pour récupérer un tableau et éviter les erreurs si 0 ou >1 résultats
         const { data: existing } = await supabase
             .from('client_feedback')
             .select('id')
-            .eq('request_id', missionId)
-            .single();
+            .eq('request_id', missionId);
 
-        if (existing) {
+        if (existing && existing.length > 0) {
             return { 
                 statusCode: 409, 
                 body: JSON.stringify({ error: "Un avis a déjà été enregistré pour cette mission." }) 
