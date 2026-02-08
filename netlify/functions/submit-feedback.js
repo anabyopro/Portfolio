@@ -15,12 +15,25 @@ exports.handler = async function(event) {
             return { statusCode: 400, body: JSON.stringify({ error: "Données manquantes." }) };
         }
 
+        // 0. Récupérer l'UUID interne de la mission à partir du tracking_id (ex: ANA-XXXX)
+        const { data: missionData, error: lookupError } = await supabase
+            .from('demandes_clients')
+            .select('id')
+            .eq('tracking_id', missionId)
+            .single();
+
+        if (lookupError || !missionData) {
+            console.error("Erreur résolution mission (tracking_id invalide):", missionId);
+            return { statusCode: 400, body: JSON.stringify({ error: "Référence de mission inconnue." }) };
+        }
+
+        const missionUuid = missionData.id;
+
         // 1. Vérifier si un avis existe déjà pour cette mission
-        // On utilise select() sans single() pour récupérer un tableau et éviter les erreurs si 0 ou >1 résultats
         const { data: existing, error: checkError } = await supabase
             .from('client_feedback')
             .select('id')
-            .eq('request_id', missionId);
+            .eq('request_id', missionUuid);
 
         if (checkError) {
             console.error("Erreur vérification doublon:", checkError);
@@ -38,7 +51,7 @@ exports.handler = async function(event) {
         const { error: insertError } = await supabase
             .from('client_feedback')
             .insert({
-                request_id: missionId,
+                request_id: missionUuid,
                 rating: parseInt(rating),
                 comment: comment,
                 is_anonymous: consent,
