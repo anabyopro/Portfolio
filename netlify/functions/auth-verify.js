@@ -81,9 +81,13 @@ exports.handler = async function(event) {
                     .from('documents')
                     .createSignedUrl(m.pvd_url, 3600);
                 
-                const signedPvdUrl = signedPvdData ? signedPvdData.signedUrl : null;
-                return { ...m, facture_url: signedUrl,
-                pvd_url: signedPvdUrl // Ajout du lien PVD
+                if (signedPvdData) signedPvdUrl = signedPvdData.signedUrl;
+            }
+
+            return {
+                ...m,
+                facture_url: signedUrl,
+                pvd_url: signedPvdUrl
             };
         }));
 

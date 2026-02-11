@@ -258,7 +258,7 @@ function generateHtml(request) {
             ${stagesHtml || '<div style="text-align:center; padding:20px; color:#94a3b8;">Aucun événement enregistré.</div>'}
 
             <div class="footer">
-                <p>AnaByo - Ce document retrace l'historique des actions réalisées sur votre dossier.</p>
+                <p>AnaByo © ${new Date().getFullYear()} - Ce document retrace l'historique des actions réalisées sur votre dossier.</p>
             </div>
         </body>
         </html>
