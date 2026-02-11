@@ -347,7 +347,7 @@
                         <div>
                           <label for="siren" class="block text-sm font-medium text-gray-700">SIREN <span class="text-red-600">*</span></label>
                           <div class="mt-1">
-                            <input type="text" name="siren" id="siren" required class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50" />
+                            <input type="text" name="siren" id="siren" required pattern="[0-9]{9}" title="Le numéro SIREN doit comporter exactement 9 chiffres." maxlength="9" inputmode="numeric" class="py-3 px-4 block w-full shadow-sm text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md bg-gray-50" />
                           </div>
                         </div>
                         <div>
@@ -427,9 +427,9 @@
           </div>
 
           <nav class="flex justify-center gap-x-4 text-sm">
-            <a href="#confidentialite" class="hover:text-white transition-colors duration-200">Confidentialité</a>
             <a href="./documents.html" class="hover:text-white transition-colors duration-200">Documents</a>
             <a href="./mentions-legales.html" class="hover:text-white transition-colors duration-200 whitespace-nowrap">Mentions Légales</a>
+            <a href="./politique-confidentialite.html" class="hover:text-white transition-colors duration-200 whitespace-nowrap">Politique de Confidentialité</a>
             <a href="./espace-client.html" class="hover:text-white transition-colors duration-200 whitespace-nowrap">Espace Partenaire</a>
           </nav>
 
@@ -634,6 +634,22 @@
                 setTimeout(() => document.body.removeChild(notification), 500);
               }, 1500);
             });
+          });
+        }
+
+        // Calcul automatique de la TVA Intracommunautaire via le SIREN
+        const sirenInput = document.getElementById("siren");
+        const tvaInput = document.getElementById("tva");
+
+        if (sirenInput && tvaInput) {
+          sirenInput.addEventListener("input", function() {
+            const rawSiren = this.value.replace(/[^0-9]/g, "");
+            if (rawSiren.length === 9) {
+               const sirenNum = parseInt(rawSiren, 10);
+               const key = (12 + 3 * (sirenNum % 97)) % 97;
+               const keyStr = key < 10 ? "0" + key : key.toString();
+               tvaInput.value = `FR${keyStr} ${rawSiren}`;
+            }
           });
         }
 

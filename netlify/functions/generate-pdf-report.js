@@ -143,7 +143,8 @@ function generateHtml(request) {
         reception: { title: '1. Initialisation', icon: '📥', events: [] },
         devis: { title: '2. Phase Administrative', icon: '📄', events: [] },
         traitement: { title: '3. Phase Technique', icon: '⚙️', events: [] },
-        finalisation: { title: '4. Clôture', icon: '✅', events: [] },
+        sav: { title: '4. SAV & Conformité', icon: '🔍', events: [] },
+        finalisation: { title: '5. Clôture', icon: '✅', events: [] },
     };
 
     eventsWithDate.forEach(e => {
@@ -158,6 +159,8 @@ function generateHtml(request) {
             stages.reception.events.push(html);
         } else if (t.includes('devis')) {
             stages.devis.events.push(html);
+        } else if (t.includes('sav') || t.includes('vérification') || t.includes('attente')) {
+            stages.sav.events.push(html);
         } else if (t.includes('démarrage') || t.includes('analyses') || t.includes('livrés')) {
             stages.traitement.events.push(html);
         } else {

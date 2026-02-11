@@ -84,6 +84,10 @@
         background-color: #cffafe;
         color: #0e7490;
       }
+      .status-sav {
+        background-color: #f3e8ff;
+        color: #6b21a8;
+      }
 
       /* Style pour les cartes financières */
       .stat-card {
@@ -333,7 +337,7 @@
       <div class="mb-8 border-b flex space-x-8 overflow-x-auto">
         <button
           data-tab="recue"
-          class="tab-btn border-b-2 border-indigo-500 text-indigo-600 py-2"
+          class="tab-btn py-2 text-cyan-600 border-cyan-500 border-b-2 font-bold opacity-100"
         >
           En cours
           <span
@@ -342,7 +346,7 @@
             >0</span
           >
         </button>
-        <button data-tab="acceptee" class="tab-btn py-2 text-gray-500">
+        <button data-tab="acceptee" class="tab-btn py-2 text-cyan-600 border-cyan-500 opacity-60">
           Attente
           <span
             id="count-acceptee"
@@ -350,7 +354,7 @@
             >0</span
           >
         </button>
-        <button data-tab="suivi-devis" class="tab-btn py-2 text-gray-500">
+        <button data-tab="suivi-devis" class="tab-btn py-2 text-orange-600 border-orange-500 opacity-60">
           Devis
           <span
             id="count-suivi-devis"
@@ -358,7 +362,7 @@
             >0</span
           >
         </button>
-        <button data-tab="en-cours" class="tab-btn py-2 text-gray-500">
+        <button data-tab="en-cours" class="tab-btn py-2 text-orange-600 border-orange-500 opacity-60">
           Traitement
           <span
             id="count-en-cours"
@@ -366,7 +370,15 @@
             >0</span
           >
         </button>
-        <button data-tab="paiement" class="tab-btn py-2 text-gray-500">
+        <button data-tab="sav" class="tab-btn py-2 text-orange-600 border-orange-500 opacity-60">
+          SAV
+          <span
+            id="count-sav"
+            class="ml-2 bg-gray-200 text-gray-700 text-xs font-bold px-2 py-0.5 rounded-full hidden"
+            >0</span
+          >
+        </button>
+        <button data-tab="paiement" class="tab-btn py-2 text-cyan-600 border-cyan-500 opacity-60">
           Factures
           <span
             id="count-paiement"
@@ -374,7 +386,7 @@
             >0</span
           >
         </button>
-        <button data-tab="terminee" class="tab-btn py-2 text-gray-500">
+        <button data-tab="terminee" class="tab-btn py-2 text-green-600 border-green-500 opacity-60">
           Terminées
           <span
             id="count-terminee"
@@ -382,7 +394,7 @@
             >0</span
           >
         </button>
-        <button data-tab="refusee" class="tab-btn py-2 text-gray-500">
+        <button data-tab="refusee" class="tab-btn py-2 text-red-600 border-red-500 opacity-60">
           Refusées
           <span
             id="count-refusee"
@@ -393,7 +405,7 @@
         <!-- NOUVEL ONGLET TRÉSORERIE -->
         <button
           data-tab="tresorerie"
-          class="tab-btn py-2 text-green-600 font-bold border-l pl-6"
+          class="tab-btn py-2 text-green-800 border-green-800 opacity-60 border-l pl-6"
         >
           📊 Trésorerie
         </button>
@@ -649,6 +661,7 @@
             "suivi-devis": 0,
             "en-cours": 0,
             paiement: 0,
+            sav: 0,
             terminee: 0,
             refusee: 0,
           };
@@ -657,6 +670,7 @@
             Acceptée: "acceptee",
             "Devis envoyé": "suivi-devis",
             "En cours": "en-cours",
+            "SAV": "sav",
             "Facture envoyée": "paiement",
             Terminée: "terminee",
             "Refusée": "refusee",
@@ -695,6 +709,7 @@
             acceptee: "Acceptée",
             "en-cours": "En cours",
             "suivi-devis": "Devis envoyé",
+            sav: "SAV",
             paiement: "Facture envoyée",
             terminee: "Terminée",
             refusee: ["Refusée", "Devis refusé"] // Gestion tableau pour multiples statuts
@@ -734,7 +749,6 @@
                       <button onclick="showMessage('${req.id}')" class="action-btn bg-indigo-500 hover:bg-indigo-600 text-xs flex-1">Message</button>
                       <button onclick="showConfigInfo('${req.id}')" class="action-btn bg-gray-600 hover:bg-gray-700 text-xs flex-1">Copier</button>
                   </div>
-                  <input type="text" class="bluefiles-link-input border rounded px-2 py-1 text-xs" placeholder="Lien BlueFiles">
                   <div class="flex gap-1">
                       <button data-action="Acceptée" class="action-btn btn-start flex-1 text-xs">Accepter</button>
                       <button data-action="Refusée" class="action-btn btn-reject flex-1 text-xs">Refuser</button>
@@ -761,7 +775,12 @@
                         <div class="flex gap-1"><button data-action="Relance" class="action-btn bg-gray-500 hover:bg-gray-600 text-xs flex-1">⚡</button><button data-action="Devis refusé" class="action-btn btn-reject text-xs flex-1">Refus</button></div>
                     </div>`;
             } else if (req.statut === "En cours") {
-              actionsHtml = `<button onclick="openInvoiceModal('${req.id}', '${req.tracking_id}')" class="action-btn btn-invoice">Générer Facture</button>`;
+              actionsHtml = `<div class="flex flex-col gap-2">
+                  <button data-action="SAV" class="action-btn bg-purple-600 hover:bg-purple-700 text-xs">Envoyer en SAV</button>
+                  <button onclick="openInvoiceModal('${req.id}', '${req.tracking_id}')" class="action-btn btn-invoice text-xs">Facturer directement</button>
+              </div>`;
+            } else if (req.statut === "SAV") {
+              actionsHtml = `<button onclick="openInvoiceModal('${req.id}', '${req.tracking_id}')" class="action-btn btn-invoice">Valider & Facturer</button>`;
             } else if (req.statut === "Facture envoyée") {
               const downloadBtn = req.facture_url
                 ? `<button onclick="openInvoice('${req.id}')" class="action-btn bg-cyan-600 hover:bg-cyan-700 text-center text-xs py-1">Voir Facture</button>`
@@ -1163,11 +1182,6 @@
               if (reason === null) return; // Annulation si l'utilisateur clique sur Annuler
               body.rejectionReason = reason;
             }
-            if (status === "Acceptée") {
-              const link = row.querySelector(".bluefiles-link-input").value;
-              if (!link) return alert("Lien manquant");
-              body.bluefilesLink = link;
-            }
             if (status === "Suppression") {
                 if (!confirm("Êtes-vous sûr de vouloir supprimer DÉFINITIVEMENT ce dossier ? Cette action est irréversible.")) return;
             }
@@ -1213,33 +1227,18 @@
         // Tabs
         document.querySelectorAll(".tab-btn").forEach((b) =>
           b.addEventListener("click", (e) => {
-            document
-              .querySelectorAll(".tab-btn")
-              .forEach((btn) =>
-                btn.classList.replace("text-indigo-600", "text-gray-500"),
-              );
-            document
-              .querySelectorAll(".tab-btn")
-              .forEach((btn) =>
-                btn.classList.remove("border-b-2", "border-indigo-500"),
-              );
+            // 1. Désactiver tous les onglets (remettre en semi-transparent)
+            document.querySelectorAll(".tab-btn").forEach((btn) => {
+                btn.classList.remove("border-b-2", "font-bold", "opacity-100");
+                btn.classList.add("opacity-60");
+            });
 
-            // Gestion spéciale pour le bouton Trésorerie (couleur verte)
-            if (e.target.dataset.tab === "tresorerie") {
-              e.target.classList.add(
-                "text-green-600",
-                "border-b-2",
-                "border-green-500",
-              );
-            } else {
-              e.target.classList.add(
-                "text-indigo-600",
-                "border-b-2",
-                "border-indigo-500",
-              );
-            }
-            e.target.classList.remove("text-gray-500");
-            currentTab = e.target.dataset.tab;
+            // 2. Activer l'onglet cliqué (pleine opacité + souligné)
+            const btn = e.currentTarget;
+            btn.classList.remove("opacity-60");
+            btn.classList.add("border-b-2", "font-bold", "opacity-100");
+
+            currentTab = btn.dataset.tab;
             renderTable();
           }),
         );

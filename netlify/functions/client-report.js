@@ -64,7 +64,8 @@ function generateHtml(request) {
         reception: { title: '1. Initialisation', icon: '📥', events: [] },
         devis: { title: '2. Validation & Admin.', icon: '📄', events: [] }, // Titre raccourci
         traitement: { title: '3. Technique', icon: '⚙️', events: [] }, // Titre raccourci
-        finalisation: { title: '4. Clôture', icon: '✅', events: [] },
+        sav: { title: '4. SAV & Conformité', icon: '🔍', events: [] },
+        finalisation: { title: '5. Clôture', icon: '✅', events: [] },
     };
 
     eventsWithDate.forEach(e => {
@@ -79,6 +80,8 @@ function generateHtml(request) {
             stages.reception.events.push(html);
         } else if (t.includes('devis') || t.includes('validée')) {
             stages.devis.events.push(html);
+        } else if (t.includes('sav') || t.includes('vérification') || t.includes('attente')) {
+            stages.sav.events.push(html);
         } else if (t.includes('démarrage') || t.includes('analyses') || t.includes('livrés')) {
             stages.traitement.events.push(html);
         } else {

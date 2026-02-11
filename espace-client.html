@@ -172,9 +172,13 @@
 
     <footer class="bg-white border-t mt-auto">
       <div
-        class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500"
+        class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500 flex flex-col sm:flex-row justify-between items-center gap-4"
       >
-        &copy; 2025 AnaByo. Tous droits réservés.
+        <p>&copy; 2025 AnaByo. Tous droits réservés.</p>
+        <div class="flex gap-4">
+             <a href="./politique-confidentialite.html" class="hover:text-indigo-600 transition-colors">Politique de Confidentialité</a>
+             <a href="./mentions-legales.html" class="hover:text-indigo-600 transition-colors">Mentions Légales</a>
+        </div>
       </div>
     </footer>
 
@@ -333,6 +337,18 @@
           return;
         }
 
+        if (docType === "pvd") {
+          const mission = clientMissions.find(
+            (m) => m.tracking_id === trackingId,
+          );
+          if (mission && mission.pvd_url) {
+            window.open(mission.pvd_url, "_blank");
+          } else {
+            alert("Le certificat de destruction n'est pas encore disponible.");
+          }
+          return;
+        }
+
         if (docType === "journal") {
           const reportUrl = `/.netlify/functions/client-report?trackingId=${trackingId}&email=${encodeURIComponent(
             userEmail,
@@ -367,6 +383,14 @@
             `;
           } else {
             actionsHtml += `<span class="text-gray-300 mx-2">|</span> <span class="text-gray-400 text-sm cursor-not-allowed" title="Pas encore disponible">Facture</span>`;
+          }
+
+          // PVD : Texte seul (Rouge si dispo)
+          if (mission.pvd_url) {
+            actionsHtml += `
+                <span class="text-gray-300 mx-2">|</span>
+                <a href="javascript:void(0);" onclick="viewDocument('${mission.tracking_id}', 'pvd')" class="text-red-600 hover:text-red-800 font-bold" title="Certificat de Destruction">PVD</a>
+            `;
           }
           // -------------------------
 

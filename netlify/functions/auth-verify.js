@@ -51,7 +51,7 @@ exports.handler = async function(event) {
         // On récupère le "path" (chemin) stocké dans facture_url
         const { data: missions } = await supabase
             .from('demandes_clients')
-            .select('tracking_id, statut, type_demande, created_at, is_urgent, facture_url')
+            .select('tracking_id, statut, type_demande, created_at, is_urgent, facture_url, pvd_url')
             .eq('client_id', client.id)
             .order('created_at', { ascending: false });
 
@@ -60,29 +60,37 @@ exports.handler = async function(event) {
         
         const missionsWithLinks = await Promise.all(missions.map(async (m) => {
             let signedUrl = null;
-            
+            let signedPvdUrl = null;
+
+            // URL signée pour la facture
             if (m.facture_url) {
                 // On demande à Supabase une URL temporaire pour ce fichier privé
                 const { data: signedData, error: signError } = await supabase
                     .storage
                     .from('documents') // Nom de votre bucket privé
                     .createSignedUrl(m.facture_url, 3600); // Lien valide 1 heure
-
                 if (signedData) {
                     signedUrl = signedData.signedUrl;
                 }
             }
 
-            return {
-                ...m,
-                facture_url: signedUrl // On remplace le chemin par le lien temporaire utilisable
+             // URL signée pour le PVD (basée sur la colonne BDD)
+            if (m.pvd_url) {
+                const { data: signedPvdData } = await supabase
+                    .storage
+                    .from('documents')
+                    .createSignedUrl(m.pvd_url, 3600);
+                
+                const signedPvdUrl = signedPvdData ? signedPvdData.signedUrl : null;
+                return { ...m, facture_url: signedUrl,
+                pvd_url: signedPvdUrl // Ajout du lien PVD
             };
         }));
 
         return { 
             statusCode: 200, 
             body: JSON.stringify({ 
-                clientName: client.nom_complet,
+               clientName: client.nom_complet,
                 clientAddress: client.adresse, 
                 clientFunction: client.fonction,
                 missions: missionsWithLinks // On renvoie la liste avec les liens sécurisés

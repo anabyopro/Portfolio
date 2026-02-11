@@ -151,6 +151,22 @@ exports.handler = async function(event) {
             return { statusCode: 200, body: JSON.stringify({ message: "Demande supprimée définitivement." }) };
         }
 
+        // --- CAS : SAV (Service Après-Vente / Vérification) ---
+        if (newStatus === 'SAV') {
+            await supabase.from('demandes_clients').update({ 
+                statut: 'SAV',
+                date_mise_a_jour: new Date().toISOString()
+            }).eq('id', id);
+
+            await supabase.from('mission_events').insert({
+                request_id: id,
+                event_type: 'SAV',
+                description: 'Dossier en attente de validation de conformité (SAV).'
+            });
+
+            return { statusCode: 200, body: JSON.stringify({ message: "Passé en SAV" }) };
+        }
+
         // --- CAS 4 : MISE À JOUR DE STATUT STANDARD ---
         const oldRequest = await fetchFullRequest(id);
 
@@ -158,8 +174,7 @@ exports.handler = async function(event) {
             .from('demandes_clients')
             .update({ 
                 statut: newStatus,
-                date_mise_a_jour: new Date().toISOString(),
-                bluefiles_link: bluefilesLink || oldRequest.bluefiles_link
+                date_mise_a_jour: new Date().toISOString()
             })
             .eq('id', id)
             .select('*, clients_identite(*)')
@@ -294,9 +309,11 @@ exports.handler = async function(event) {
                     <div style="font-family: sans-serif; color: #333; line-height: 1.6;">
                         <p>Bonjour ${finalData.nom_client},</p>
                         
-                        <p>C'est un plaisir de vous confirmer que notre mission est arrivée à son terme. <b>Un grand merci pour votre confiance</b> tout au long de ce projet.</p>
+                        <p>C'est un plaisir de vous confirmer que notre mission est désormais terminée. <b>Un grand merci pour votre confiance</b> tout au long de ce projet.</p>
                         
-                        <p>Pourriez-vous nous accorder un court instant pour nous partager votre retour d'expérience ? Votre regard sur notre travail est précieux et nous aide à faire évoluer nos services :</p>
+                        <p>Le dossier est désormais administrativement clos.</p>
+
+                        <p>Votre avis nous est précieux : pourriez-vous nous accorder un court instant pour partager votre retour d'expérience ? Votre regard nous aide à faire évoluer nos services :</p>
                         
                         <p style="margin: 25px 0;">
                             <a href="${feedbackLink}" style="color: #0253e0; font-weight: bold; text-decoration: underline; font-size: 110%;">
