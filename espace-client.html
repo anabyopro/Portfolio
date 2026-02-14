@@ -349,6 +349,23 @@
           return;
         }
 
+        if (docType === "nda") {
+          const mission = clientMissions.find((m) => m.tracking_id === trackingId);
+          if (mission && mission.nda_url) {
+            window.open(mission.nda_url, "_blank");
+          } else {
+            alert("Le NDA n'est pas disponible.");
+          }
+          return;
+        }
+
+        if (docType === "devis") {
+          const mission = clientMissions.find((m) => m.tracking_id === trackingId);
+          if (mission && mission.devis_url) window.open(mission.devis_url, "_blank");
+          else alert("Le devis signé n'est pas disponible.");
+          return;
+        }
+
         if (docType === "journal") {
           const reportUrl = `/.netlify/functions/client-report?trackingId=${trackingId}&email=${encodeURIComponent(
             userEmail,
@@ -374,6 +391,19 @@
           // --- BOUTONS SANS LOGO ---
           // Journal : Texte seul
           let actionsHtml = `<a href="javascript:void(0);" onclick="viewDocument('${mission.tracking_id}', 'journal')" class="text-indigo-600 hover:text-indigo-900 font-medium">Journal</a>`;
+
+          // NDA (Bleu)
+          if (mission.nda_url) {
+            actionsHtml += `
+                <span class="text-gray-300 mx-2">|</span>
+                <a href="javascript:void(0);" onclick="viewDocument('${mission.tracking_id}', 'nda')" class="text-blue-600 hover:text-blue-800 font-medium" title="Accord de Confidentialité">NDA</a>
+            `;
+          }
+
+          // Devis Signé (Orange)
+          if (mission.devis_url) {
+            actionsHtml += `<span class="text-gray-300 mx-2">|</span><a href="javascript:void(0);" onclick="viewDocument('${mission.tracking_id}', 'devis')" class="text-orange-600 hover:text-orange-800 font-medium" title="Devis Signé">Devis</a>`;
+          }
 
           // Facture : Texte seul (Vert si dispo, Gris sinon)
           if (mission.facture_url) {

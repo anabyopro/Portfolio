@@ -51,7 +51,7 @@ exports.handler = async function(event) {
         // On récupère le "path" (chemin) stocké dans facture_url
         const { data: missions } = await supabase
             .from('demandes_clients')
-            .select('tracking_id, statut, type_demande, created_at, is_urgent, facture_url, pvd_url')
+            .select('tracking_id, statut, type_demande, created_at, is_urgent, facture_url, pvd_url, nda_url, devis_url')
             .eq('client_id', client.id)
             .order('created_at', { ascending: false });
 
@@ -84,10 +84,26 @@ exports.handler = async function(event) {
                 if (signedPvdData) signedPvdUrl = signedPvdData.signedUrl;
             }
 
+            // URL signée pour le NDA
+            let signedNdaUrl = null;
+            if (m.nda_url) {
+                const { data: signedNdaData } = await supabase.storage.from('documents').createSignedUrl(m.nda_url, 3600);
+                if (signedNdaData) signedNdaUrl = signedNdaData.signedUrl;
+            }
+
+            // URL signée pour le Devis Signé
+            let signedDevisUrl = null;
+            if (m.devis_url) {
+                const { data: signedDevisData } = await supabase.storage.from('documents').createSignedUrl(m.devis_url, 3600);
+                if (signedDevisData) signedDevisUrl = signedDevisData.signedUrl;
+            }
+
             return {
                 ...m,
                 facture_url: signedUrl,
-                pvd_url: signedPvdUrl
+                pvd_url: signedPvdUrl,
+                nda_url: signedNdaUrl,
+                devis_url: signedDevisUrl
             };
         }));
 

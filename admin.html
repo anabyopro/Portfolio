@@ -775,7 +775,10 @@
               }
             } else if (req.statut === "Devis envoyé") {
               actionsHtml = `<div class="flex flex-col gap-2">
-                        <button data-action="En cours" class="action-btn btn-start">Devis Validé</button>
+                        <div class="flex items-center gap-1">
+                            <input type="file" id="file-devis-${req.id}" class="w-full text-[10px] text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100" accept=".pdf" />
+                        </div>
+                        <button onclick="validateQuote('${req.id}')" class="action-btn btn-start text-xs">Valider & Uploader</button>
                         <div class="flex gap-1"><button data-action="Relance" class="action-btn bg-gray-500 hover:bg-gray-600 text-xs flex-1">⚡</button><button data-action="Devis refusé" class="action-btn btn-reject text-xs flex-1">Refus</button></div>
                     </div>`;
             } else if (req.statut === "En cours") {
@@ -1025,6 +1028,50 @@
           } catch (e) {
             alert("Erreur lors de la mise à jour : " + e.message);
           }
+        };
+
+        // --- VALIDATION DEVIS AVEC UPLOAD ---
+        window.validateQuote = async (id) => {
+            const fileInput = document.getElementById(`file-devis-${id}`);
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                if (!confirm("Aucun devis signé sélectionné. Passer en 'En cours' sans uploader de fichier ?")) return;
+            }
+
+            const btn = fileInput.parentElement.nextElementSibling;
+            const originalText = btn.innerText;
+            btn.innerText = "Envoi...";
+            btn.disabled = true;
+
+            let body = { id, newStatus: "En cours" };
+
+            const send = async () => {
+                try {
+                    await fetch("/.netlify/functions/update-request", {
+                        method: "POST",
+                        headers: { "x-admin-password": passwordInput.value },
+                        body: JSON.stringify(body),
+                    });
+                    fetchRequests();
+                } catch (e) {
+                    alert("Erreur : " + e.message);
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }
+            };
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    body.signedQuote = e.target.result.split(',')[1]; // Base64
+                    body.signedQuoteName = file.name;
+                    send();
+                };
+                reader.readAsDataURL(file);
+            } else {
+                send();
+            }
         };
 
         // --- MODALE FACTURE ---

@@ -23,7 +23,7 @@ exports.handler = async function(event) {
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     try {
-        const { id, newStatus, bluefilesLink, rejectionReason } = JSON.parse(event.body);
+        const { id, newStatus, bluefilesLink, rejectionReason, signedQuote, signedQuoteName } = JSON.parse(event.body);
         if (!id || !newStatus) return { statusCode: 400, body: JSON.stringify({ error: "Données manquantes." }) };
 
         // --- FONCTION UTILITAIRE : RÉCUPÉRER LES INFOS ---
@@ -170,12 +170,32 @@ exports.handler = async function(event) {
         // --- CAS 4 : MISE À JOUR DE STATUT STANDARD ---
         const oldRequest = await fetchFullRequest(id);
 
+        // Gestion Upload Devis Signé (si présent)
+        let devisUrl = null;
+        if (newStatus === 'En cours' && signedQuote && signedQuoteName) {
+             try {
+                const buffer = Buffer.from(signedQuote, 'base64');
+                const fileName = `devis/Devis_Signe_${oldRequest.tracking_id}.pdf`;
+                const { error: upError } = await supabase.storage
+                    .from('documents')
+                    .upload(fileName, buffer, { contentType: 'application/pdf', upsert: true });
+                
+                if (upError) console.error("Erreur upload devis:", upError);
+                else devisUrl = fileName;
+             } catch (e) {
+                 console.error("Exception upload devis:", e);
+             }
+        }
+
+        const updatePayload = { 
+            statut: newStatus,
+            date_mise_a_jour: new Date().toISOString()
+        };
+        if (devisUrl) updatePayload.devis_url = devisUrl;
+
         const { data: updatedRaw, error: upErr } = await supabase
             .from('demandes_clients')
-            .update({ 
-                statut: newStatus,
-                date_mise_a_jour: new Date().toISOString()
-            })
+            .update(updatePayload)
             .eq('id', id)
             .select('*, clients_identite(*)')
             .single();
